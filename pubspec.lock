@@ -46,9 +46,11 @@ packages:
   dart_pty:
     dependency: "direct main"
     description:
-      path: "/Users/nightmare/Desktop/termare-space/dart_pty"
-      relative: false
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "1f7b85b0d3af6adb2c3a83d79ac6240860ce9a66"
+      url: "https://github.com/termare/dart_pty"
+    source: git
     version: "0.0.2"
   event_bus:
     dependency: transitive
@@ -91,9 +93,11 @@ packages:
   global_repository:
     dependency: "direct main"
     description:
-      path: "/Users/nightmare/Desktop/nightmare-space/plugins/global_repository"
-      relative: false
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "8039ef03c959b3938360469eccc7a7daf6a43270"
+      url: "https://github.com/nightmare-space/global_repository"
+    source: git
     version: "0.0.1"
   intl:
     dependency: transitive

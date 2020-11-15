@@ -13,10 +13,10 @@ dependencies:
     sdk: flutter
 
   dart_pty:
-    path: /Users/nightmare/Desktop/termare-space/dart_pty
+    git: https://github.com/termare/dart_pty
 
   global_repository:
-    path: /Users/nightmare/Desktop/nightmare-space/plugins/global_repository
+    git: https://github.com/nightmare-space/global_repository
 dev_dependencies:
   flutter_test:
     sdk: flutter
