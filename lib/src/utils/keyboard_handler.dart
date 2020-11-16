@@ -17,6 +17,7 @@ class KeyboardHandler {
     if (event is RawKeyDownEvent) {
       switch (event.logicalKey.keyId) {
         case 0x10007002a:
+          print('删除');
           controller.write(utf8.decode(<int>[127]));
           return;
           break;
