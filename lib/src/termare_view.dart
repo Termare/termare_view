@@ -88,6 +88,7 @@ class _TermareViewState extends State<TermareView>
     //       echo -e "\\033[1;34m${'<' * 46}\\033[0m"
     // }
     //       ''');
+    // await Future.delayed(Duration(seconds: 2));
     // termareController.write('test\n');
     SystemChannels.keyEvent.setMessageHandler(keyboardHandler.handleKeyEvent);
     SystemChannels.textInput.invokeMethod('TextInput.show');
@@ -97,14 +98,14 @@ class _TermareViewState extends State<TermareView>
     // focusNode.onKey=(a){};
     // unixPthC.write('python3\n');
     while (mounted) {
-      await Future.delayed(Duration(milliseconds: 10));
       String cur = termareController.read();
       // print(('cur->$cur'));
       if (cur.isNotEmpty) {
-        print('相加');
         out += cur;
         scrollLock = false;
         setState(() {});
+      } else {
+        await Future.delayed(Duration(milliseconds: 10));
       }
     }
     // DynamicLibrary dynamicLibrary = DynamicLibrary.open(
@@ -150,7 +151,7 @@ class _TermareViewState extends State<TermareView>
         //   return;
         // }
         curOffset = preOffset + (details.globalPosition.dy - onPanDownOffset);
-        if (curOffset > 0) curOffset = 0;
+        // if (curOffset > 0) curOffset = 0;
         print('curOffset->$curOffset');
         setState(() {});
       },
@@ -186,10 +187,10 @@ class _TermareViewState extends State<TermareView>
         });
         animationController.animateWith(clampingScrollSimulation);
       },
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.black,
-          body: Stack(
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          child: Stack(
             children: [
               SizedBox(
                 height: 200,
@@ -197,17 +198,19 @@ class _TermareViewState extends State<TermareView>
                   builder: (_) {
                     Size size = MediaQuery.of(context).size;
                     double screenWidth = size.width;
-                    double screenHeight =
-                        size.height - MediaQuery.of(context).viewInsets.bottom;
-                    int column = screenHeight ~/ 16.0;
-                    int row = screenWidth ~/ 8.0;
+                    double screenHeight = size.height;
+                    //  - MediaQuery.of(context).viewInsets.bottom
+                    // 行数
+                    int row = screenHeight ~/ 16.0;
+                    // 列数
+                    int column = screenWidth ~/ 8.0;
                     // print('col:$column');
                     // print('row:$row');
                     return CustomPaint(
                       isComplex: true,
                       painter: TermarePainter(
                         theme: termareController.theme,
-                        rowLength: row - 2,
+                        rowLength: row - 6,
                         columnLength: column - 2,
                         defaultOffsetY: curOffset,
                         call: (lastLetterOffset) {
