@@ -4,6 +4,7 @@ import 'package:dart_pty/dart_pty.dart';
 import 'package:global_repository/global_repository.dart';
 
 import 'envirpath.dart';
+import 'observable.dart';
 import 'theme/term_theme.dart';
 
 /// Flutter Controller 的思想
@@ -14,7 +15,7 @@ class TermareStyle {
   final bool showCursor = true;
 }
 
-class TermareController {
+class TermareController with Observable {
   final Map<String, String> environment;
   final TermareStyle termareStyle;
   TermareController(
