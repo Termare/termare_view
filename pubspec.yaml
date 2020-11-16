@@ -14,7 +14,7 @@ dependencies:
 
   dart_pty:
     git: https://github.com/termare/dart_pty
-
+  quiver: ^2.1.5
   global_repository:
     git: https://github.com/nightmare-space/global_repository
 dev_dependencies:
