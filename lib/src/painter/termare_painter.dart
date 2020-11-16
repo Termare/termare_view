@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:termare/src/config/cache.dart';
+import 'package:termare/src/painter/model/position.dart';
 import 'package:termare/src/theme/term_theme.dart';
 
 const double letterWidth = 8.0;
@@ -9,6 +11,7 @@ const double letterHeight = 16.0;
 
 // int rowLength = 80;
 // int columnLength = 24;
+TextLayoutCache cache = TextLayoutCache(TextDirection.ltr, 4068);
 
 class TermarePainter extends CustomPainter {
   TermarePainter({
@@ -20,13 +23,14 @@ class TermarePainter extends CustomPainter {
     this.input,
     this.call,
   }) {
-    termHeight = columnLength * letterHeight;
-    termWidth = rowLength * letterWidth;
+    termWidth = columnLength * letterWidth;
+    termHeight = rowLength * letterHeight;
   }
   final int rowLength;
   final int columnLength;
   double termWidth;
   double termHeight;
+  int curPaintIndex = 0;
   final TermTheme theme;
   List<Color> colors = [
     Colors.yellow,
@@ -41,13 +45,7 @@ class TermarePainter extends CustomPainter {
   double padding;
   final String input;
   Function eq = const ListEquality().equals;
-  Offset curOffset = Offset(0, 0);
-  void remove() {
-    moveToNextOffset(-1);
-    // if (curOffset.dx == 0) {
-    //   curOffset = Offset(curOffset.dx - 1, 0);
-    // }
-  }
+  Position position = Position(0, 0);
 
   TextStyle defaultStyle = TextStyle(
     textBaseline: TextBaseline.ideographic,
@@ -61,41 +59,48 @@ class TermarePainter extends CustomPainter {
   void drawLine(Canvas canvas) async {
     Paint paint = Paint();
     paint.strokeWidth = 1;
-    paint.color = Colors.white.withOpacity(0.4);
+    paint.color = Colors.grey.withOpacity(0.4);
     for (int j = 0; j <= rowLength; j++) {
       // print(j);
       canvas.drawLine(
-        Offset(j * letterWidth, 0),
-        Offset(j * letterWidth, termHeight),
+        Offset(0, j * letterHeight),
+        Offset(
+          termWidth,
+          j * letterHeight,
+        ),
         paint,
       );
     }
     for (int k = 0; k <= columnLength; k++) {
       canvas.drawLine(
         Offset(
+          k * letterWidth,
           0,
-          k * letterHeight,
         ),
-        Offset(termWidth, k * letterHeight),
+        Offset(k * letterWidth, termHeight),
         paint,
       );
     }
   }
 
-  @override
-  void paint(Canvas canvas, Size size) {
+  void drawBackground(Canvas canvas) {
     canvas.drawRect(
-      Rect.fromLTWH(curOffset.dx, curOffset.dy, termWidth, termHeight),
+      Rect.fromLTWH(0, 0, termWidth, termHeight),
       Paint()..color = Colors.black,
     );
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    drawBackground(canvas);
     TextStyle curStyle = defaultStyle;
     for (int i = 0; i < input.length; i++) {
       if (input[i] == '\n') {
         moveNewLineOffset();
         continue;
       }
-      // print(input[i]);
-      // print(input[i].codeUnits);
+      print(input[i]);
+      print(input[i].codeUnits);
       if (eq(input[i].codeUnits, [0x07])) {
         // print('<- C0 Bell ->');
         continue;
@@ -110,7 +115,6 @@ class TermarePainter extends CustomPainter {
           moveToNextOffset(-1);
         }
         moveToNextOffset(-1);
-
         continue;
       }
 
@@ -126,14 +130,28 @@ class TermarePainter extends CustomPainter {
       if (eq(input[i].codeUnits, [0x1b])) {
         // print('<- ESC ->');
         String nextStr = input[i + 1];
-        // print('curStr->${input[i]} nextStr->$nextStr');
+        print('curStr->${input[i]} nextStr->$nextStr');
         switch (nextStr) {
           case '[':
             String nextStr = input[i + 2];
-            // print('[->nextStr->$nextStr');
+            print('[->nextStr->$nextStr');
             switch (nextStr) {
               case 'K':
-                moveToLineFirstOffset();
+                i += 2;
+                final RegExp doubleByteReg = RegExp('[^\x00-\xff]');
+                bool isDoubleByte = doubleByteReg.hasMatch(input[i]);
+                if (isDoubleByte) {
+                  // print('数按字节字符---->${input[i]}');
+                }
+                canvas.drawRect(
+                  Rect.fromLTWH(
+                    position.dx * letterWidth,
+                    position.dy * letterHeight + defaultOffsetY,
+                    isDoubleByte ? 2 * letterWidth : letterWidth,
+                    letterHeight,
+                  ),
+                  Paint()..color = Colors.black,
+                );
                 continue;
                 break;
               default:
@@ -178,91 +196,92 @@ class TermarePainter extends CustomPainter {
       if (isOutTerm()) {
         continue;
       }
-      canvas.drawRect(
-        Rect.fromLTWH(
-            curOffset.dx, curOffset.dy + defaultOffsetY, letterWidth, 16),
-        Paint()..color = Colors.black,
-      );
+
       final RegExp doubleByteReg = RegExp('[^\x00-\xff]');
       bool isDoubleByte = doubleByteReg.hasMatch(input[i]);
       if (isDoubleByte) {
         // print('数按字节字符---->${input[i]}');
       }
-      TextPainter(
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          text: input[i],
-          style: curStyle.copyWith(
-              // backgroundColor: colors[i % 5],
-              ),
+      canvas.drawRect(
+        Rect.fromLTWH(
+          position.dx * letterWidth,
+          position.dy * letterHeight + defaultOffsetY,
+          isDoubleByte ? 2 * letterWidth : letterWidth,
+          letterHeight,
         ),
-        textDirection: TextDirection.ltr,
-      )
+        Paint()..color = Colors.black,
+      );
+      TextPainter painter = cache.getOrPerformLayout(
+        TextSpan(
+          text: input[i],
+          style: curStyle,
+        ),
+      );
+      painter
         ..layout(
           maxWidth: isDoubleByte ? 2 * letterWidth : letterWidth,
           minWidth: isDoubleByte ? 2 * letterWidth : letterWidth,
         )
         ..paint(
           canvas,
-          curOffset + Offset(0.0, defaultOffsetY),
+          Offset(
+            position.dx * letterWidth,
+            position.dy * letterHeight + defaultOffsetY,
+          ),
         );
+
       moveToNextOffset(1);
       if (isDoubleByte) {
         moveToNextOffset(1);
       }
     }
+    paintCursor(canvas);
+    // drawLine(canvas);
+    call(
+      position.dy * letterHeight + defaultOffsetY - termHeight + letterHeight,
+    );
+  }
+
+  void paintCursor(Canvas canvas) {
     if (!isOutTerm()) {
       canvas.drawRect(
-        Rect.fromLTWH(curOffset.dx, curOffset.dy + defaultOffsetY, letterWidth,
+        Rect.fromLTWH(
+            position.dx * letterWidth,
+            position.dy * letterHeight + defaultOffsetY,
+            letterWidth,
             letterHeight),
         Paint()..color = Colors.grey.withOpacity(0.4),
       );
     }
-
-    drawLine(canvas);
-    call(curOffset.dy + defaultOffsetY - termHeight + letterHeight);
   }
 
   bool isOutTerm() {
-    return curOffset.dy + defaultOffsetY >= termHeight ||
-        curOffset.dy + defaultOffsetY < 0;
+    return position.dy * letterHeight + defaultOffsetY >= termHeight ||
+        position.dy * letterHeight + defaultOffsetY < 0;
   }
 
   void moveToLineFirstOffset() {
-    double offsetX = 0;
-    double offsetY = curOffset.dy;
-    // print('offsetY->$offsetY');
-    curOffset = Offset(offsetX, offsetY);
+    curPaintIndex = curPaintIndex - curPaintIndex % columnLength;
+    position = getCurPosition();
+  }
+
+  Position getCurPosition() {
+    return Position(
+      curPaintIndex % columnLength,
+      curPaintIndex ~/ columnLength,
+    );
   }
 
   void moveToNextOffset(int x) {
-    double offsetX = curOffset.dx + x * letterWidth;
-    int col;
-    if (offsetX < 0) {
-      // print('offsetX->$offsetX');
-      col = -1;
-      // print('object');
-      offsetX = 0;
-    } else {
-      col = offsetX ~/ termWidth;
-      offsetX = offsetX % termWidth;
-    }
-
-    // print('offsetX->$offsetX');
-    // print('col->$col');
-    double offsetY = curOffset.dy + col * letterHeight;
-    // print('offsetY->$offsetY');
-    curOffset = Offset(offsetX, offsetY);
+    curPaintIndex += x;
+    position = getCurPosition();
+    // print(position);
   }
 
   void moveNewLineOffset() {
-    double offsetX = 0;
-    // int col = offsetX ~/ termWidth;
-
-    // print('offsetX->$offsetX');
-    // print('col->$col');
-    double offsetY = curOffset.dy + letterHeight;
-    curOffset = Offset(offsetX, offsetY);
+    int tmp = columnLength - curPaintIndex % columnLength;
+    curPaintIndex = tmp + curPaintIndex;
+    position = getCurPosition();
   }
 
   TextStyle getTextStyle(String tag, TextStyle preTextStyle) {
