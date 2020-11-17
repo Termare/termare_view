@@ -11,8 +11,8 @@ class KeyboardHandler {
   Future<dynamic> handleKeyEvent(dynamic message) async {
     final RawKeyEvent event =
         RawKeyEvent.fromMessage(message as Map<String, dynamic>);
-    print('event.logicalKey.debugName->${event.logicalKey.debugName}');
-    print('event->$event');
+    // print('event.logicalKey.debugName->${event.logicalKey.debugName}');
+    // print('event->$event');
 
     if (event is RawKeyDownEvent) {
       switch (event.logicalKey.keyId) {
@@ -49,9 +49,9 @@ class KeyboardHandler {
         );
         enableShift = false;
       } else {
-        print(event.logicalKey);
+        // print(event.logicalKey);
         controller.write(utf8.decode([event.logicalKey.keyId]));
-        print(utf8.decode([event.logicalKey.keyId]));
+        // print(utf8.decode([event.logicalKey.keyId]));
       }
     }
     // if (event is RawKeyUpEvent) {
