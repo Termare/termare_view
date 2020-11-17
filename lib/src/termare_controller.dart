@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dart_pty/dart_pty.dart';
 import 'package:global_repository/global_repository.dart';
 
-import 'envirpath.dart';
 import 'observable.dart';
 import 'theme/term_theme.dart';
 
@@ -18,6 +17,8 @@ class TermareStyle {
 class TermareController with Observable {
   final Map<String, String> environment;
   final TermareStyle termareStyle;
+  bool dirty = false;
+  String out = '';
   TermareController(
       {this.termareStyle = const TermareStyle(), this.environment}) {
     unixPthC = UnixPtyC(environment: environment);
