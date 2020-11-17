@@ -1,15 +1,9 @@
-import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:ui';
-
-import 'package:dart_pty/dart_pty.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'painter/termare_painter.dart';
 import 'termare_controller.dart';
-import 'unix/term.dart';
 import 'utils/keyboard_handler.dart';
 
 class TermareView extends StatefulWidget {
