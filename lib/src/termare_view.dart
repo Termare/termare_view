@@ -46,9 +46,6 @@ class _TermareViewState extends State<TermareView>
           },
         );
     keyboardHandler = KeyboardHandler(termareController);
-
-    // termareController.write(
-    //     "echo 'abc h\x08ello H\x8ello from \\033[1;3;31mxterm.js\\033[0m \$ Hello from \x1B[1;3;31mxterm.js\x1B[0m \$' \n");
     animationController = AnimationController(
       vsync: this,
       value: 0,
@@ -64,18 +61,8 @@ class _TermareViewState extends State<TermareView>
     super.didChangeDependencies();
   }
 
-  // @override
-  // void didUpdateWidget(RotatedView oldWidget) {
-  //   WidgetsBinding.instance.addPostFrameCallback(_onAfterRendering);
-  //   super.didUpdateWidget(oldWidget);
-  // }
-
   void _onAfterRendering(Duration timeStamp) {
     print('$this 刷新 ${MediaQuery.of(context).viewInsets}');
-    // double screenWidth = MediaQuery.of(context).size.width;
-    // int column = screenWidth ~/ 11.0;
-    // print('column-$column');
-    // print('MediaQuery.of(context).size.width->$screenWidth');
   }
 
   int textSelectionOffset = 0;
@@ -117,37 +104,15 @@ class _TermareViewState extends State<TermareView>
         await Future.delayed(Duration(milliseconds: 10));
       }
     }
-    // DynamicLibrary dynamicLibrary = DynamicLibrary.open(
-    //     '/Users/nightmare/Desktop/termare/new_term/c_resource/NiTerm/src/build/libterm.dylib');
-    // int ptm = unixPty.createPseudoTerminal(
-    //   verbose: true,
-    // );
-    // unixPty.createSubprocess(ptm);
-    // unixPty.setNonblock(
-    //   ptm,
-    //   verbose: true,
-    // );
-    // //     final Pointer<Uint8> resultPoint = fileDescriptor.read();
-    // read(ptm);
-    // // 代表空指针
-    // if (resultPoint.address == 0) {
-    //   // 释放内存
-    //   // free(resultPoint);
-    //   return '';
-    // }
-    // String result = _niUtf.cStringtoString(resultPoint);
   }
 
   @override
   Widget build(BuildContext context) {
-    // print("codeUnits->${'a'.codeUnits}");
     return GestureDetector(
       onTap: () {
-        // // SystemChannels.textInput.invokeMethod('TextInput.hide');
         scrollLock = false;
         focusNode.requestFocus();
         SystemChannels.textInput.invokeMethod('TextInput.show');
-        // setState(() {});
       },
       onDoubleTap: () async {
         final String text = (await Clipboard.getData('text/plain')).text;
@@ -160,17 +125,9 @@ class _TermareViewState extends State<TermareView>
       },
       onPanUpdate: (details) {
         scrollLock = true;
-        // if (lastLetterOffset < 0) {
-        //   curOffset -= lastLetterOffset;
-        //   return;
-        // }
+
         double shouldOffset =
             preOffset + (details.globalPosition.dy - onPanDownOffset);
-        // if (curOffset < 0) {
-        //   if (lastLetterOffset < 0 && shouldOffset < curOffset) {
-        //     return;
-        //   }
-        // }
         curOffset = shouldOffset;
         if (curOffset > 0) curOffset = 0;
         print('curOffset->$curOffset');
@@ -178,13 +135,12 @@ class _TermareViewState extends State<TermareView>
       },
       onPanEnd: (details) {
         scrollLock = true;
+        double velocity =
+            1.0 / (0.050 * WidgetsBinding.instance.window.devicePixelRatio);
+        double distance = 1.0 / WidgetsBinding.instance.window.devicePixelRatio;
         final Tolerance tolerance = Tolerance(
-          velocity: 1.0 /
-              (0.050 *
-                  WidgetsBinding.instance.window
-                      .devicePixelRatio), // logical pixels per second
-          distance: 1.0 /
-              WidgetsBinding.instance.window.devicePixelRatio, // logical pixels
+          velocity: velocity, // logical pixels per second
+          distance: distance, // logical pixels
         );
         double start = curOffset;
         ClampingScrollSimulation clampingScrollSimulation =
@@ -261,72 +217,6 @@ class _TermareViewState extends State<TermareView>
                   },
                 ),
               ),
-
-              // Align(
-              //   alignment: Alignment.center,
-              //   child: SingleChildScrollView(
-              //     child: SizedBox(
-              //       height: 100,
-              //       child: TextField(
-              //         style: TextStyle(color: Colors.white),
-              //         controller: _editingController,
-              //         autofocus: false,
-              //         keyboardType: TextInputType.text,
-              //         focusNode: focusNode,
-              //         // style: const TextStyle(color: Colors.transparent),
-              //         // cursorColor: Colors.transparent,
-              //         showCursor: false,
-              //         cursorWidth: 20,
-              //         enabled: true,
-              //         scrollPadding: const EdgeInsets.all(0.0),
-              //         enableInteractiveSelection: false,
-              //         decoration: InputDecoration(
-              //           alignLabelWithHint: true,
-              //           // border: InputBorder.none,
-              //           // hasFloatingPlaceholder: false,
-              //         ),
-              //         onChanged: (String strCall) {
-              //           String currentInput;
-
-              //           // print(
-              //           //     'editingController.selection.end===>${editingController.selection.end}');
-              //           // print('currentInput===>$currentInput');
-              //           // print(textSelectionOffset);
-              //           if (_editingController.selection.end >
-              //               textSelectionOffset) {
-              //             currentInput =
-              //                 strCall[_editingController.selection.end - 1];
-              //             // if (isUseCtrl) {
-              //             //   _nitermController.write(String.fromCharCode(
-              //             //       currentInput.toUpperCase().codeUnits[0] - 64));
-              //             //   isUseCtrl = false;
-              //             //   setState(() {});
-              //             // } else {
-              //             termareController.write(currentInput);
-              //             // }
-              //           } else {
-              //             termareController.write(utf8.decode(<int>[127]));
-              //           }
-              //           textSelectionOffset = _editingController.selection.end;
-              //         },
-              //         onEditingComplete: () {
-              //           textSelectionOffset = 0;
-              //         },
-              //         onSubmitted: (String a) {
-              //           _editingController.clear();
-              //           termareController.write('\n');
-              //         },
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // TextField(
-              //   focusNode: focusNode,
-              //   onChanged: (str) {
-              //     print(str);
-              //     // unixPty.write(unixPthC.pseudoTerminalId, str);
-              //   },
-              // ),
             ],
           ),
         ),
