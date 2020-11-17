@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:termare/src/config/cache.dart';
 import 'package:termare/src/painter/model/position.dart';
+import 'package:termare/src/termare_controller.dart';
 import 'package:termare/src/theme/term_theme.dart';
 
 const double letterWidth = 8.0;
@@ -15,17 +16,19 @@ TextLayoutCache cache = TextLayoutCache(TextDirection.ltr, 4068);
 
 class TermarePainter extends CustomPainter {
   TermarePainter({
+    this.controller,
     this.theme,
     this.rowLength,
     this.columnLength,
     this.defaultOffsetY,
     this.color = Colors.white,
     this.input,
-    this.call,
+    this.lastLetterPositionCall,
   }) {
     termWidth = columnLength * letterWidth;
     termHeight = rowLength * letterHeight;
   }
+  final TermareController controller;
   final int rowLength;
   final int columnLength;
   double termWidth;
@@ -41,11 +44,11 @@ class TermarePainter extends CustomPainter {
   ];
   final Color color;
   final double defaultOffsetY;
-  final void Function(double lastLetterOffset) call;
+  final void Function(double lastLetterPosition) lastLetterPositionCall;
   double padding;
   final String input;
   Function eq = const ListEquality().equals;
-  Position position = Position(0, 0);
+  Position _position = Position(0, 0);
 
   TextStyle defaultStyle = TextStyle(
     textBaseline: TextBaseline.ideographic,
@@ -92,15 +95,18 @@ class TermarePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    _position = Position(0, 0);
+    curPaintIndex = 0;
     drawBackground(canvas);
+    // print('_position->$_position');
     TextStyle curStyle = defaultStyle;
     for (int i = 0; i < input.length; i++) {
       if (input[i] == '\n') {
         moveNewLineOffset();
         continue;
       }
-      print(input[i]);
-      print(input[i].codeUnits);
+      // print(input[i]);
+      // print(input[i].codeUnits);
       if (eq(input[i].codeUnits, [0x07])) {
         // print('<- C0 Bell ->');
         continue;
@@ -145,8 +151,8 @@ class TermarePainter extends CustomPainter {
                 }
                 canvas.drawRect(
                   Rect.fromLTWH(
-                    position.dx * letterWidth,
-                    position.dy * letterHeight + defaultOffsetY,
+                    _position.dx * letterWidth,
+                    _position.dy * letterHeight + defaultOffsetY,
                     isDoubleByte ? 2 * letterWidth : letterWidth,
                     letterHeight,
                   ),
@@ -204,8 +210,8 @@ class TermarePainter extends CustomPainter {
       }
       canvas.drawRect(
         Rect.fromLTWH(
-          position.dx * letterWidth,
-          position.dy * letterHeight + defaultOffsetY,
+          _position.dx * letterWidth,
+          _position.dy * letterHeight + defaultOffsetY,
           isDoubleByte ? 2 * letterWidth : letterWidth,
           letterHeight,
         ),
@@ -225,8 +231,8 @@ class TermarePainter extends CustomPainter {
         ..paint(
           canvas,
           Offset(
-            position.dx * letterWidth,
-            position.dy * letterHeight + defaultOffsetY,
+            _position.dx * letterWidth,
+            _position.dy * letterHeight + defaultOffsetY,
           ),
         );
 
@@ -237,17 +243,18 @@ class TermarePainter extends CustomPainter {
     }
     paintCursor(canvas);
     // drawLine(canvas);
-    call(
-      position.dy * letterHeight + defaultOffsetY - termHeight + letterHeight,
+    lastLetterPositionCall?.call(
+      _position.dy * letterHeight + defaultOffsetY - termHeight + letterHeight,
     );
+    controller.dirty = false;
   }
 
   void paintCursor(Canvas canvas) {
     if (!isOutTerm()) {
       canvas.drawRect(
         Rect.fromLTWH(
-            position.dx * letterWidth,
-            position.dy * letterHeight + defaultOffsetY,
+            _position.dx * letterWidth,
+            _position.dy * letterHeight + defaultOffsetY,
             letterWidth,
             letterHeight),
         Paint()..color = Colors.grey.withOpacity(0.4),
@@ -256,13 +263,13 @@ class TermarePainter extends CustomPainter {
   }
 
   bool isOutTerm() {
-    return position.dy * letterHeight + defaultOffsetY >= termHeight ||
-        position.dy * letterHeight + defaultOffsetY < 0;
+    return _position.dy * letterHeight + defaultOffsetY >= termHeight ||
+        _position.dy * letterHeight + defaultOffsetY < 0;
   }
 
   void moveToLineFirstOffset() {
     curPaintIndex = curPaintIndex - curPaintIndex % columnLength;
-    position = getCurPosition();
+    _position = getCurPosition();
   }
 
   Position getCurPosition() {
@@ -274,14 +281,14 @@ class TermarePainter extends CustomPainter {
 
   void moveToNextOffset(int x) {
     curPaintIndex += x;
-    position = getCurPosition();
-    // print(position);
+    _position = getCurPosition();
+    // print(_position);
   }
 
   void moveNewLineOffset() {
     int tmp = columnLength - curPaintIndex % columnLength;
     curPaintIndex = tmp + curPaintIndex;
-    position = getCurPosition();
+    _position = getCurPosition();
   }
 
   TextStyle getTextStyle(String tag, TextStyle preTextStyle) {
@@ -351,5 +358,6 @@ class TermarePainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return true;
+    return controller.dirty;
   }
 }
