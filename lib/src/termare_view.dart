@@ -13,8 +13,13 @@ import 'unix/term.dart';
 import 'utils/keyboard_handler.dart';
 
 class TermareView extends StatefulWidget {
-  const TermareView({Key key, this.controller}) : super(key: key);
+  const TermareView({
+    Key key,
+    this.controller,
+    this.autoFocus = false,
+  }) : super(key: key);
   final TermareController controller;
+  final bool autoFocus;
   @override
   _TermareViewState createState() => _TermareViewState();
 }
@@ -26,7 +31,6 @@ class _TermareViewState extends State<TermareView>
   double preOffset = 0;
   double onPanDownOffset = 0;
   double curOffset = 0;
-  String out = '';
   double lastLetterOffset = 0;
   KeyboardHandler keyboardHandler;
   @override
@@ -80,18 +84,20 @@ class _TermareViewState extends State<TermareView>
   bool scrollLock = false;
 
   Future<void> init() async {
-    // await termareController.defineTermFunc('''
-    // function test(){
-    //   echo -e "\\033[1;34m${'>' * 46}\\033[0m"
-    //       echo -n -e "\\033[1;31m>>> 完整解压ROM中...\\033[0m"
-    //       echo "<<< 刷机包解压结束..."
-    //       echo -e "\\033[1;34m${'<' * 46}\\033[0m"
-    // }
-    //       ''');
-    // await Future.delayed(Duration(seconds: 2));
+//     await termareController.defineTermFunc('''
+//     function test(){
+// for i in \$(seq 1 100)
+// do
+// echo \$i;
+// sleep 0.1
+// done
+//   }
+//     ''');
     // termareController.write('test\n');
     SystemChannels.keyEvent.setMessageHandler(keyboardHandler.handleKeyEvent);
-    SystemChannels.textInput.invokeMethod('TextInput.show');
+    if (widget.autoFocus) {
+      SystemChannels.textInput.invokeMethod('TextInput.show');
+    }
     // focusNode.attach(context);
     // focusNode.requestFocus();
     // focusNode.onKey;
@@ -101,9 +107,12 @@ class _TermareViewState extends State<TermareView>
       String cur = termareController.read();
       // print(('cur->$cur'));
       if (cur.isNotEmpty) {
-        out += cur;
+        termareController.out += cur;
+        termareController.notifyListeners();
+        termareController.dirty = true;
         scrollLock = false;
         setState(() {});
+        // await Future.delayed(Duration(milliseconds: 10));
       } else {
         await Future.delayed(Duration(milliseconds: 10));
       }
@@ -134,11 +143,15 @@ class _TermareViewState extends State<TermareView>
     // print("codeUnits->${'a'.codeUnits}");
     return GestureDetector(
       onTap: () {
-        SafeArea;
         // // SystemChannels.textInput.invokeMethod('TextInput.hide');
         scrollLock = false;
         focusNode.requestFocus();
         SystemChannels.textInput.invokeMethod('TextInput.show');
+        // setState(() {});
+      },
+      onDoubleTap: () async {
+        final String text = (await Clipboard.getData('text/plain')).text;
+        termareController.write(text);
       },
       onPanDown: (details) {
         scrollLock = true;
@@ -146,12 +159,20 @@ class _TermareViewState extends State<TermareView>
         preOffset = curOffset;
       },
       onPanUpdate: (details) {
+        scrollLock = true;
         // if (lastLetterOffset < 0) {
         //   curOffset -= lastLetterOffset;
         //   return;
         // }
-        curOffset = preOffset + (details.globalPosition.dy - onPanDownOffset);
-        // if (curOffset > 0) curOffset = 0;
+        double shouldOffset =
+            preOffset + (details.globalPosition.dy - onPanDownOffset);
+        // if (curOffset < 0) {
+        //   if (lastLetterOffset < 0 && shouldOffset < curOffset) {
+        //     return;
+        //   }
+        // }
+        curOffset = shouldOffset;
+        if (curOffset > 0) curOffset = 0;
         print('curOffset->$curOffset');
         setState(() {});
       },
@@ -180,10 +201,16 @@ class _TermareViewState extends State<TermareView>
         );
         animationController.reset();
         animationController.addListener(() {
-          curOffset = animationController.value;
+          double shouldOffset = animationController.value;
+          if (curOffset < 0) {
+            if (lastLetterOffset < 0 && shouldOffset < curOffset) {
+              return;
+            }
+          }
+          curOffset = shouldOffset;
           if (curOffset > 0) curOffset = 0;
-          setState(() {});
           print('curOffset->$curOffset');
+          setState(() {});
         });
         animationController.animateWith(clampingScrollSimulation);
       },
@@ -196,10 +223,12 @@ class _TermareViewState extends State<TermareView>
                 height: 200,
                 child: Builder(
                   builder: (_) {
+                    print(
+                        'MediaQuery.of(context).viewInsets.bottom->${MediaQuery.of(context).viewPadding.bottom}');
                     Size size = MediaQuery.of(context).size;
                     double screenWidth = size.width;
-                    double screenHeight = size.height;
-                    //  - MediaQuery.of(context).viewInsets.bottom
+                    double screenHeight =
+                        size.height - MediaQuery.of(context).viewInsets.bottom;
                     // 行数
                     int row = screenHeight ~/ 16.0;
                     // 列数
@@ -207,30 +236,26 @@ class _TermareViewState extends State<TermareView>
                     // print('col:$column');
                     // print('row:$row');
                     return CustomPaint(
-                      isComplex: true,
                       painter: TermarePainter(
+                        controller: termareController,
                         theme: termareController.theme,
-                        rowLength: row - 6,
+                        rowLength: (row - 4),
                         columnLength: column - 2,
                         defaultOffsetY: curOffset,
-                        call: (lastLetterOffset) {
+                        lastLetterPositionCall: (lastLetterOffset) async {
                           this.lastLetterOffset = lastLetterOffset;
                           print('lastLetterOffset : $lastLetterOffset');
-                          if (lastLetterOffset > 0) {
-                            if (scrollLock) return;
+                          if (!scrollLock && lastLetterOffset > 0) {
                             scrollLock = true;
-                            Future.delayed(Duration(milliseconds: 100), () {
-                              curOffset -= lastLetterOffset;
-                              scrollLock = false;
-                              setState(() {});
-                            });
-                          }
+                            await Future.delayed(Duration(milliseconds: 100));
 
-                          // height = d;
-                          // setState(() {});
+                            curOffset -= lastLetterOffset;
+                            setState(() {});
+                            scrollLock = false;
+                          }
                         },
                         color: const Color(0xff811016),
-                        input: out,
+                        input: termareController.out,
                       ),
                     );
                   },
