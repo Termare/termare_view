@@ -11,7 +11,8 @@ mixin Observable {
     listeners.remove(listener);
   }
 
-  void notifyListeners() {
+  void notifyListeners() async {
+    print('notifyListeners');
     for (var listener in listeners) {
       listener();
     }
