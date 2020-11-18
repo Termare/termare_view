@@ -152,11 +152,12 @@ class _TermareViewState extends State<TermareView>
         animationController.reset();
         animationController.addListener(() {
           double shouldOffset = animationController.value;
-          if (curOffset < 0) {
-            if (lastLetterOffset < 0 && shouldOffset < curOffset) {
-              return;
-            }
-          }
+          // print(object)
+          // if (curOffset < 0) {
+          //   if (lastLetterOffset < 0 && shouldOffset < curOffset) {
+          //     return;
+          //   }
+          // }
           curOffset = shouldOffset;
           if (curOffset > 0) curOffset = 0;
           print('curOffset->$curOffset');
