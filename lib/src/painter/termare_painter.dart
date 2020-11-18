@@ -242,7 +242,7 @@ class TermarePainter extends CustomPainter {
       }
     }
     paintCursor(canvas);
-    // drawLine(canvas);
+    drawLine(canvas);
     lastLetterPositionCall?.call(
       _position.dy * letterHeight + defaultOffsetY - termHeight + letterHeight,
     );
