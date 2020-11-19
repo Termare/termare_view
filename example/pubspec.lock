@@ -49,13 +49,13 @@ packages:
       name: cupertino_icons
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.1+1"
   dart_pty:
     dependency: transitive
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "1f7b85b0d3af6adb2c3a83d79ac6240860ce9a66"
+      resolved-ref: a392570aa8cb9936ba18bc9b0d4c871c67c6891d
       url: "https://github.com/termare/dart_pty"
     source: git
     version: "0.0.2"
@@ -102,7 +102,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "8039ef03c959b3938360469eccc7a7daf6a43270"
+      resolved-ref: "7a530059e920ad83e47677682ded219b6ff13775"
       url: "https://github.com/nightmare-space/global_repository"
     source: git
     version: "0.0.1"
@@ -183,15 +183,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.3"
-  print_color:
-    dependency: transitive
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "629a53e8d3f238ac906794e53df3c6553f2b0bda"
-      url: "https://github.com/Nightmare-MY/print_color.git"
-    source: git
-    version: "0.0.1"
   process:
     dependency: transitive
     description:
