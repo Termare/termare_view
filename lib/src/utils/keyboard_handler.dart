@@ -13,7 +13,8 @@ class KeyboardHandler {
         RawKeyEvent.fromMessage(message as Map<String, dynamic>);
     // print('event.logicalKey.debugName->${event.logicalKey.debugName}');
     // print('event->$event');
-
+    // TODO
+    // shift按下时enable，抬起时enable为false
     if (event is RawKeyDownEvent) {
       switch (event.logicalKey.keyId) {
         case 0x10007002a:
