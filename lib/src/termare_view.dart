@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:global_repository/global_repository.dart';
 import 'painter/termare_painter.dart';
 import 'termare_controller.dart';
 import 'utils/keyboard_handler.dart';
+import 'utils/sequences_test.dart';
 
 class TermareView extends StatefulWidget {
   const TermareView({
@@ -22,14 +24,18 @@ class TermareView extends StatefulWidget {
 class _TermareViewState extends State<TermareView>
     with TickerProviderStateMixin {
   AnimationController animationController;
-  TermareController termareController;
+  TermareController controller;
   double curOffset = 0;
   double lastLetterOffset = 0;
   KeyboardHandler keyboardHandler;
+  int textSelectionOffset = 0;
+  FocusNode focusNode = FocusNode();
+  bool scrollLock = false;
+
   @override
   void initState() {
     super.initState();
-    termareController = widget.controller ??
+    controller = widget.controller ??
         TermareController(
           environment: {
             'TERM': 'screen-256color',
@@ -38,7 +44,8 @@ class _TermareViewState extends State<TermareView>
                 Platform.environment['PATH'],
           },
         );
-    keyboardHandler = KeyboardHandler(termareController);
+
+    keyboardHandler = KeyboardHandler(controller);
     animationController = AnimationController(
       vsync: this,
       value: 0,
@@ -46,6 +53,7 @@ class _TermareViewState extends State<TermareView>
       upperBound: double.infinity,
     );
     init();
+    // testSequence();
   }
 
   @override
@@ -58,10 +66,11 @@ class _TermareViewState extends State<TermareView>
     print('$this 刷新 ${MediaQuery.of(context).viewInsets}');
   }
 
-  int textSelectionOffset = 0;
-  FocusNode focusNode = FocusNode();
-  TextEditingController _editingController = TextEditingController();
-  bool scrollLock = false;
+  Future<void> testSequence() async {
+    await Future.delayed(Duration(milliseconds: 100));
+    SequencesTest.testC0(controller);
+    setState(() {});
+  }
 
   Future<void> init() async {
 //     await termareController.defineTermFunc('''
@@ -78,18 +87,19 @@ class _TermareViewState extends State<TermareView>
     if (widget.autoFocus) {
       SystemChannels.textInput.invokeMethod('TextInput.show');
     }
+
     // focusNode.attach(context);
     // focusNode.requestFocus();
     // focusNode.onKey;
     // focusNode.onKey=(a){};
     // unixPthC.write('python3\n');
     while (mounted) {
-      String cur = termareController.read();
+      String cur = controller.read();
       // print(('cur->$cur'));
       if (cur.isNotEmpty) {
-        termareController.out += cur;
-        termareController.notifyListeners();
-        termareController.dirty = true;
+        controller.out += cur;
+        controller.notifyListeners();
+        controller.dirty = true;
         scrollLock = false;
         setState(() {});
         // await Future.delayed(Duration(milliseconds: 10));
@@ -103,13 +113,180 @@ class _TermareViewState extends State<TermareView>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        // termareController.out += utf8.decode([
+        //   27,
+        //   91,
+        //   63,
+        //   50,
+        //   53,
+        //   108,
+        //   32,
+        //   32,
+        //   68,
+        //   111,
+        //   119,
+        //   110,
+        //   108,
+        //   111,
+        //   97,
+        //   100,
+        //   105,
+        //   110,
+        //   103,
+        //   32,
+        //   104,
+        //   116,
+        //   116,
+        //   112,
+        //   115,
+        //   58,
+        //   47,
+        //   47,
+        //   109,
+        //   105,
+        //   114,
+        //   114,
+        //   111,
+        //   114,
+        //   46,
+        //   98,
+        //   97,
+        //   105,
+        //   100,
+        //   117,
+        //   46,
+        //   99,
+        //   111,
+        //   109,
+        //   47,
+        //   112,
+        //   121,
+        //   112,
+        //   105,
+        //   47,
+        //   112,
+        //   97,
+        //   99,
+        //   107,
+        //   97,
+        //   103,
+        //   101,
+        //   115,
+        //   47,
+        //   51,
+        //   48,
+        //   47,
+        //   52,
+        //   54,
+        //   47,
+        //   56,
+        //   50,
+        //   49,
+        //   57,
+        //   50,
+        //   48,
+        //   57,
+        //   56,
+        //   54,
+        //   99,
+        //   55,
+        //   99,
+        //   101,
+        //   53,
+        //   98,
+        //   97,
+        //   101,
+        //   53,
+        //   53,
+        //   49,
+        //   56,
+        //   99,
+        //   49,
+        //   100,
+        //   52,
+        //   57,
+        //   48,
+        //   101,
+        //   53,
+        //   50,
+        //   48,
+        //   97,
+        //   57,
+        //   97,
+        //   98,
+        //   52,
+        //   99,
+        //   101,
+        //   102,
+        //   53,
+        //   49,
+        //   101,
+        //   51,
+        //   101,
+        //   53,
+        //   52,
+        //   101,
+        //   51,
+        //   53,
+        //   48,
+        //   57,
+        //   52,
+        //   100,
+        //   97,
+        //   100,
+        //   102,
+        //   48,
+        //   100,
+        //   54,
+        //   56,
+        //   47,
+        //   111,
+        //   112,
+        //   101,
+        //   110,
+        //   99,
+        //   118,
+        //   45,
+        //   112,
+        //   121,
+        //   116,
+        //   104,
+        //   111,
+        //   110,
+        //   45,
+        //   52,
+        //   46,
+        //   52,
+        //   46,
+        //   48,
+        //   46,
+        //   52,
+        //   54,
+        //   46,
+        //   116,
+        //   97,
+        //   114,
+        //   46,
+        //   103,
+        //   122,
+        //   32,
+        //   40,
+        //   56,
+        //   56,
+        //   46,
+        //   57,
+        //   77,
+        //   66,
+        //   41,
+        //   13
+        // ]);
         scrollLock = false;
         focusNode.requestFocus();
         SystemChannels.textInput.invokeMethod('TextInput.show');
       },
       onDoubleTap: () async {
         final String text = (await Clipboard.getData('text/plain')).text;
-        termareController.write(text);
+        controller.write(text);
       },
       onPanDown: (details) {
         scrollLock = true;
@@ -187,15 +364,15 @@ class _TermareViewState extends State<TermareView>
                     double screenHeight =
                         size.height - MediaQuery.of(context).viewInsets.bottom;
                     // 行数
-                    int row = screenHeight ~/ 16.0;
+                    int row = screenHeight ~/ 12.0;
                     // 列数
-                    int column = screenWidth ~/ 8.0;
+                    int column = screenWidth ~/ 5.0;
                     // print('col:$column');
                     // print('row:$row');
                     return CustomPaint(
                       painter: TermarePainter(
-                        controller: termareController,
-                        theme: termareController.theme,
+                        controller: controller,
+                        theme: controller.theme,
                         rowLength: (row - 4),
                         columnLength: column - 2,
                         defaultOffsetY: curOffset,
@@ -212,7 +389,7 @@ class _TermareViewState extends State<TermareView>
                           }
                         },
                         color: const Color(0xff811016),
-                        input: termareController.out,
+                        input: controller.out,
                       ),
                     );
                   },
