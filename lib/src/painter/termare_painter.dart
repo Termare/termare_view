@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:global_repository/global_repository.dart';
 import 'package:termare/src/config/cache.dart';
 import 'package:termare/src/painter/model/position.dart';
 import 'package:termare/src/termare_controller.dart';
@@ -95,156 +96,166 @@ class TermarePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    PrintUtil.printd('$this defaultOffsetY->$defaultOffsetY', 31);
+    int outLine = defaultOffsetY.toInt() ~/ letterHeight.toInt();
+    PrintUtil.printd(
+        '$this defaultOffsetY->$defaultOffsetY  outLine->$outLine  defaultOffsetY.toInt()->${defaultOffsetY.toInt()}',
+        31);
     _position = Position(0, 0);
     curPaintIndex = 0;
     drawBackground(canvas);
     // print('_position->$_position');
+    final List<String> outList = input.split('\n');
     TextStyle curStyle = defaultStyle;
-    for (int i = 0; i < input.length; i++) {
-      if (input[i] == '\n') {
-        moveNewLineOffset();
-        continue;
-      }
-      // print(input[i]);
-      // print(input[i].codeUnits);
-      if (eq(input[i].codeUnits, [0x07])) {
-        // print('<- C0 Bell ->');
-        continue;
-      }
-      if (eq(input[i].codeUnits, [0x08])) {
-        // 光标左移动
-        // print('<- C0 Backspace ->');
-        final RegExp doubleByteReg = RegExp('[^\x00-\xff]');
-        bool isDoubleByte = doubleByteReg.hasMatch(input[i - 1]);
-        if (isDoubleByte) {
-          // print('双字节字符---->${input[i]}');
+    for (int j = -outLine; j < outList.length; j++) {
+      String line = outList[j];
+      PrintUtil.printd('line->$line');
+      // continue;
+      for (int i = 0; i < line.length; i++) {
+        // print(line[i]);
+        // print(line[i].codeUnits);
+        if (eq(line[i].codeUnits, [0x07])) {
+          // print('<- C0 Bell ->');
+          continue;
+        }
+        if (eq(line[i].codeUnits, [0x08])) {
+          // 光标左移动
+          // print('<- C0 Backspace ->');
+          final RegExp doubleByteReg = RegExp('[^\x00-\xff]');
+          bool isDoubleByte = doubleByteReg.hasMatch(line[i - 1]);
+          if (isDoubleByte) {
+            // print('双字节字符---->${line[i]}');
+            moveToNextOffset(-1);
+          }
           moveToNextOffset(-1);
+          continue;
         }
-        moveToNextOffset(-1);
-        continue;
-      }
 
-      if (eq(input[i].codeUnits, [0x09])) {
-        moveToNextOffset(4);
-        // print('<- Horizontal Tabulation ->');
-        continue;
-      }
-      if (eq(input[i].codeUnits, [0x0a])) {
-        // print('<- C0 	Line Feed ->');
-        continue;
-      }
-      if (eq(input[i].codeUnits, [0x1b])) {
-        // print('<- ESC ->');
-        String nextStr = input[i + 1];
-        print('curStr->${input[i]} nextStr->$nextStr');
-        switch (nextStr) {
-          case '[':
-            String nextStr = input[i + 2];
-            print('[->nextStr->$nextStr');
-            switch (nextStr) {
-              case 'K':
-                i += 2;
-                final RegExp doubleByteReg = RegExp('[^\x00-\xff]');
-                bool isDoubleByte = doubleByteReg.hasMatch(input[i]);
-                if (isDoubleByte) {
-                  // print('数按字节字符---->${input[i]}');
-                }
-                canvas.drawRect(
-                  Rect.fromLTWH(
-                    _position.dx * letterWidth,
-                    _position.dy * letterHeight + defaultOffsetY,
-                    isDoubleByte ? 2 * letterWidth : letterWidth,
-                    letterHeight,
-                  ),
-                  Paint()..color = Colors.black,
-                );
-                continue;
-                break;
-              default:
-            }
-            // print(input.substring(i + 2));
-            final int charMindex = input.substring(i + 1).indexOf('m');
+        if (eq(line[i].codeUnits, [0x09])) {
+          moveToNextOffset(4);
+          // print('<- Horizontal Tabulation ->');
+          continue;
+        }
+        if (eq(line[i].codeUnits, [0x0a])) {
+          // print('<- C0 	Line Feed ->');
+          continue;
+        }
+        if (eq(line[i].codeUnits, [0x1b])) {
+          // print('<- ESC ->');
+          String nextStr = line[i + 1];
+          print('curStr->${line[i]} nextStr->$nextStr');
+          switch (nextStr) {
+            case '[':
+              String nextStr = line[i + 2];
+              print('[->nextStr->$nextStr');
+              switch (nextStr) {
+                case 'K':
+                  i += 2;
+                  final RegExp doubleByteReg = RegExp('[^\x00-\xff]');
+                  bool isDoubleByte = doubleByteReg.hasMatch(line[i]);
+                  if (isDoubleByte) {
+                    // print('数按字节字符---->${line[i]}');
+                  }
+                  canvas.drawRect(
+                    Rect.fromLTWH(
+                      _position.dx * letterWidth,
+                      _position.dy * letterHeight + defaultOffsetY,
+                      isDoubleByte ? 2 * letterWidth : letterWidth,
+                      letterHeight,
+                    ),
+                    Paint()..color = Colors.black,
+                  );
+                  continue;
+                  break;
+                default:
+              }
+              // print(line.substring(i + 2));
+              final int charMindex = line.substring(i + 1).indexOf('m');
 
-            // print('charMindex=======>$charMindex');
-            String header = '';
-            header = input.substring(i + 2, i + 1 + charMindex);
-            for (var str in header.split(';')) {
-              curStyle = getTextStyle(str, curStyle);
-              // switch (str) {
-              //   case '1':
-              //     break;
-              //   default:
+              // print('charMindex=======>$charMindex');
+              String header = '';
+              header = line.substring(i + 2, i + 1 + charMindex);
+              for (var str in header.split(';')) {
+                curStyle = getTextStyle(str, curStyle);
+                // switch (str) {
+                //   case '1':
+                //     break;
+                //   default:
+                // }
+              }
+              i += header.length + 1;
+              // print('header->$header');
+              // for (int j = i + 2; j < line.length; j++) {
+              //   print(line[j]);
               // }
-            }
-            i += header.length + 1;
-            // print('header->$header');
-            // for (int j = i + 2; j < input.length; j++) {
-            //   print(input[j]);
-            // }
-            i++;
-            break;
-          default:
+              i++;
+              break;
+            default:
+          }
+
+          continue;
+        }
+        if (eq(line[i].codeUnits, [0x0d])) {
+          moveToLineFirstOffset();
+          // print('<- 将光标移动到行的开头。 ->');
+
+          continue;
+        }
+        // print(line[i] == utf8.decode(TermControlSequences.buzzing));
+        // canvas.drawRect(
+        //   Rect.fromLTWH(curOffset * width.toDouble(), 0.0, 16, 16),
+        //   Paint()..color = Colors.white,
+        // );
+        if (isOutTerm()) {
+          continue;
         }
 
-        continue;
-      }
-      if (eq(input[i].codeUnits, [0x0d])) {
-        moveToLineFirstOffset();
-        // print('<- 将光标移动到行的开头。 ->');
-
-        continue;
-      }
-      // print(input[i] == utf8.decode(TermControlSequences.buzzing));
-      // canvas.drawRect(
-      //   Rect.fromLTWH(curOffset * width.toDouble(), 0.0, 16, 16),
-      //   Paint()..color = Colors.white,
-      // );
-      if (isOutTerm()) {
-        continue;
-      }
-
-      final RegExp doubleByteReg = RegExp('[^\x00-\xff]');
-      bool isDoubleByte = doubleByteReg.hasMatch(input[i]);
-      if (isDoubleByte) {
-        // print('数按字节字符---->${input[i]}');
-      }
-      canvas.drawRect(
-        Rect.fromLTWH(
-          _position.dx * letterWidth,
-          _position.dy * letterHeight + defaultOffsetY,
-          isDoubleByte ? 2 * letterWidth : letterWidth,
-          letterHeight,
-        ),
-        Paint()..color = Colors.black,
-      );
-      TextPainter painter = cache.getOrPerformLayout(
-        TextSpan(
-          text: input[i],
-          style: curStyle,
-        ),
-      );
-      painter
-        ..layout(
-          maxWidth: isDoubleByte ? 2 * letterWidth : letterWidth,
-          minWidth: isDoubleByte ? 2 * letterWidth : letterWidth,
-        )
-        ..paint(
-          canvas,
-          Offset(
+        final RegExp doubleByteReg = RegExp('[^\x00-\xff]');
+        bool isDoubleByte = doubleByteReg.hasMatch(line[i]);
+        if (isDoubleByte) {
+          // print('数按字节字符---->${line[i]}');
+        }
+        canvas.drawRect(
+          Rect.fromLTWH(
             _position.dx * letterWidth,
-            _position.dy * letterHeight + defaultOffsetY,
+            _position.dy * letterHeight,
+            isDoubleByte ? 2 * letterWidth : letterWidth,
+            letterHeight,
+          ),
+          Paint()..color = Colors.black,
+        );
+        TextPainter painter = cache.getOrPerformLayout(
+          TextSpan(
+            text: line[i],
+            style: curStyle,
           ),
         );
+        painter
+          ..layout(
+            maxWidth: isDoubleByte ? 2 * letterWidth : letterWidth,
+            minWidth: isDoubleByte ? 2 * letterWidth : letterWidth,
+          )
+          ..paint(
+            canvas,
+            Offset(
+              _position.dx * letterWidth,
+              _position.dy * letterHeight,
+            ),
+          );
 
-      moveToNextOffset(1);
-      if (isDoubleByte) {
         moveToNextOffset(1);
+        if (isDoubleByte) {
+          moveToNextOffset(1);
+        }
+      }
+      if (j != outList.length - 1) {
+        moveNewLineOffset();
       }
     }
     paintCursor(canvas);
-    drawLine(canvas);
+    // drawLine(canvas);
     lastLetterPositionCall?.call(
-      _position.dy * letterHeight + defaultOffsetY - termHeight + letterHeight,
+      _position.dy * letterHeight - termHeight + letterHeight,
     );
     controller.dirty = false;
   }
@@ -252,19 +263,16 @@ class TermarePainter extends CustomPainter {
   void paintCursor(Canvas canvas) {
     if (!isOutTerm()) {
       canvas.drawRect(
-        Rect.fromLTWH(
-            _position.dx * letterWidth,
-            _position.dy * letterHeight + defaultOffsetY,
-            letterWidth,
-            letterHeight),
+        Rect.fromLTWH(_position.dx * letterWidth, _position.dy * letterHeight,
+            letterWidth, letterHeight),
         Paint()..color = Colors.grey.withOpacity(0.4),
       );
     }
   }
 
   bool isOutTerm() {
-    return _position.dy * letterHeight + defaultOffsetY >= termHeight ||
-        _position.dy * letterHeight + defaultOffsetY < 0;
+    return _position.dy * letterHeight >= termHeight ||
+        _position.dy * letterHeight < 0;
   }
 
   void moveToLineFirstOffset() {
