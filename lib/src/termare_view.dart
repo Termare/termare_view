@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:global_repository/global_repository.dart';
 import 'painter/termare_painter.dart';
 import 'termare_controller.dart';
 import 'utils/keyboard_handler.dart';
@@ -22,8 +23,6 @@ class _TermareViewState extends State<TermareView>
     with TickerProviderStateMixin {
   AnimationController animationController;
   TermareController termareController;
-  double preOffset = 0;
-  double onPanDownOffset = 0;
   double curOffset = 0;
   double lastLetterOffset = 0;
   KeyboardHandler keyboardHandler;
@@ -114,17 +113,24 @@ class _TermareViewState extends State<TermareView>
       },
       onPanDown: (details) {
         scrollLock = true;
-        onPanDownOffset = details.globalPosition.dy;
-        preOffset = curOffset;
       },
+      // onVerticalDragUpdate: (details) {
+      //   print(details.delta);
+      // },
       onPanUpdate: (details) {
         scrollLock = true;
 
-        double shouldOffset =
-            preOffset + (details.globalPosition.dy - onPanDownOffset);
-        curOffset = shouldOffset;
-        if (curOffset > 0) curOffset = 0;
-        print('curOffset->$curOffset');
+        curOffset += details.delta.dy;
+        if (details.delta.dy > 0 && curOffset > 0) {
+          curOffset = 0;
+          print('往下滑动');
+        }
+        if (details.delta.dy < 0) {
+          print('往上滑动');
+        }
+        print(
+          'curOffset->$curOffset  details.delta.dy->${details.delta.dy}  details.globalPosition->${details.globalPosition}',
+        );
         setState(() {});
       },
       onPanEnd: (details) {
@@ -174,8 +180,8 @@ class _TermareViewState extends State<TermareView>
                 height: 200,
                 child: Builder(
                   builder: (_) {
-                    print(
-                        'MediaQuery.of(context).viewInsets.bottom->${MediaQuery.of(context).viewPadding.bottom}');
+                    // print(
+                    //     'MediaQuery.of(context).viewInsets.bottom->${MediaQuery.of(context).viewPadding.bottom}');
                     Size size = MediaQuery.of(context).size;
                     double screenWidth = size.width;
                     double screenHeight =
