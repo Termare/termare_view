@@ -55,7 +55,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: a392570aa8cb9936ba18bc9b0d4c871c67c6891d
+      resolved-ref: d9e97f1d0db01b092adc4c19baa2367a96969747
       url: "https://github.com/termare/dart_pty"
     source: git
     version: "0.0.2"
