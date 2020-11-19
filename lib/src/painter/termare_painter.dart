@@ -8,8 +8,8 @@ import 'package:termare/src/painter/model/position.dart';
 import 'package:termare/src/termare_controller.dart';
 import 'package:termare/src/theme/term_theme.dart';
 
-const double letterWidth = 8.0;
-const double letterHeight = 16.0;
+const double letterWidth = 5.0;
+const double letterHeight = 12.0;
 
 // int rowLength = 80;
 // int columnLength = 24;
@@ -50,11 +50,12 @@ class TermarePainter extends CustomPainter {
   final String input;
   Function eq = const ListEquality().equals;
   Position _position = Position(0, 0);
+  bool showCursor = true;
 
   TextStyle defaultStyle = TextStyle(
     textBaseline: TextBaseline.ideographic,
     height: 1,
-    fontSize: 14.0,
+    fontSize: 8.0,
     color: Colors.white,
     fontWeight: FontWeight.w500,
     // backgroundColor: Colors.black,
@@ -96,31 +97,52 @@ class TermarePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    PrintUtil.printd('$this defaultOffsetY->$defaultOffsetY', 31);
+    PrintUtil.printd(
+      '${'>' * 32} $this defaultOffsetY->$defaultOffsetY',
+      32,
+    );
     int outLine = defaultOffsetY.toInt() ~/ letterHeight.toInt();
     PrintUtil.printd(
-        '$this defaultOffsetY->$defaultOffsetY  outLine->$outLine  defaultOffsetY.toInt()->${defaultOffsetY.toInt()}',
-        31);
+      '$this defaultOffsetY->$defaultOffsetY  outLine->$outLine  defaultOffsetY.toInt()->${defaultOffsetY.toInt()}',
+      31,
+    );
     _position = Position(0, 0);
     curPaintIndex = 0;
     drawBackground(canvas);
     // print('_position->$_position');
     final List<String> outList = input.split('\n');
+    PrintUtil.printd(
+      '${'>' * 32} input  ',
+      32,
+    );
+    print(input);
+    PrintUtil.printd(
+      '${'<' * 32} ',
+      32,
+    );
     TextStyle curStyle = defaultStyle;
     for (int j = -outLine; j < outList.length; j++) {
       String line = outList[j];
-      PrintUtil.printd('line->$line');
-      // continue;
+      if (line.contains('|')) {
+        print('wait');
+        for (int char in line.codeUnits) {
+          PrintUtil.printd('char->$char', 34);
+        }
+      }
+      PrintUtil.printd('line->$line', 35);
+      PrintUtil.printd('line.codeUnits->${line.codeUnits}', 35);
+      // continue;s
       for (int i = 0; i < line.length; i++) {
         // print(line[i]);
         // print(line[i].codeUnits);
+        /// ------------------ c0 ----------------------
         if (eq(line[i].codeUnits, [0x07])) {
-          // print('<- C0 Bell ->');
+          PrintUtil.printn('<- C0 Bell ->', 31, 47);
           continue;
         }
         if (eq(line[i].codeUnits, [0x08])) {
           // 光标左移动
-          // print('<- C0 Backspace ->');
+          PrintUtil.printn('<- C0 Backspace ->', 31, 47);
           final RegExp doubleByteReg = RegExp('[^\x00-\xff]');
           bool isDoubleByte = doubleByteReg.hasMatch(line[i - 1]);
           if (isDoubleByte) {
@@ -133,38 +155,74 @@ class TermarePainter extends CustomPainter {
 
         if (eq(line[i].codeUnits, [0x09])) {
           moveToNextOffset(4);
+
+          PrintUtil.printn('<- C0 Horizontal Tabulation ->', 31, 47);
           // print('<- Horizontal Tabulation ->');
           continue;
         }
-        if (eq(line[i].codeUnits, [0x0a])) {
-          // print('<- C0 	Line Feed ->');
+        if (eq(line[i].codeUnits, [0x0a]) ||
+            eq(line[i].codeUnits, [0x0b]) ||
+            eq(line[i].codeUnits, [0x0c])) {
+          moveNewLineOffset();
+          PrintUtil.printn('<- C0 Line Feed ->', 31, 47);
           continue;
         }
+        if (eq(line[i].codeUnits, [0x0d])) {
+          // ascii 13
+          moveToLineFirstOffset();
+          PrintUtil.printn('<- C0 Carriage Return ->', 31, 47);
+          continue;
+        }
+
+        /// ------------------ c0 ----------------------
+        ///
         if (eq(line[i].codeUnits, [0x1b])) {
           // print('<- ESC ->');
-          String nextStr = line[i + 1];
-          print('curStr->${line[i]} nextStr->$nextStr');
-          switch (nextStr) {
+          i += 1;
+          String curStr = line[i];
+          PrintUtil.printd('preStr-> ESC curStr->$curStr', 31);
+          switch (curStr) {
             case '[':
-              String nextStr = line[i + 2];
-              print('[->nextStr->$nextStr');
-              switch (nextStr) {
+              i += 1;
+              String curStr = line[i];
+              PrintUtil.printd(
+                'preStr-> \x1b[32m[\x1b[31m ->curStr-> \x1b[32m$curStr\x1b[31m',
+                31,
+              );
+              switch (curStr) {
+                // 27 91 75
                 case 'K':
-                  i += 2;
+                  // i += 1;
+                  // print(line[i - 5]);
                   final RegExp doubleByteReg = RegExp('[^\x00-\xff]');
-                  bool isDoubleByte = doubleByteReg.hasMatch(line[i]);
-                  if (isDoubleByte) {
-                    // print('数按字节字符---->${line[i]}');
-                  }
+
+                  // TODO 这个是删除的序列，写得有问题
+                  // bool isDoubleByte = doubleByteReg.hasMatch(line[i - 5]);
+                  // if (isDoubleByte) {
+                  //   // print('数按字节字符---->${line[i]}');
+                  // }
                   canvas.drawRect(
                     Rect.fromLTWH(
                       _position.dx * letterWidth,
                       _position.dy * letterHeight + defaultOffsetY,
-                      isDoubleByte ? 2 * letterWidth : letterWidth,
+                      false ? 2 * letterWidth : letterWidth,
                       letterHeight,
                     ),
                     Paint()..color = Colors.black,
                   );
+                  continue;
+                  break;
+                case '?':
+                  i += 1;
+                  RegExp regExp = RegExp('l');
+                  int w = line.substring(i).indexOf(regExp);
+                  String number = line.substring(i, i + w);
+                  if (number == '25') {
+                    i += 2;
+                    showCursor = false;
+                  }
+                  i += 1;
+                  PrintUtil.printd('[ ? 后的值->${line.substring(i)}', 31);
                   continue;
                   break;
                 default:
@@ -195,12 +253,7 @@ class TermarePainter extends CustomPainter {
 
           continue;
         }
-        if (eq(line[i].codeUnits, [0x0d])) {
-          moveToLineFirstOffset();
-          // print('<- 将光标移动到行的开头。 ->');
 
-          continue;
-        }
         // print(line[i] == utf8.decode(TermControlSequences.buzzing));
         // canvas.drawRect(
         //   Rect.fromLTWH(curOffset * width.toDouble(), 0.0, 16, 16),
@@ -253,15 +306,19 @@ class TermarePainter extends CustomPainter {
       }
     }
     paintCursor(canvas);
-    // drawLine(canvas);
+    drawLine(canvas);
     lastLetterPositionCall?.call(
       _position.dy * letterHeight - termHeight + letterHeight,
     );
     controller.dirty = false;
+    PrintUtil.printd(
+      '${'<' * 32} $this defaultOffsetY->$defaultOffsetY',
+      32,
+    );
   }
 
   void paintCursor(Canvas canvas) {
-    if (!isOutTerm()) {
+    if (!isOutTerm() && showCursor) {
       canvas.drawRect(
         Rect.fromLTWH(_position.dx * letterWidth, _position.dy * letterHeight,
             letterWidth, letterHeight),
