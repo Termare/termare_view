@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 //   final bool showCursor;
 // }
 const double defaultLetterWidth = 9.0;
-const double defaultLetterHeight = 16.0;
+const double defaultLetterHeight = 14.0;
 
 class TermareStyle {
   const TermareStyle({
