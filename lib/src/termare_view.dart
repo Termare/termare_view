@@ -379,7 +379,7 @@ class _TermareViewState extends State<TermareView>
                     return CustomPaint(
                       painter: TermarePainter(
                         controller: controller,
-                        rowLength: row - 2,
+                        rowLength: row - 3,
                         columnLength: column - 2,
                         defaultOffsetY: curOffset,
                         lastLetterPositionCall: (lastLetterOffset) async {
