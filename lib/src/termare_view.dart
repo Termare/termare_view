@@ -67,7 +67,9 @@ class _TermareViewState extends State<TermareView>
   }
 
   Future<void> testSequence() async {
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future<void>.delayed(
+      const Duration(milliseconds: 100),
+    );
     SequencesTest.testC0(controller);
     setState(() {});
   }
@@ -85,7 +87,7 @@ class _TermareViewState extends State<TermareView>
     // termareController.write('test\n');
     SystemChannels.keyEvent.setMessageHandler(keyboardHandler.handleKeyEvent);
     if (widget.autoFocus) {
-      SystemChannels.textInput.invokeMethod('TextInput.show');
+      SystemChannels.textInput.invokeMethod<void>('TextInput.show');
     }
 
     // focusNode.attach(context);
@@ -94,7 +96,7 @@ class _TermareViewState extends State<TermareView>
     // focusNode.onKey=(a){};
     // unixPthC.write('python3\n');
     while (mounted) {
-      String cur = controller.read();
+      final String cur = controller.read();
       // print(('cur->$cur'));
       if (cur.isNotEmpty) {
         controller.out += cur;
@@ -102,9 +104,9 @@ class _TermareViewState extends State<TermareView>
         controller.dirty = true;
         scrollLock = false;
         setState(() {});
-        // await Future.delayed(Duration(milliseconds: 10));
+        await Future<void>.delayed(const Duration(milliseconds: 100));
       } else {
-        await Future.delayed(Duration(milliseconds: 10));
+        await Future<void>.delayed(const Duration(milliseconds: 100));
       }
     }
   }
@@ -113,6 +115,7 @@ class _TermareViewState extends State<TermareView>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        controller.write('啊');
         // termareController.out += utf8.decode([
         //   27,
         //   91,
@@ -282,7 +285,7 @@ class _TermareViewState extends State<TermareView>
         // ]);
         scrollLock = false;
         focusNode.requestFocus();
-        SystemChannels.textInput.invokeMethod('TextInput.show');
+        SystemChannels.textInput.invokeMethod<void>('TextInput.show');
       },
       onDoubleTap: () async {
         final String text = (await Clipboard.getData('text/plain')).text;
@@ -296,7 +299,6 @@ class _TermareViewState extends State<TermareView>
       // },
       onPanUpdate: (details) {
         scrollLock = true;
-
         curOffset += details.delta.dy;
         if (details.delta.dy > 0 && curOffset > 0) {
           curOffset = 0;
@@ -312,15 +314,16 @@ class _TermareViewState extends State<TermareView>
       },
       onPanEnd: (details) {
         scrollLock = true;
-        double velocity =
+        final double velocity =
             1.0 / (0.050 * WidgetsBinding.instance.window.devicePixelRatio);
-        double distance = 1.0 / WidgetsBinding.instance.window.devicePixelRatio;
+        final double distance =
+            1.0 / WidgetsBinding.instance.window.devicePixelRatio;
         final Tolerance tolerance = Tolerance(
           velocity: velocity, // logical pixels per second
           distance: distance, // logical pixels
         );
-        double start = curOffset;
-        ClampingScrollSimulation clampingScrollSimulation =
+        final double start = curOffset;
+        final ClampingScrollSimulation clampingScrollSimulation =
             ClampingScrollSimulation(
           position: start,
           velocity: details.velocity.pixelsPerSecond.dy,
@@ -334,7 +337,7 @@ class _TermareViewState extends State<TermareView>
         );
         animationController.reset();
         animationController.addListener(() {
-          double shouldOffset = animationController.value;
+          final double shouldOffset = animationController.value;
           // print(object)
           // if (curOffset < 0) {
           //   if (lastLetterOffset < 0 && shouldOffset < curOffset) {
@@ -342,7 +345,9 @@ class _TermareViewState extends State<TermareView>
           //   }
           // }
           curOffset = shouldOffset;
-          if (curOffset > 0) curOffset = 0;
+          if (curOffset > 0) {
+            curOffset = 0;
+          }
           print('curOffset->$curOffset');
           setState(() {});
         });
@@ -359,34 +364,36 @@ class _TermareViewState extends State<TermareView>
                   builder: (_) {
                     // print(
                     //     'MediaQuery.of(context).viewInsets.bottom->${MediaQuery.of(context).viewPadding.bottom}');
-                    Size size = MediaQuery.of(context).size;
-                    double screenWidth = size.width;
-                    double screenHeight =
+                    final Size size = MediaQuery.of(context).size;
+                    final double screenWidth = size.width;
+                    final double screenHeight =
                         size.height - MediaQuery.of(context).viewInsets.bottom;
                     // 行数
-                    int row = screenHeight ~/ 12.0;
+                    final int row =
+                        screenHeight ~/ controller.theme.letterHeight;
                     // 列数
-                    int column = screenWidth ~/ 5.0;
+                    final int column =
+                        screenWidth ~/ controller.theme.letterWidth;
                     // print('col:$column');
                     // print('row:$row');
                     return CustomPaint(
                       painter: TermarePainter(
                         controller: controller,
-                        theme: controller.theme,
-                        rowLength: (row - 4),
+                        rowLength: row - 2,
                         columnLength: column - 2,
                         defaultOffsetY: curOffset,
                         lastLetterPositionCall: (lastLetterOffset) async {
-                          this.lastLetterOffset = lastLetterOffset;
-                          print('lastLetterOffset : $lastLetterOffset');
-                          if (!scrollLock && lastLetterOffset > 0) {
-                            scrollLock = true;
-                            await Future.delayed(Duration(milliseconds: 100));
-
-                            curOffset -= lastLetterOffset;
-                            setState(() {});
-                            scrollLock = false;
-                          }
+                          // this.lastLetterOffset = lastLetterOffset;
+                          // print('lastLetterOffset : $lastLetterOffset');
+                          // if (!scrollLock && lastLetterOffset > 0) {
+                          //   scrollLock = true;
+                          //   await Future<void>.delayed(
+                          //     const Duration(milliseconds: 100),
+                          //   );
+                          //   curOffset -= lastLetterOffset;
+                          //   setState(() {});
+                          //   scrollLock = false;
+                          // }
                         },
                         color: const Color(0xff811016),
                         input: controller.out,
