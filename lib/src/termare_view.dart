@@ -115,7 +115,7 @@ class _TermareViewState extends State<TermareView>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        controller.write('啊');
+        // controller.write('啊');
         // termareController.out += utf8.decode([
         //   27,
         //   91,
