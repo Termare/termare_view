@@ -25,10 +25,12 @@ class TermarePainter extends CustomPainter {
     defaultStyle = TextStyle(
       textBaseline: TextBaseline.ideographic,
       height: 1,
-      fontSize: controller.theme.letterHeight,
+      fontSize: controller.theme.letterHeight - 2,
       color: Colors.white,
+      fontWeight: FontWeight.w500,
       // backgroundColor: Colors.black,
-      fontFamily: 'SourceCodePro',
+      // backgroundColor: Colors.red,
+      fontFamily: 'monospace',
     );
   }
   final TermareController controller;
@@ -192,8 +194,9 @@ class TermarePainter extends CustomPainter {
               case '[':
                 i += 1;
                 final String curStr = line[i];
+                print(line.substring(i));
                 PrintUtil.printd(
-                  'preStr-> \x1b[32m[\x1b[31m ->curStr-> \x1b[32m$curStr\x1b[31m',
+                  'preStr-> \x1b[32;7m[\x1b[31m ->curStr-> \x1b[32m$curStr\x1b[31m',
                   31,
                 );
                 switch (curStr) {
@@ -225,7 +228,7 @@ class TermarePainter extends CustomPainter {
                   case '?':
                     i += 1;
                     RegExp regExp = RegExp('l');
-                    int w = line.substring(i).indexOf(regExp);
+                    int w = line.substring(i + 1).indexOf(regExp);
                     String number = line.substring(i, i + w);
                     if (number == '25') {
                       i += 2;
@@ -237,12 +240,13 @@ class TermarePainter extends CustomPainter {
                     break;
                   default:
                 }
-                // print(line.substring(i + 2));
-                final int charMindex = line.substring(i + 1).indexOf('m');
+                print('line.substring(i + 1)->${line.substring(i)}');
+                final int charMindex = line.substring(i).indexOf('m');
 
-                // print('charMindex=======>$charMindex');
+                print('charMindex=======>$charMindex');
                 String header = '';
-                header = line.substring(i + 2, i + 1 + charMindex);
+                header = line.substring(i, i + charMindex);
+                print('header->$header');
                 for (var str in header.split(';')) {
                   curStyle = getTextStyle(str, curStyle);
                   // switch (str) {
@@ -251,12 +255,8 @@ class TermarePainter extends CustomPainter {
                   //   default:
                   // }
                 }
-                i += header.length + 1;
-                // print('header->$header');
-                // for (int j = i + 2; j < line.length; j++) {
-                //   print(line[j]);
-                // }
-                i++;
+                i += header.length;
+
                 break;
               default:
             }
@@ -314,7 +314,7 @@ class TermarePainter extends CustomPainter {
             ),
           );
 
-        PrintUtil.printD('paint text end -> ${stopwatch.elapsed}', [31, 47, 7]);
+        // PrintUtil.printD('paint text end -> ${stopwatch.elapsed}', [31, 47, 7]);
         moveToNextOffset(1);
         if (isDoubleByte) {
           moveToNextOffset(1);
