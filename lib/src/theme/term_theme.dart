@@ -2,8 +2,15 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class TermTheme {
-  const TermTheme({
+// class TermareStyle {
+//   const TermareStyle(this.showCursor);
+//   final bool showCursor;
+// }
+const double defaultLetterWidth = 10.0;
+const double defaultLetterHeight = 12.0;
+
+class TermareStyle {
+  const TermareStyle({
     this.cursorColor = Colors.grey,
     this.backgroundColor = Colors.black,
     this.defaultColor = Colors.white,
@@ -23,8 +30,10 @@ class TermTheme {
     this.lightCyan,
     this.white,
     this.lightWhite,
+    this.letterHeight = defaultLetterHeight,
+    this.letterWidth = defaultLetterWidth,
   });
-  TermTheme copyWith({
+  TermareStyle copyWith({
     Color cursorColor,
     Color backgroundColor,
     Color defaultColor,
@@ -45,7 +54,7 @@ class TermTheme {
     Color white,
     Color lightWhite,
   }) {
-    return TermTheme(
+    return TermareStyle(
       cursorColor: cursorColor ?? this.cursorColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
       defaultColor: defaultColor ?? this.defaultColor,
@@ -68,8 +77,6 @@ class TermTheme {
     );
   }
 
-  //TODO(添加拷贝函数)
-  // TermTheme copyWith() {}
   final Color cursorColor;
   final Color backgroundColor;
   final Color defaultColor;
@@ -97,10 +104,12 @@ class TermTheme {
   // 前景色37 背景色47 白色
   final Color white;
   final Color lightWhite;
+  final double letterWidth;
+  final double letterHeight;
 }
 
-class TermThemes {
-  static const TermTheme termux = TermTheme(
+class TermareStyles {
+  static const TermareStyle termux = TermareStyle(
     cursorColor: Colors.grey,
     backgroundColor: Colors.black,
     black: Color(0xff000000),
@@ -121,7 +130,7 @@ class TermThemes {
     lightWhite: Color(0xffffffff),
   );
   // static const  TermTheme manjaro;
-  static const TermTheme macos = TermTheme(
+  static const TermareStyle macos = TermareStyle(
     defaultColor: Colors.black,
     backgroundColor: Color(0xffffffff),
     black: Color(0xff040404),
@@ -141,7 +150,7 @@ class TermThemes {
     white: Color(0xffdccecd),
     lightWhite: Color(0xffd9d2d5),
   );
-  static const TermTheme manjaro = TermTheme(
+  static const TermareStyle manjaro = TermareStyle(
     defaultColor: Color(0xffaaaaaa),
     backgroundColor: Color(0xff454649),
     black: Color(0xff000000),
