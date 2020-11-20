@@ -48,6 +48,19 @@ flutter:
   #
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
+  fonts:
+    # - family: Sarasa
+    #   fonts:
+    #     - asset: assets/fonts/sarasa-ui-sc-semibold.ttf
+    # - family: SourceCodePro
+    #   fonts:
+    #     - asset: assets/fonts/SourceCodePro.ttf
+    - family: DroidSansMono
+      fonts:
+        - asset: assets/fonts/DroidSansMono.ttf
+    - family: SourceCodePro
+      fonts:
+        - asset: assets/fonts/SourceCodePro.ttf
 
   # To add custom fonts to your plugin package, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
