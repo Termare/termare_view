@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:termare/termare.dart';
+import 'package:termare_example/ssh.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(SshMyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -12,8 +13,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-
   @override
   void initState() {
     super.initState();
@@ -21,7 +20,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(
         child: TermareView(),
