@@ -3,6 +3,19 @@ import 'dart:convert';
 import 'package:termare/src/termare_controller.dart';
 
 class SequencesTest {
+  static Future<void> testIsOut(TermareController controller) async {
+    controller.out += '\n';
+    for (int i = 0; i < 5500; i++) {
+      controller.out += '${'${i % 10}' * 40}\n';
+      controller.autoScroll = true;
+      controller.dirty = true;
+      controller.notifyListeners();
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+    controller.out += '${'b' * 40}\n';
+    controller.out += '${'c' * 40}\n';
+  }
+
   static void testC0(TermareController controller) {
     controller.out += '\n';
     controller.out += 'bell test\x07\n';
