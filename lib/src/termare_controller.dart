@@ -27,6 +27,8 @@ class TermareController with Observable {
   UnixPtyC unixPthC;
 
   bool showCursor = true;
+  // 当从 pty 读出内容的时候就会自动滑动
+  bool autoScroll = true;
 
   /// 直接指向 pty write 函数
   void write(String data) => unixPthC.write(data);
