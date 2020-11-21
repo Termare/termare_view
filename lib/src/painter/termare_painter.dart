@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
@@ -39,6 +38,8 @@ class TermarePainter extends CustomPainter {
   double termWidth;
   double termHeight;
   int curPaintIndex = 0;
+  // // 这个 bool 值用得很烂，用来内层循环跳出外层循环
+  // bool isOutLine = false;
   List<Color> colors = [
     Colors.yellow,
     Colors.green,
@@ -139,10 +140,9 @@ class TermarePainter extends CustomPainter {
       PrintUtil.printd('line.codeUnits->${line.codeUnits}', 35);
       // continue;s
       for (int i = 0; i < line.length; i++) {
-        List<int> codeUnits = line[i].codeUnits;
+        final List<int> codeUnits = line[i].codeUnits;
         // PrintUtil.printD(
         //     'utf8.encode start -> ${stopwatch.elapsed}', [31, 47, 7]);
-        codeUnits = utf8.encode(line[i]);
         // PrintUtil.printD(
         //     'utf8.encode end -> ${stopwatch.elapsed}', [31, 47, 7]);
         if (codeUnits.length == 1) {
@@ -204,7 +204,6 @@ class TermarePainter extends CustomPainter {
                   case 'K':
                     // i += 1;
                     // print(line[i - 5]);
-                    final RegExp doubleByteReg = RegExp('[^\x00-\xff]');
 
                     // TODO 这个是删除的序列，写得有问题
                     // bool isDoubleByte = doubleByteReg.hasMatch(line[i - 5]);
@@ -227,9 +226,9 @@ class TermarePainter extends CustomPainter {
                     break;
                   case '?':
                     i += 1;
-                    RegExp regExp = RegExp('l');
-                    int w = line.substring(i + 1).indexOf(regExp);
-                    String number = line.substring(i, i + w);
+                    final RegExp regExp = RegExp('l');
+                    final int w = line.substring(i + 1).indexOf(regExp);
+                    final String number = line.substring(i, i + w);
                     if (number == '25') {
                       i += 2;
                       controller.showCursor = false;
@@ -247,16 +246,10 @@ class TermarePainter extends CustomPainter {
                 String header = '';
                 header = line.substring(i, i + charMindex);
                 print('header->$header');
-                for (var str in header.split(';')) {
-                  curStyle = getTextStyle(str, curStyle);
-                  // switch (str) {
-                  //   case '1':
-                  //     break;
-                  //   default:
-                  // }
-                }
+                header.split(';').forEach((element) {
+                  curStyle = getTextStyle(element, curStyle);
+                });
                 i += header.length;
-
                 break;
               default:
             }
@@ -266,19 +259,19 @@ class TermarePainter extends CustomPainter {
 
           /// ------------------ c0 ----------------------
         }
-
-        ///
-
-        // print(line[i] == utf8.decode(TermControlSequences.buzzing));
-        // canvas.drawRect(
-        //   Rect.fromLTWH(curOffset * width.toDouble(), 0.0, 16, 16),
-        //   Paint()..color = Colors.white,
-        // );
         if (isOutTerm()) {
+          if (controller.autoScroll) {
+            PrintUtil.printd(
+                'line 越界 -> ${line}  $j  ${outList.length}  ${outList.length - j}',
+                31);
+            lastLetterPositionCall(
+                -controller.theme.letterHeight * (outList.length - j));
+          }
+          PrintUtil.printd('line[i] 越界 -> ${line[i]}', 31);
+          j = outList.length;
           break;
         } // TODO 可能会数组越界
         final bool isDoubleByte = codeUnits.first > 0x7f;
-
         canvas.drawRect(
           Rect.fromLTWH(
             _position.dx * controller.theme.letterWidth,
@@ -325,12 +318,8 @@ class TermarePainter extends CustomPainter {
       }
     }
     paintCursor(canvas);
-    drawLine(canvas);
-    lastLetterPositionCall?.call(
-      _position.dy * controller.theme.letterHeight -
-          termHeight +
-          controller.theme.letterHeight,
-    );
+    // drawLine(canvas);
+
     controller.dirty = false;
     PrintUtil.printd(
       '${'<' * 32} $this defaultOffsetY->$defaultOffsetY',
@@ -449,7 +438,7 @@ class TermarePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
+    // return true;
     return controller.dirty;
   }
 }
