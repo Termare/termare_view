@@ -366,7 +366,7 @@ class TermarePainter extends CustomPainter {
   }
 
   void moveNewLineOffset() {
-    int tmp = columnLength - curPaintIndex % columnLength;
+    final int tmp = columnLength - curPaintIndex % columnLength;
     curPaintIndex = tmp + curPaintIndex;
     _position = getCurPosition();
   }
