@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:global_repository/global_repository.dart';
 import 'painter/termare_painter.dart';
 import 'termare_controller.dart';
 import 'utils/keyboard_handler.dart';
@@ -30,7 +28,6 @@ class _TermareViewState extends State<TermareView>
   KeyboardHandler keyboardHandler;
   int textSelectionOffset = 0;
   FocusNode focusNode = FocusNode();
-  bool scrollLock = false;
 
   @override
   void initState() {
@@ -53,7 +50,7 @@ class _TermareViewState extends State<TermareView>
       upperBound: double.infinity,
     );
     init();
-    // testSequence();
+    testSequence();
   }
 
   @override
@@ -68,43 +65,30 @@ class _TermareViewState extends State<TermareView>
 
   Future<void> testSequence() async {
     await Future<void>.delayed(
-      const Duration(milliseconds: 100),
+      const Duration(milliseconds: 200),
     );
-    SequencesTest.testC0(controller);
+    // SequencesTest.testIsOut(controller);
+    controller.dirty = true;
     setState(() {});
   }
 
   Future<void> init() async {
-//     await termareController.defineTermFunc('''
-//     function test(){
-// for i in \$(seq 1 100)
-// do
-// echo \$i;
-// sleep 0.1
-// done
-//   }
-//     ''');
-    // termareController.write('test\n');
     SystemChannels.keyEvent.setMessageHandler(keyboardHandler.handleKeyEvent);
     if (widget.autoFocus) {
       SystemChannels.textInput.invokeMethod<void>('TextInput.show');
     }
-
-    // focusNode.attach(context);
-    // focusNode.requestFocus();
-    // focusNode.onKey;
-    // focusNode.onKey=(a){};
-    // unixPthC.write('python3\n');
+    controller.addListener(() {
+      setState(() {});
+    });
     while (mounted) {
       final String cur = controller.read();
       // print(('cur->$cur'));
       if (cur.isNotEmpty) {
         controller.out += cur;
-        controller.notifyListeners();
+        controller.autoScroll = true;
         controller.dirty = true;
-        scrollLock = false;
-        setState(() {});
-        await Future<void>.delayed(const Duration(milliseconds: 100));
+        controller.notifyListeners();
+        await Future<void>.delayed(const Duration(milliseconds: 10));
       } else {
         await Future<void>.delayed(const Duration(milliseconds: 100));
       }
@@ -283,7 +267,6 @@ class _TermareViewState extends State<TermareView>
         //   41,
         //   13
         // ]);
-        scrollLock = false;
         focusNode.requestFocus();
         SystemChannels.textInput.invokeMethod<void>('TextInput.show');
       },
@@ -291,14 +274,12 @@ class _TermareViewState extends State<TermareView>
         final String text = (await Clipboard.getData('text/plain')).text;
         controller.write(text);
       },
-      onPanDown: (details) {
-        scrollLock = true;
-      },
+      onPanDown: (details) {},
       // onVerticalDragUpdate: (details) {
       //   print(details.delta);
       // },
       onPanUpdate: (details) {
-        scrollLock = true;
+        controller.dirty = true;
         curOffset += details.delta.dy;
         if (details.delta.dy > 0 && curOffset > 0) {
           curOffset = 0;
@@ -313,7 +294,7 @@ class _TermareViewState extends State<TermareView>
         setState(() {});
       },
       onPanEnd: (details) {
-        scrollLock = true;
+        controller.dirty = true;
         final double velocity =
             1.0 / (0.050 * WidgetsBinding.instance.window.devicePixelRatio);
         final double distance =
@@ -338,6 +319,7 @@ class _TermareViewState extends State<TermareView>
         animationController.reset();
         animationController.addListener(() {
           final double shouldOffset = animationController.value;
+          controller.dirty = true;
           // print(object)
           // if (curOffset < 0) {
           //   if (lastLetterOffset < 0 && shouldOffset < curOffset) {
@@ -374,8 +356,8 @@ class _TermareViewState extends State<TermareView>
                     // 列数
                     final int column =
                         screenWidth ~/ controller.theme.letterWidth;
-                    // print('col:$column');
-                    // print('row:$row');
+                    print('col:$column');
+                    print('row:$row');
                     return CustomPaint(
                       painter: TermarePainter(
                         controller: controller,
@@ -384,7 +366,8 @@ class _TermareViewState extends State<TermareView>
                         defaultOffsetY: curOffset,
                         lastLetterPositionCall: (lastLetterOffset) async {
                           // this.lastLetterOffset = lastLetterOffset;
-                          // print('lastLetterOffset : $lastLetterOffset');
+                          print('lastLetterOffset : $lastLetterOffset');
+                          curOffset += lastLetterOffset;
                           // if (!scrollLock && lastLetterOffset > 0) {
                           //   scrollLock = true;
                           //   await Future<void>.delayed(
