@@ -1,9 +1,10 @@
 class ShiftCombining {
+  ShiftCombining._();
   static String getCombiningChar(String key) {
     if (shiftComChar.containsKey(key)) {
       return shiftComChar[key];
     }
-    RegExp regExp = RegExp('\\w');
+    final RegExp regExp = RegExp('\\w');
     if (regExp.hasMatch(key)) {
       return key.toUpperCase();
     }
