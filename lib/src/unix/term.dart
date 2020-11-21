@@ -5,11 +5,11 @@ import 'dart:ffi' as ffi;
 
 /// unistd.h头文件在dart的移植.
 class CTermare {
-  /// Holds the Dynamic library.
-  final ffi.DynamicLibrary _dylib;
-
   /// The symbols are looked up in [dynamicLibrary].
   CTermare(ffi.DynamicLibrary dynamicLibrary) : _dylib = dynamicLibrary;
+
+  /// Holds the Dynamic library.
+  final ffi.DynamicLibrary _dylib;
 
   int get_ptm_int(
     int rows,
