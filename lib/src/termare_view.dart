@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'painter/termare_painter.dart';
 import 'termare_controller.dart';
 import 'utils/keyboard_handler.dart';
-import 'utils/sequences_test.dart';
 
 class TermareView extends StatefulWidget {
   const TermareView({
