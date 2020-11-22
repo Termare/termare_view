@@ -3,31 +3,43 @@ import 'dart:convert';
 import 'package:termare/src/termare_controller.dart';
 
 class SequencesTest {
+  static Future<void> testChinese(TermareController controller) async {
+    controller.write('${'啊' * 17}\x08\x08 \n');
+  }
+
+  static Future<void> testMang(TermareController controller) async {
+    List<String> list = ['⣿', '⣷', '⣯', '⣟', '⡿', '⣿', '⢿', '⣻', '⣽', '⣾'];
+    for (String str in list) {
+      controller.write('$str\b');
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+  }
+
   static Future<void> testIsOut(TermareController controller) async {
-    controller.out += '\n';
+    controller.write('\n');
     for (int i = 0; i < 5500; i++) {
-      controller.out += '${'${i % 10}' * 40}\n';
+      controller.write('${'${i % 10}' * 40}\n');
       controller.autoScroll = true;
       controller.dirty = true;
       controller.notifyListeners();
-      await Future<void>.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
     }
-    controller.out += '${'b' * 40}\n';
-    controller.out += '${'c' * 40}\n';
+    controller.write('${'b' * 40}\n');
+    controller.write('${'c' * 40}\n');
   }
 
   static void testC0(TermareController controller) {
-    controller.out += '\n';
-    controller.out += 'bell test\x07\n';
-    controller.out += 'Backspace Teaa\x08\x08st\n';
-    controller.out += 'Horizontal\x09Tabulation\n';
+    controller.write('\n');
+    controller.write('bell test\x07\n');
+    controller.write('Backspace Teaa\x08\x08st\n');
+    controller.write('Horizontal\x09Tabulation\n');
     // 因为\x0a转换成string就是\n，所以不会被序列单独检测到
-    controller.out += 'Line Feed\x0a\n';
-    controller.out += 'Line Feed\x0b\n';
-    controller.out += 'Line Feed\x0c\n';
-    controller.out += '${'a' * 47}\x0dbbb\n';
-    // controller.out += 'Last login: Fri Nov 20 08:16:19 on console 啊';
-    controller.out += utf8.decode([
+    controller.write('Line Feed\x0a\n');
+    controller.write('Line Feed\x0b\n');
+    controller.write('Line Feed\x0c\n');
+    controller.write('${'a' * 47}\x0dbbb\n');
+    // controller.write() 'Last login: Fri Nov 20 08:16:19 on console 啊';
+    controller.write(utf8.decode([
       27,
       91,
       48,
@@ -44,6 +56,6 @@ class SequencesTest {
       91,
       48,
       109,
-    ]);
+    ]));
   }
 }
