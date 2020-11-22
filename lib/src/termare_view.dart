@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'painter/termare_painter.dart';
 import 'termare_controller.dart';
 import 'utils/keyboard_handler.dart';
+import 'utils/sequences_test.dart';
 
 class TermareView extends StatefulWidget {
   const TermareView({
@@ -41,7 +42,7 @@ class _TermareViewState extends State<TermareView>
           },
         );
 
-    keyboardHandler = KeyboardHandler(controller);
+    keyboardHandler = KeyboardHandler(controller.unixPthC);
     animationController = AnimationController(
       vsync: this,
       value: 0,
@@ -66,6 +67,7 @@ class _TermareViewState extends State<TermareView>
     await Future<void>.delayed(
       const Duration(milliseconds: 200),
     );
+    // SequencesTest.testMang(controller);
     // SequencesTest.testIsOut(controller);
     controller.dirty = true;
     setState(() {});
@@ -83,7 +85,12 @@ class _TermareViewState extends State<TermareView>
       final String cur = controller.read();
       // print(('cur->$cur'));
       if (cur.isNotEmpty) {
-        controller.out += cur;
+        controller.currentRead = cur;
+        if (cur.contains('Audio')) {
+          print('等回去');
+          print(cur);
+        }
+        controller.write(cur);
         controller.autoScroll = true;
         controller.dirty = true;
         controller.notifyListeners();
@@ -271,7 +278,7 @@ class _TermareViewState extends State<TermareView>
       },
       onDoubleTap: () async {
         final String text = (await Clipboard.getData('text/plain')).text;
-        controller.write(text);
+        controller.unixPthC.write(text);
       },
       onPanDown: (details) {},
       // onVerticalDragUpdate: (details) {
@@ -355,8 +362,8 @@ class _TermareViewState extends State<TermareView>
                     // 列数
                     final int column =
                         screenWidth ~/ controller.theme.letterWidth;
-                    print('col:$column');
-                    print('row:$row');
+                    // print('col:$column');
+                    // print('row:$row');
                     return CustomPaint(
                       painter: TermarePainter(
                         controller: controller,
@@ -378,7 +385,6 @@ class _TermareViewState extends State<TermareView>
                           // }
                         },
                         color: const Color(0xff811016),
-                        input: controller.out,
                       ),
                     );
                   },
