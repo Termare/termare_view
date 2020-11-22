@@ -18,7 +18,7 @@ class TextLayoutCache {
 
   TextPainter _performAndCacheLayout(TextSpan text) {
     final textPainter = TextPainter(
-        text: text, textDirection: textDirection, textAlign: TextAlign.start);
+        text: text, textDirection: textDirection, textAlign: TextAlign.center);
     textPainter.layout();
 
     _cache[text] = textPainter;
