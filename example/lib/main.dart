@@ -4,7 +4,7 @@ import 'package:termare/termare.dart';
 import 'package:termare_example/ssh.dart';
 
 void main() {
-  runApp(SshMyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
