@@ -98,12 +98,12 @@ class TermarePainter extends CustomPainter {
     stopwatch.start();
     final int outLine =
         -defaultOffsetY.toInt() ~/ controller.theme.letterHeight.toInt();
-    PrintUtil.printD('outLine->$outLine', [31]);
+    // PrintUtil.printD('outLine->$outLine', [31]);
     final int realColumnLen = math.min(
       controller.cache.length,
       controller.rowLength,
     );
-    PrintUtil.printD('realColumnLen->$realColumnLen', [31]);
+    // PrintUtil.printD('realColumnLen->$realColumnLen', [31]);
     for (int y = 0; y < realColumnLen; y++) {
       if (y + outLine >= controller.cache.length) {
         break;
@@ -121,7 +121,7 @@ class TermarePainter extends CustomPainter {
         final TextPainter painter = painterCache.getOrPerformLayout(
           TextSpan(
             text: letterEntity.content,
-            style: defaultStyle,
+            style: letterEntity.textStyle,
           ),
         );
         painter
@@ -142,14 +142,16 @@ class TermarePainter extends CustomPainter {
 
     if (controller.cache.length > realColumnLen + outLine) {
       // TODO  应该滑动上去一点
-      lastLetterPositionCall(
-        -controller.theme.letterHeight *
-            (controller.cache.length - realColumnLen - outLine),
-      );
+      if (controller.autoScroll) {
+        lastLetterPositionCall(
+          -controller.theme.letterHeight *
+              (controller.cache.length - realColumnLen - outLine),
+        );
+      }
     } else {}
     controller.dirty = false;
 
-    // drawLine(canvas);
+    drawLine(canvas);
 
     paintCursor(canvas, outLine);
   }
