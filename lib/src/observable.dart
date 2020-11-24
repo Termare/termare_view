@@ -12,8 +12,8 @@ mixin Observable {
   }
 
   void notifyListeners() {
-    print('notifyListeners');
-    for (var listener in listeners) {
+    // print('notifyListeners');
+    for (final _VoidCallback listener in listeners) {
       listener();
     }
   }
