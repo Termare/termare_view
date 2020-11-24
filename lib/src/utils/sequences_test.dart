@@ -7,6 +7,10 @@ class SequencesTest {
     controller.write('${'啊' * 17}\x08\x08 \n');
   }
 
+  static Future<void> testColorText(TermareController controller) async {
+    controller.write('\x1B[1;31m Text\x1B[0m\n');
+  }
+
   static Future<void> testMang(TermareController controller) async {
     List<String> list = ['⣿', '⣷', '⣯', '⣟', '⡿', '⣿', '⢿', '⣻', '⣽', '⣾'];
     for (String str in list) {
