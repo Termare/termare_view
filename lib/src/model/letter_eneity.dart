@@ -7,9 +7,11 @@ class LetterEntity {
     @required this.letterWidth,
     @required this.letterHeight,
     @required this.position,
+    @required this.textStyle,
   });
   final String content;
   final double letterWidth;
   final double letterHeight;
   final Position position;
+  final TextStyle textStyle;
 }
