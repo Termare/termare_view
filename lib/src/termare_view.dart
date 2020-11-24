@@ -69,6 +69,7 @@ class _TermareViewState extends State<TermareView>
     );
     // SequencesTest.testMang(controller);
     // SequencesTest.testIsOut(controller);
+    // SequencesTest.testColorText(controller);
     controller.dirty = true;
     setState(() {});
   }
@@ -87,7 +88,7 @@ class _TermareViewState extends State<TermareView>
       if (cur.isNotEmpty) {
         controller.currentRead = cur;
         if (cur.contains('Audio')) {
-          print('等回去');
+          // print('等回去');
           print(cur);
         }
         controller.write(cur);
@@ -285,6 +286,7 @@ class _TermareViewState extends State<TermareView>
       //   print(details.delta);
       // },
       onPanUpdate: (details) {
+        controller.autoScroll = false;
         controller.dirty = true;
         curOffset += details.delta.dy;
         if (details.delta.dy > 0 && curOffset > 0) {
