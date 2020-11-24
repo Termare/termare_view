@@ -78,17 +78,18 @@ class TermareController with Observable {
   int rowLength = 57;
   int columnLength = 41;
 
-  /// 直接指向 pty write 函数
-  void write(String data) {
-    parseOutput(data);
-  }
   // void write(String data) => unixPthC.write(data);
 
   TextStyle defaultStyle;
 
+  /// 直接指向 pty write 函数
+  void write(String data) {
+    parseOutput(data);
+  }
+
   /// 指向 pty read 函数
   String read() => unixPthC.read();
-  // 光标的位置
+  // 光标的位置；
   Position currentPointer = Position(0, 0);
   String currentRead = '';
   Future<void> defineTermFunc(
@@ -176,12 +177,12 @@ class TermareController with Observable {
     currentPointer = Position(0, currentPointer.y);
   }
 
-  void parseOutput(String data) {
+  void verboseExec(void Function() call) {}
+  void parseOutput(String data, {bool verbose = true}) {
     // print('data->parseOutput->$data');
     for (int i = 0; i < data.length; i++) {
       final List<int> codeUnits = data[i].codeUnits;
       // print('codeUnits->${codeUnits}');
-      final bool isDoubleByte = codeUnits.first > 0x7f;
       if (codeUnits.length == 1) {
         // 说明单字节
         if (eq(codeUnits, [0x07])) {
@@ -190,8 +191,11 @@ class TermareController with Observable {
         }
         if (eq(codeUnits, [0x08])) {
           // 光标左移动
-          PrintUtil.printn('<- C0 Backspace ->', 31, 47);
-          Position prePosition = getToPosition(-1);
+          // verboseExec(() {});
+          if (verbose) {
+            PrintUtil.printn('<- C0 Backspace ->', 31, 47);
+          }
+          final Position prePosition = getToPosition(-1);
           // PrintUtil.printn(
           //     'currentPointer -> $currentPointer prePosition -> $prePosition',
           //     31,
@@ -206,14 +210,14 @@ class TermareController with Observable {
           //   moveToPrePosition();
           // }
           moveToPrePosition();
-          cache[prePosition.y][prePosition.x] = null;
+          // cache[prePosition.y][prePosition.x] = null;
           continue;
         }
 
         if (eq(codeUnits, [0x09])) {
           moveToPosition(4);
-
-          PrintUtil.printn('<- C0 Horizontal Tabulation ->', 31, 47);
+          if (verbose)
+            PrintUtil.printn('<- C0 Horizontal Tabulation ->', 31, 47);
           // print('<- Horizontal Tabulation ->');
           continue;
         }
@@ -221,13 +225,13 @@ class TermareController with Observable {
             eq(codeUnits, [0x0b]) ||
             eq(codeUnits, [0x0c])) {
           moveToNextLinePosition();
-          PrintUtil.printn('<- C0 Line Feed ->', 31, 47);
+          if (verbose) PrintUtil.printn('<- C0 Line Feed ->', 31, 47);
           continue;
         }
         if (eq(codeUnits, [0x0d])) {
           // ascii 13
           moveToLineFirstPosition();
-          PrintUtil.printn('<- C0 Carriage Return ->', 31, 47);
+          if (verbose) PrintUtil.printn('<- C0 Carriage Return ->', 31, 47);
           continue;
         }
 
@@ -235,16 +239,17 @@ class TermareController with Observable {
           // print('<- ESC ->');
           i += 1;
           final String curStr = data[i];
-          PrintUtil.printd('preStr-> ESC curStr->$curStr', 31);
+          if (verbose) PrintUtil.printd('preStr-> ESC curStr->$curStr', 31);
           switch (curStr) {
             case '[':
               i += 1;
               final String curStr = data[i];
               print(data.substring(i));
-              PrintUtil.printd(
-                'preStr-> \x1b[32;7m[\x1b[31m ->curStr-> \x1b[32m$curStr\x1b[31m',
-                31,
-              );
+              if (verbose)
+                PrintUtil.printd(
+                  'preStr-> \x1b[32;7m[\x1b[31m ->curStr-> \x1b[32m$curStr\x1b[31m',
+                  31,
+                );
               switch (curStr) {
                 // 27 91 75
                 case 'K':
@@ -280,7 +285,8 @@ class TermareController with Observable {
                     showCursor = false;
                   }
                   i += 1;
-                  PrintUtil.printd('[ ? 后的值->${data.substring(i)}', 31);
+                  if (verbose)
+                    PrintUtil.printd('[ ? 后的值->${data.substring(i)}', 31);
                   continue;
                   break;
                 default:
@@ -322,6 +328,7 @@ class TermareController with Observable {
           letterWidth: painter.width,
           letterHeight: painter.height,
           position: currentPointer,
+          textStyle: defaultStyle,
         );
 
         if (painter.width > theme.letterWidth) {
