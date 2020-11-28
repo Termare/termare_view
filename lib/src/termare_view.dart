@@ -288,12 +288,22 @@ class _TermareViewState extends State<TermareView>
       onPanUpdate: (details) {
         controller.autoScroll = false;
         controller.dirty = true;
-        curOffset += details.delta.dy;
-        if (details.delta.dy > 0 && curOffset > 0) {
-          curOffset = 0;
+        if (details.delta.dy > 0) {
+          if (curOffset > 0) {
+            curOffset = 0;
+            return;
+          }
+          curOffset += details.delta.dy;
           print('往下滑动');
         }
         if (details.delta.dy < 0) {
+          final int outLine =
+              -curOffset.toInt() ~/ controller.theme.letterHeight.toInt();
+          if (controller.currentPointer.dy - outLine < controller.rowLength) {
+            return;
+          }
+          curOffset += details.delta.dy;
+          print('controller${controller.currentPointer.dy - outLine}');
           print('往上滑动');
         }
         print(
@@ -302,6 +312,8 @@ class _TermareViewState extends State<TermareView>
         setState(() {});
       },
       onPanEnd: (details) {
+        final double pixelsPerSecondDy = details.velocity.pixelsPerSecond.dy;
+        // return;
         controller.dirty = true;
         final double velocity =
             1.0 / (0.050 * WidgetsBinding.instance.window.devicePixelRatio);
@@ -328,18 +340,34 @@ class _TermareViewState extends State<TermareView>
         animationController.addListener(() {
           final double shouldOffset = animationController.value;
           controller.dirty = true;
-          // print(object)
-          // if (curOffset < 0) {
-          //   if (lastLetterOffset < 0 && shouldOffset < curOffset) {
-          //     return;
+
+          // if (pixelsPerSecondDy > 0) {
+          //   if (shouldOffset > 0) {
+          //     curOffset = 0;
+          //   } else {
+          //     curOffset = shouldOffset;
           //   }
           // }
+          // print('curOffset------------>$curOffset');
           curOffset = shouldOffset;
+          if (pixelsPerSecondDy > 0) {
+            final int outLine =
+                -curOffset.toInt() ~/ controller.theme.letterHeight.toInt();
+            if (controller.currentPointer.dy - outLine < controller.rowLength) {
+              return;
+            }
+            curOffset = shouldOffset;
+          }
+
           if (curOffset > 0) {
             curOffset = 0;
           }
-          print('curOffset->$curOffset');
           setState(() {});
+          // final int outLine =
+          //     -curOffset.toInt() ~/ controller.theme.letterHeight.toInt();
+          // if (controller.currentPointer.dy - outLine < controller.rowLength) {
+          //   return;
+          // }
         });
         animationController.animateWith(clampingScrollSimulation);
       },
