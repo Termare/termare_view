@@ -1,6 +1,7 @@
 class ShiftCombining {
   ShiftCombining._();
   static String getCombiningChar(String key) {
+    print('key -> $key');
     if (shiftComChar.containsKey(key)) {
       return shiftComChar[key];
     }
