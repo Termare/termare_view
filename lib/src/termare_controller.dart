@@ -1,27 +1,26 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:dart_pty/dart_pty.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:global_repository/global_repository.dart';
 import 'package:termare/src/painter/model/position.dart';
 
-import 'package:collection/collection.dart';
 import 'model/letter_eneity.dart';
 import 'observable.dart';
-import 'theme/term_theme.dart';
 import 'painter/termare_painter.dart';
+import 'theme/term_theme.dart';
 
 /// Flutter Controller 的思想
 /// 一个TermView对应一个 Controller
-/// 在 Controller 被初始化的时候，底层终端已经被初始化了。
 
 class TermareController with Observable {
   TermareController({
     this.theme = TermareStyles.termux,
     this.environment,
+    this.rowLength = 57,
+    this.columnLength = 41,
   }) {
-    unixPthC = UnixPtyC(environment: environment);
     defaultStyle = TextStyle(
       textBaseline: TextBaseline.ideographic,
       height: 1,
@@ -30,7 +29,7 @@ class TermareController with Observable {
       fontWeight: FontWeight.w500,
       // backgroundColor: Colors.black,
       // backgroundColor: Colors.red,
-      fontFamily: 'monospace',
+      fontFamily: 'packages/termare/DroidSansMono',
     );
     cache.length = rowLength;
     for (int i = 0; i < rowLength; i++) {
@@ -69,14 +68,13 @@ class TermareController with Observable {
   bool dirty = false;
   // String out = '';
   final TermareStyle theme;
-  UnixPtyC unixPthC;
   List<List<LetterEntity>> cache = [];
   bool showCursor = true;
   // 当从 pty 读出内容的时候就会自动滑动
   bool autoScroll = true;
 
-  int rowLength = 57;
-  int columnLength = 41;
+  final int rowLength;
+  final int columnLength;
 
   // void write(String data) => unixPthC.write(data);
 
@@ -84,44 +82,44 @@ class TermareController with Observable {
 
   /// 直接指向 pty write 函数
   void write(String data) {
+    dirty = true;
     parseOutput(data);
+    notifyListeners();
   }
 
-  /// 指向 pty read 函数
-  String read() => unixPthC.read();
   // 光标的位置；
   Position currentPointer = Position(0, 0);
   String currentRead = '';
-  Future<void> defineTermFunc(
-    String func, {
-    String tmpFilePath,
-  }) async {
-    tmpFilePath ??=
-        '${PlatformUtil.getFilsePath(await PlatformUtil.getPackageName())}/tmp';
-    print('定义函数中...--->$tmpFilePath');
-    final File tmpFile = File(tmpFilePath);
-    await tmpFile.writeAsString(func);
-    print('创建临时脚本成功...->${tmpFile.path}');
-    unixPthC.write(
-      'export AUTO=TRUE\n',
-    );
-    unixPthC.write(
-      'source $tmpFilePath\n',
-    );
-    unixPthC.write(
-      'rm -rf $tmpFilePath\n',
-    );
-    while (true) {
-      final bool exist = await tmpFile.exists();
-      // 把不想被看到的代码读掉
-      read();
-      // print('read()->${read()}');
-      if (!exist) {
-        break;
-      }
-      await Future<void>.delayed(const Duration(milliseconds: 100));
-    }
-  }
+  // Future<void> defineTermFunc(
+  //   String func, {
+  //   String tmpFilePath,
+  // }) async {
+  //   tmpFilePath ??=
+  //       '${PlatformUtil.getFilsePath(await PlatformUtil.getPackageName())}/tmp';
+  //   print('定义函数中...--->$tmpFilePath');
+  //   final File tmpFile = File(tmpFilePath);
+  //   await tmpFile.writeAsString(func);
+  //   print('创建临时脚本成功...->${tmpFile.path}');
+  //   unixPthC.write(
+  //     'export AUTO=TRUE\n',
+  //   );
+  //   unixPthC.write(
+  //     'source $tmpFilePath\n',
+  //   );
+  //   unixPthC.write(
+  //     'rm -rf $tmpFilePath\n',
+  //   );
+  //   while (true) {
+  //     final bool exist = await tmpFile.exists();
+  //     // 把不想被看到的代码读掉
+  //     unixPthC.read();
+  //     // print('read()->${read()}');
+  //     if (!exist) {
+  //       break;
+  //     }
+  //     await Future<void>.delayed(const Duration(milliseconds: 100));
+  //   }
+  // }
 
   void moveToPosition(int x) {
     if (currentPointer.x + x >= columnLength) {
