@@ -8,6 +8,7 @@ export 'src/termare_view.dart';
 export 'src/theme/term_theme.dart';
 
 class Termare {
+  // File().
   static const MethodChannel _channel = const MethodChannel('termare');
 
   // static Future<String> get platformVersion async {

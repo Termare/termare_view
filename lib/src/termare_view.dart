@@ -37,6 +37,7 @@ class _TermareViewState extends State<TermareView>
     await Future<void>.delayed(
       const Duration(milliseconds: 200),
     );
+    File
     // SequencesTest.testMang(controller);
     // SequencesTest.testIsOut(controller);
     // SequencesTest.testColorText(controller);
