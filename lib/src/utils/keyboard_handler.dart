@@ -2,57 +2,78 @@ import 'dart:convert';
 
 import 'package:dart_pty/dart_pty.dart';
 import 'package:flutter/services.dart';
+import 'package:global_repository/global_repository.dart';
 import 'package:termare/src/combining_characters.dart';
 import 'package:termare/termare.dart';
 
+typedef KeyboardInput = void Function(String data);
+
 class KeyboardHandler {
-  KeyboardHandler(this.unixPtyC);
-  final UnixPtyC unixPtyC;
+  KeyboardHandler(this.keyboardInput);
+  final KeyboardInput keyboardInput;
   bool enableShift = false;
   Future<dynamic> handleKeyEvent(dynamic message) async {
     final RawKeyEvent event =
         RawKeyEvent.fromMessage(message as Map<String, dynamic>);
-    // print('event.logicalKey.debugName->${event.logicalKey.debugName}');
-    // print('event->$event');
+    print('event->$event');
     // TODO
     // shift按下时enable，抬起时enable为false
+
     if (event is RawKeyDownEvent) {
+      switch (event.logicalKey.keyId) {
+        case 0x1000700e1:
+          print('shift 按下');
+          enableShift = true;
+          return;
+          break;
+      }
+    }
+
+    if (event is RawKeyUpEvent) {
       switch (event.logicalKey.keyId) {
         case 0x10007002a:
           print('删除');
-          unixPtyC.write(utf8.decode(<int>[127]));
+          keyboardInput?.call(utf8.decode(<int>[127]));
           return;
           break;
         case 0x100070028:
-          unixPtyC.write(utf8.decode(<int>[10]));
+          keyboardInput?.call(utf8.decode(<int>[10]));
           return;
           break;
         case 0x1000700e1:
-          enableShift = true;
+          print('shift 抬起');
+          enableShift = false;
           return;
           break;
         case 0x100070050:
           // 左
-          unixPtyC.write(utf8.decode(<int>[2]));
+          keyboardInput?.call(utf8.decode(<int>[2]));
           return;
         case 0x10007004f:
           // 右
-          unixPtyC.write(utf8.decode(<int>[6]));
+          keyboardInput?.call(utf8.decode(<int>[6]));
           return;
         default:
       }
       if (enableShift) {
-        unixPtyC.write(
-          ShiftCombining.getCombiningChar(
-            utf8.decode(
-              [event.logicalKey.keyId],
+        print('当前shift已被按下');
+        // 这儿在安卓与pc上不一样，安卓上是虚拟键盘，pc上是物理键盘
+        if (PlatformUtil.isDesktop()) {
+          keyboardInput?.call(utf8.decode(<int>[event.logicalKey.keyId]));
+        } else {
+          keyboardInput?.call(
+            ShiftCombining.getCombiningChar(
+              utf8.decode(
+                [event.logicalKey.keyId],
+              ),
             ),
-          ),
-        );
-        enableShift = false;
+          );
+          // 玄学，勿动
+          enableShift = false;
+        }
       } else {
         // print(event.logicalKey);
-        unixPtyC.write(utf8.decode([event.logicalKey.keyId]));
+        keyboardInput?.call(utf8.decode([event.logicalKey.keyId]));
         // print(utf8.decode([event.logicalKey.keyId]));
       }
     }
