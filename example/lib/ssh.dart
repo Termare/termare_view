@@ -10,7 +10,7 @@ import 'package:termare/termare.dart';
 
 const host = 'ssh://39.107.248.176:22';
 const username = 'root';
-const password = 'mys906262255.';
+const password = '';
 
 class SshMyApp extends StatelessWidget {
   @override
