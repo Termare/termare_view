@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-export 'src/termare_view.dart';
+export 'src/termare_pty.dart';
 export 'src/termare_controller.dart';
+export 'src/termare_view.dart';
+export 'src/theme/term_theme.dart';
 
 class Termare {
   static const MethodChannel _channel = const MethodChannel('termare');
