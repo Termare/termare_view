@@ -4,7 +4,7 @@ import 'package:termare/termare.dart';
 import 'package:termare_example/ssh.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(SshMyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -20,10 +20,41 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(
-        child: TermareView(),
+        // child: Material(
+        //   child: Column(
+        //     children: [
+        //       Text(
+        //         '测试字体 Test Font' * 3,
+        //         style: TextStyle(
+        //           fontFamily: 'packages/termare/UbuntuMono',
+        //           // fontWeight: FontWeight.bold,
+        //         ),
+        //       ),
+        //       Text(
+        //         '测试字体 Test Font' * 3,
+        //         style: TextStyle(
+        //           fontFamily: 'packages/termare/DroidSansMono',
+        //         ),
+        //       ),
+        //       Text(
+        //         '测试字体 Test Font' * 3,
+        //         style: TextStyle(
+        //           fontFamily: 'packages/termare/SourceCodePro',
+        //         ),
+        //       ),
+        //       Text(
+        //         '测试字体 Test Font' * 3,
+        //         style: TextStyle(
+        //           fontFamily: 'packages/termare/sarasa-mono-sc-bold',
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
+        child: TermarePty(),
       ),
     );
   }
