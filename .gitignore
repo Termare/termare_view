@@ -6,3 +6,4 @@
 
 build/
 example/pubspec.lock
+termare_ssh/lib/config.dart
