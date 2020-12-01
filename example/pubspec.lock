@@ -57,17 +57,24 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.1"
+  cupertino_icons:
+    dependency: transitive
+    description:
+      name: cupertino_icons
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.1+1"
   dart_pty:
     dependency: transitive
     description:
       path: "."
       ref: HEAD
-      resolved-ref: d9e97f1d0db01b092adc4c19baa2367a96969747
+      resolved-ref: "0e400ecb2826ddc7ed017f9aef737e27b6809a8a"
       url: "https://github.com/termare/dart_pty"
     source: git
-    version: "0.0.2"
+    version: "0.0.3"
   dartssh:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: dartssh
       url: "https://pub.flutter-io.cn"
@@ -123,7 +130,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: aa6c6292c5986fcfb7c1b4fa07aebcd7f3889ab8
+      resolved-ref: "426fca163a47c971c4aa613f4e2c7bfe4c4f1237"
       url: "https://github.com/nightmare-space/global_repository"
     source: git
     version: "0.0.1"
@@ -287,12 +294,26 @@ packages:
     source: hosted
     version: "1.2.0-nullsafety.3"
   termare:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: ".."
       relative: true
     source: path
     version: "0.0.1"
+  termare_pty:
+    dependency: "direct main"
+    description:
+      path: "../termare_pty"
+      relative: true
+    source: path
+    version: "1.0.0+1"
+  termare_ssh:
+    dependency: "direct main"
+    description:
+      path: "../termare_ssh"
+      relative: true
+    source: path
+    version: "1.0.0+1"
   test_api:
     dependency: transitive
     description:
