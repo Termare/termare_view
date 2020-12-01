@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:termare/termare.dart';
-
 import 'termare.dart';
 
 void main() {
