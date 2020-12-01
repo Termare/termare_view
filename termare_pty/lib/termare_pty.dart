@@ -25,11 +25,9 @@ class _TermarePtyState extends State<TermarePty> with TickerProviderStateMixin {
   double lastLetterOffset = 0;
   int textSelectionOffset = 0;
   UnixPtyC unixPtyC;
-
   @override
   void initState() {
     super.initState();
-
     final Size size = window.physicalSize;
     print(size);
     print(window.devicePixelRatio);
