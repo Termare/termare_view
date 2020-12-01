@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dart_pty/dart_pty.dart';
 import 'package:flutter/services.dart';
 import 'package:global_repository/global_repository.dart';
 import 'package:termare/src/combining_characters.dart';
@@ -21,16 +20,6 @@ class KeyboardHandler {
 
     if (event is RawKeyDownEvent) {
       switch (event.logicalKey.keyId) {
-        case 0x1000700e1:
-          print('shift 按下');
-          enableShift = true;
-          return;
-          break;
-      }
-    }
-
-    if (event is RawKeyUpEvent) {
-      switch (event.logicalKey.keyId) {
         case 0x10007002a:
           print('删除');
           keyboardInput?.call(utf8.decode(<int>[127]));
@@ -42,7 +31,7 @@ class KeyboardHandler {
           break;
         case 0x1000700e1:
           print('shift 抬起');
-          enableShift = false;
+          enableShift = true;
           return;
           break;
         case 0x100070050:
@@ -77,8 +66,15 @@ class KeyboardHandler {
         // print(utf8.decode([event.logicalKey.keyId]));
       }
     }
-    // if (event is RawKeyUpEvent) {
-    //   print(event.data.keyLabel);
-    // }
+
+    if (event is RawKeyUpEvent) {
+      switch (event.logicalKey.keyId) {
+        case 0x1000700e1:
+          print('shift 抬起');
+          enableShift = false;
+          return;
+          break;
+      }
+    }
   }
 }
