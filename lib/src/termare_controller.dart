@@ -16,19 +16,18 @@ import 'theme/term_theme.dart';
 
 class TermareController with Observable {
   TermareController({
-    this.theme = TermareStyles.termux,
+    this.theme,
     this.environment,
     this.rowLength = 57,
     this.columnLength = 41,
   }) {
+    theme ??= TermareStyles.termux;
     defaultStyle = TextStyle(
       textBaseline: TextBaseline.ideographic,
       height: 1,
-      fontSize: theme.letterHeight - 2,
+      fontSize: theme.fontSize,
       color: Colors.white,
       fontWeight: FontWeight.w500,
-      // backgroundColor: Colors.black,
-      // backgroundColor: Colors.red,
       fontFamily: 'packages/termare/DroidSansMono',
     );
     cache.length = rowLength;
@@ -67,14 +66,16 @@ class TermareController with Observable {
   /// 每次从 pty 中读出数据的时候会将当前终端页标记为脏，在下一帧页终端就会进执行刷新
   bool dirty = false;
   // String out = '';
-  final TermareStyle theme;
+  TermareStyle theme;
   List<List<LetterEntity>> cache = [];
   bool showCursor = true;
   // 当从 pty 读出内容的时候就会自动滑动
   bool autoScroll = true;
+  // 显示背景网格
+  bool showLine = false;
 
-  final int rowLength;
-  final int columnLength;
+  int rowLength;
+  int columnLength;
 
   // void write(String data) => unixPthC.write(data);
 
@@ -90,53 +91,45 @@ class TermareController with Observable {
   // 光标的位置；
   Position currentPointer = Position(0, 0);
   String currentRead = '';
-  // Future<void> defineTermFunc(
-  //   String func, {
-  //   String tmpFilePath,
-  // }) async {
-  //   tmpFilePath ??=
-  //       '${PlatformUtil.getFilsePath(await PlatformUtil.getPackageName())}/tmp';
-  //   print('定义函数中...--->$tmpFilePath');
-  //   final File tmpFile = File(tmpFilePath);
-  //   await tmpFile.writeAsString(func);
-  //   print('创建临时脚本成功...->${tmpFile.path}');
-  //   unixPthC.write(
-  //     'export AUTO=TRUE\n',
-  //   );
-  //   unixPthC.write(
-  //     'source $tmpFilePath\n',
-  //   );
-  //   unixPthC.write(
-  //     'rm -rf $tmpFilePath\n',
-  //   );
-  //   while (true) {
-  //     final bool exist = await tmpFile.exists();
-  //     // 把不想被看到的代码读掉
-  //     unixPthC.read();
-  //     // print('read()->${read()}');
-  //     if (!exist) {
-  //       break;
-  //     }
-  //     await Future<void>.delayed(const Duration(milliseconds: 100));
-  //   }
-  // }
 
   void moveToPosition(int x) {
     if (currentPointer.x + x >= columnLength) {
-      // 说明在行首
+      // 说明在行尾
       currentPointer = Position(
         currentPointer.x + x - columnLength,
         currentPointer.y + 1,
       );
     } else if (currentPointer.x + x <= 0) {
       // 说明在行首
+      int yShould = currentPointer.y - 1;
+      if (yShould < 0) {
+        yShould = 0;
+      }
       currentPointer = Position(
         columnLength - 1,
-        currentPointer.y - 1,
+        yShould,
       );
     } else {
       currentPointer = Position(currentPointer.x + x, currentPointer.y);
     }
+  }
+
+  void setFontSize(double fontSize) {
+    theme.fontSize = fontSize;
+    final Size size = window.physicalSize;
+    print(size);
+    print(window.devicePixelRatio);
+    final double screenWidth = size.width / window.devicePixelRatio;
+    final double screenHeight = size.height / window.devicePixelRatio;
+    // 行数
+    final int row = screenHeight ~/ theme.letterHeight;
+    // 列数
+    final int column = screenWidth ~/ theme.letterWidth;
+    print('< row : $row column : $column>');
+    rowLength = row - 3;
+    columnLength = column - 2;
+    dirty = true;
+    notifyListeners();
   }
 
   Position getToPosition(int x) {
@@ -177,7 +170,7 @@ class TermareController with Observable {
 
   void verboseExec(void Function() call) {}
   void parseOutput(String data, {bool verbose = true}) {
-    // print('data->parseOutput->$data');
+    print('data->parseOutput->$data');
     for (int i = 0; i < data.length; i++) {
       final List<int> codeUnits = data[i].codeUnits;
       // print('codeUnits->${codeUnits}');
@@ -294,6 +287,7 @@ class TermareController with Observable {
 
               print('charMindex=======>$charMindex');
               String header = '';
+              // TODO  有错
               header = data.substring(i, i + charMindex);
               print('header->$header');
               header.split(';').forEach((element) {
@@ -321,15 +315,20 @@ class TermareController with Observable {
             style: defaultStyle,
           ),
         );
+        // PrintUtil.printD('currentPointer->$currentPointer');
+        // PrintUtil.printD('data[i]->${data[i]}');
+
         cache[currentPointer.y][currentPointer.x] = LetterEntity(
           content: data[i],
           letterWidth: painter.width,
           letterHeight: painter.height,
           position: currentPointer,
-          textStyle: defaultStyle,
+          textStyle: defaultStyle.copyWith(fontSize: theme.fontSize),
         );
 
-        if (painter.width > theme.letterWidth) {
+        if (painter.width == painter.height) {
+          // 只有双字节字符宽高相等
+          // 这儿应该有更好的方法
           moveToNextPosition();
         }
 
