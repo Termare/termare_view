@@ -6,11 +6,29 @@ import 'package:flutter/material.dart';
 //   const TermareStyle(this.showCursor);
 //   final bool showCursor;
 // }
-const double defaultLetterWidth = 9.0;
-const double defaultLetterHeight = 14.0;
+const Map<int, double> letterWidthMap = {
+  8: 5.0,
+  9: 6.0,
+  10: 6.0,
+  11: 7.0,
+  12: 8.0,
+  13: 8.0,
+  14: 9.0,
+  15: 9.0,
+  16: 10.0,
+  17: 11.0,
+  18: 11.0,
+  19: 12.0,
+  20: 13.0,
+  21: 13.0,
+  22: 14.0,
+  23: 14.0,
+  24: 15.0,
+};
 
 class TermareStyle {
-  const TermareStyle({
+  TermareStyle({
+    this.fontSize = 12,
     this.cursorColor = Colors.grey,
     this.backgroundColor = Colors.black,
     this.defaultColor = Colors.white,
@@ -30,8 +48,6 @@ class TermareStyle {
     this.lightCyan,
     this.white,
     this.lightWhite,
-    this.letterHeight = defaultLetterHeight,
-    this.letterWidth = defaultLetterWidth,
   });
   TermareStyle copyWith({
     Color cursorColor,
@@ -104,12 +120,13 @@ class TermareStyle {
   // 前景色37 背景色47 白色
   final Color white;
   final Color lightWhite;
-  final double letterWidth;
-  final double letterHeight;
+  double get letterWidth => letterWidthMap[fontSize.toInt()];
+  double get letterHeight => letterWidth * 2;
+  double fontSize;
 }
 
 class TermareStyles {
-  static const TermareStyle termux = TermareStyle(
+  static TermareStyle termux = TermareStyle(
     cursorColor: Colors.grey,
     backgroundColor: Colors.black,
     black: Color(0xff000000),
@@ -130,7 +147,7 @@ class TermareStyles {
     lightWhite: Color(0xffffffff),
   );
   // static const  TermTheme manjaro;
-  static const TermareStyle macos = TermareStyle(
+  static TermareStyle macos = TermareStyle(
     defaultColor: Colors.black,
     backgroundColor: Color(0xffffffff),
     black: Color(0xff040404),
@@ -150,7 +167,7 @@ class TermareStyles {
     white: Color(0xffdccecd),
     lightWhite: Color(0xffd9d2d5),
   );
-  static const TermareStyle manjaro = TermareStyle(
+  static TermareStyle manjaro = TermareStyle(
     defaultColor: Color(0xffaaaaaa),
     backgroundColor: Color(0xff454649),
     black: Color(0xff000000),
