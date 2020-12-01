@@ -13,14 +13,12 @@ TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 4096);
 class TermarePainter extends CustomPainter {
   TermarePainter({
     this.controller,
-    this.rowLength,
-    this.columnLength,
     this.defaultOffsetY,
     this.color = Colors.white,
     this.lastLetterPositionCall,
   }) {
-    termWidth = columnLength * controller.theme.letterWidth;
-    termHeight = rowLength * controller.theme.letterHeight;
+    termWidth = controller.columnLength * controller.theme.letterWidth;
+    termHeight = controller.rowLength * controller.theme.letterHeight;
     defaultStyle = TextStyle(
       textBaseline: TextBaseline.ideographic,
       height: 1,
@@ -33,8 +31,6 @@ class TermarePainter extends CustomPainter {
     );
   }
   final TermareController controller;
-  final int rowLength;
-  final int columnLength;
   double termWidth;
   double termHeight;
   int curPaintIndex = 0;
@@ -59,7 +55,7 @@ class TermarePainter extends CustomPainter {
     final Paint paint = Paint();
     paint.strokeWidth = 1;
     paint.color = Colors.grey.withOpacity(0.4);
-    for (int j = 0; j <= rowLength; j++) {
+    for (int j = 0; j <= controller.rowLength; j++) {
       // print(j);
       canvas.drawLine(
         Offset(
@@ -73,7 +69,7 @@ class TermarePainter extends CustomPainter {
         paint,
       );
     }
-    for (int k = 0; k <= columnLength; k++) {
+    for (int k = 0; k <= controller.columnLength; k++) {
       canvas.drawLine(
         Offset(
           k * controller.theme.letterWidth,
@@ -121,20 +117,23 @@ class TermarePainter extends CustomPainter {
         final TextPainter painter = painterCache.getOrPerformLayout(
           TextSpan(
             text: letterEntity.content,
-            style: letterEntity.textStyle,
+            style: letterEntity.textStyle.copyWith(
+              fontSize: controller.theme.fontSize,
+            ),
           ),
         );
         painter
           ..layout(
-            maxWidth: letterEntity.letterWidth,
-            minWidth: letterEntity.letterWidth,
+            maxWidth: controller.theme.letterWidth * 2,
+            minWidth: controller.theme.letterWidth,
           )
           ..paint(
             canvas,
             Offset(
               letterEntity.position.x * controller.theme.letterWidth,
               (letterEntity.position.y - outLine) *
-                  controller.theme.letterHeight,
+                      controller.theme.letterHeight +
+                  2,
             ),
           );
       }
@@ -149,9 +148,10 @@ class TermarePainter extends CustomPainter {
         );
       }
     } else {}
+    if (controller.showLine) {
+      drawLine(canvas);
+    }
     controller.dirty = false;
-
-    drawLine(canvas);
 
     paintCursor(canvas, outLine);
   }
