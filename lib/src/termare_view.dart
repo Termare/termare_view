@@ -37,7 +37,6 @@ class _TermareViewState extends State<TermareView>
     await Future<void>.delayed(
       const Duration(milliseconds: 200),
     );
-    File
     // SequencesTest.testMang(controller);
     // SequencesTest.testIsOut(controller);
     // SequencesTest.testColorText(controller);
@@ -52,10 +51,6 @@ class _TermareViewState extends State<TermareView>
         focusNode.requestFocus();
         SystemChannels.textInput.invokeMethod<void>('TextInput.show');
       },
-      onPanDown: (details) {},
-      // onVerticalDragUpdate: (details) {
-      //   print(details.delta);
-      // },
       onPanUpdate: (details) {
         widget.controller.autoScroll = false;
         widget.controller.dirty = true;
@@ -161,8 +156,6 @@ class _TermareViewState extends State<TermareView>
                     return CustomPaint(
                       painter: TermarePainter(
                         controller: widget.controller,
-                        rowLength: widget.controller.rowLength,
-                        columnLength: widget.controller.columnLength,
                         defaultOffsetY: curOffset,
                         lastLetterPositionCall: (lastLetterOffset) async {
                           // this.lastLetterOffset = lastLetterOffset;
