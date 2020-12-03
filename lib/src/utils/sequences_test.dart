@@ -26,7 +26,7 @@ class SequencesTest {
       controller.autoScroll = true;
       controller.dirty = true;
       controller.notifyListeners();
-      await Future<void>.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
     }
     controller.write('${'b' * 40}\n');
     controller.write('${'c' * 40}\n');
