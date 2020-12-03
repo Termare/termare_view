@@ -10,34 +10,54 @@ class Termare extends StatefulWidget {
   _TermareState createState() => _TermareState();
 }
 
-class _TermareState extends State<Termare> {
+class _TermareState extends State<Termare> with WidgetsBindingObserver {
   TermareController controller;
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addObserver(this);
     final Size size = window.physicalSize;
-    print(size);
-    print(window.devicePixelRatio);
+    print('size->$size');
+    print('window.devicePixelRatio->${window.devicePixelRatio}');
     final double screenWidth = size.width / window.devicePixelRatio;
-    final double screenHeight = size.height / window.devicePixelRatio;
-    // 行数
-    final int row = screenHeight ~/ TermareStyles.termux.letterHeight;
-    // 列数
-    final int column = screenWidth ~/ TermareStyles.termux.letterWidth;
-    print('< row : $row column : $column>');
+    final double screenHeight =
+        size.height / window.devicePixelRatio - kToolbarHeight;
 
-    controller = TermareController(
-      environment: Platform.isIOS
-          ? {}
-          : {
-              'TERM': 'screen-256color',
-              'PATH': '/data/data/com.nightmare/files/usr/bin:' +
-                  Platform.environment['PATH'],
-            },
-      rowLength: row - 3,
-      columnLength: column - 2,
-    );
+    controller = TermareController();
+    controller.setPtyWindowSize(Size(screenWidth, screenHeight));
+    // window.onMetricsChanged = () {
+    //   print('window.onMetricsChanged');
+    // };
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final Size size = window.physicalSize;
+      final double screenWidth = size.width / window.devicePixelRatio;
+      final double screenHeight = size.height / window.devicePixelRatio -
+          MediaQuery.of(context).padding.top;
+      final double keyoardHeight = MediaQuery.of(context).viewInsets.bottom;
+      print('kToolbarHeight->${MediaQuery.of(context).viewInsets.top}');
+      print('kToolbarHeight->${MediaQuery.of(context).padding.top}');
+      // SafeArea()
+      print(
+        ' ${Size(screenWidth, screenHeight - keyoardHeight)}',
+      );
+      controller.setPtyWindowSize(
+        Size(screenWidth, screenHeight - keyoardHeight),
+      );
+      controller.autoScroll = true;
+      controller.dirty = true;
+      controller.notifyListeners();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
