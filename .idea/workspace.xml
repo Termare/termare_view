@@ -1,38 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="ac9f3cf1-eda8-4519-ab10-910bc362296a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/example/lib/termare.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/termare.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/example/lib/termare.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/example/lib/termare.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/painter/termare_painter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/painter/termare_painter.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/termare_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/termare_controller.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/termare_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/termare_view.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/utils/sequences_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/utils/sequences_test.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/termare_pty/lib/termare_pty.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/termare_pty/lib/termare_pty.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/termare_ssh/lib/ssh.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/termare_ssh/lib/ssh.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/painter/termare_painter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/painter/termare_painter.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/termare_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/termare_controller.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/termare_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/termare_view.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/utils/sequences_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/utils/sequences_test.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/termare_pty/lib/termare_pty.dart" beforeDir="false" afterPath="$PROJECT_DIR$/termare_pty/lib/termare_pty.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/termare_ssh/lib/ssh.dart" beforeDir="false" afterPath="$PROJECT_DIR$/termare_ssh/lib/ssh.dart" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/.pub/" />
+    <ignored path="$PROJECT_DIR$/build/" />
+    <ignored path="$PROJECT_DIR$/example/.pub/" />
+    <ignored path="$PROJECT_DIR$/example/ios/.symlinks/plugins/termare/.pub/" />
+    <ignored path="$PROJECT_DIR$/example/ios/.symlinks/plugins/termare/build/" />
+    <ignored path="$PROJECT_DIR$/example/ios/.symlinks/plugins/termare/example/.pub/" />
+    <ignored path="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/.pub/" />
+    <ignored path="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/build/" />
+    <ignored path="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/example/.pub/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="192.168.43.1:5555" />
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="termare.dart" pinned="false" current-in-tab="true">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/termare.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="19">
+              <caret line="1" column="7" lean-forward="true" selection-start-line="1" selection-start-column="7" selection-end-line="1" selection-end-column="7" />
+              <folding>
+                <element signature="e#41#78#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.dart" pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/example/lib/main.dart">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-            </state>
-          </provider>
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="23" />
     <option name="width" value="1920" />
     <option name="height" value="986" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1" />
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <option name="show-excluded-files" value="false" />
-      </pane>
+      <pane id="PackagesPane" />
+      <pane id="ProjectPane" />
+      <pane id="Scope" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -40,10 +79,76 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ac9f3cf1-eda8-4519-ab10-910bc362296a" name="Default Changelist" comment="" />
+      <created>1606828822466</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1606828822466</updated>
+    </task>
+    <servers />
+  </component>
   <component name="ToolWindowManager">
+    <frame x="0" y="23" width="1920" height="986" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Capture Tool" />
+      <window_info id="Structure" side_tool="true" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info id="Build Variants" side_tool="true" />
+      <window_info id="Image Layers" />
+      <window_info id="Designer" />
+      <window_info id="Captures" side_tool="true" />
+      <window_info id="Resources Explorer" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24973376" />
+      <window_info anchor="bottom" id="Run" />
+      <window_info anchor="bottom" id="Dart Analysis" />
+      <window_info anchor="bottom" id="Logcat" />
+      <window_info anchor="bottom" id="TODO" />
+      <window_info anchor="bottom" id="Debug" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Android Profiler" show_stripe_button="false" />
+      <window_info anchor="right" id="Word Book" side_tool="true" />
+      <window_info anchor="right" id="Device File Explorer" side_tool="true" />
+      <window_info anchor="right" id="Capture Analysis" />
+      <window_info anchor="right" id="Theme Preview" />
+      <window_info anchor="right" id="Flutter Inspector" />
+      <window_info anchor="right" id="Flutter Outline" />
+      <window_info anchor="right" id="Palette&#9;" />
+      <window_info anchor="right" id="Flutter Performance" />
     </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/lib/termare.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="1" column="7" lean-forward="true" selection-start-line="1" selection-start-column="7" selection-end-line="1" selection-end-column="7" />
+          <folding>
+            <element signature="e#41#78#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/main.dart">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
   </component>
 </project>
