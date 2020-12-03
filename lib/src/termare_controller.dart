@@ -13,11 +13,14 @@ import 'theme/term_theme.dart';
 
 /// Flutter Controller 的思想
 /// 一个TermView对应一个 Controller
+String red = '\x1b[31m';
+
+String whiteBackground = '\x1b[47m';
+String defaultColor = '\x1b[0m';
 
 class TermareController with Observable {
   TermareController({
     this.theme,
-    this.environment,
     this.rowLength = 57,
     this.columnLength = 41,
   }) {
@@ -30,15 +33,15 @@ class TermareController with Observable {
       fontWeight: FontWeight.w500,
       fontFamily: 'packages/termare/DroidSansMono',
     );
-    cache.length = rowLength;
-    for (int i = 0; i < rowLength; i++) {
-      cache[i] = [];
-    }
-    // print(cache);
-    for (int i = 0; i < rowLength; i++) {
-      cache[i].length = columnLength;
-    }
+    final Stopwatch stopwatch = Stopwatch();
+    stopwatch.start();
+    // cache.length = cacheLine;
+    // for (int i = 0; i < cacheLine; i++) {
+    //   cache[i] = [];
+    //   cache[i].length = columnLength;
+    // }
 
+    // print('\x1b[31m${stopwatch.elapsed}');
     // PrintUtil.printd('posistion -> $currentPointer', 31);
     // for (int i = 0; i < columnLength; i++) {
     //   moveToNextPosition();
@@ -58,9 +61,10 @@ class TermareController with Observable {
     // }
     // print(cache);
   }
-  final Map<String, String> environment;
+  // final Map<String, String> environment;
 
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
+  final int cacheLine = 1000;
 
   /// 通过这个值来判断终端是否需要刷新
   /// 每次从 pty 中读出数据的时候会将当前终端页标记为脏，在下一帧页终端就会进执行刷新
@@ -90,7 +94,8 @@ class TermareController with Observable {
 
   // 光标的位置；
   Position currentPointer = Position(0, 0);
-  String currentRead = '';
+  // 通过这个变量来滑动终端
+  int startLine = 0;
 
   void moveToPosition(int x) {
     if (currentPointer.x + x >= columnLength) {
@@ -114,20 +119,23 @@ class TermareController with Observable {
     }
   }
 
+  void setPtyWindowSize(Size size) {
+    final int row = size.height ~/ theme.letterHeight;
+    // 列数
+    final int column = size.width ~/ theme.letterWidth;
+    rowLength = row;
+    columnLength = column;
+    dirty = true;
+    notifyListeners();
+  }
+
   void setFontSize(double fontSize) {
     theme.fontSize = fontSize;
     final Size size = window.physicalSize;
-    print(size);
-    print(window.devicePixelRatio);
     final double screenWidth = size.width / window.devicePixelRatio;
     final double screenHeight = size.height / window.devicePixelRatio;
     // 行数
-    final int row = screenHeight ~/ theme.letterHeight;
-    // 列数
-    final int column = screenWidth ~/ theme.letterWidth;
-    print('< row : $row column : $column>');
-    rowLength = row - 3;
-    columnLength = column - 2;
+    setPtyWindowSize(Size(screenWidth, screenHeight));
     dirty = true;
     notifyListeners();
   }
@@ -170,7 +178,7 @@ class TermareController with Observable {
 
   void verboseExec(void Function() call) {}
   void parseOutput(String data, {bool verbose = true}) {
-    print('data->parseOutput->$data');
+    print('$red $whiteBackground parseOutput->$data');
     for (int i = 0; i < data.length; i++) {
       final List<int> codeUnits = data[i].codeUnits;
       // print('codeUnits->${codeUnits}');
@@ -207,8 +215,9 @@ class TermareController with Observable {
 
         if (eq(codeUnits, [0x09])) {
           moveToPosition(4);
-          if (verbose)
+          if (verbose) {
             PrintUtil.printn('<- C0 Horizontal Tabulation ->', 31, 47);
+          }
           // print('<- Horizontal Tabulation ->');
           continue;
         }
@@ -216,13 +225,17 @@ class TermareController with Observable {
             eq(codeUnits, [0x0b]) ||
             eq(codeUnits, [0x0c])) {
           moveToNextLinePosition();
-          if (verbose) PrintUtil.printn('<- C0 Line Feed ->', 31, 47);
+          if (verbose) {
+            PrintUtil.printn('<- C0 Line Feed ->', 31, 47);
+          }
           continue;
         }
         if (eq(codeUnits, [0x0d])) {
           // ascii 13
           moveToLineFirstPosition();
-          if (verbose) PrintUtil.printn('<- C0 Carriage Return ->', 31, 47);
+          if (verbose) {
+            PrintUtil.printn('<- C0 Carriage Return ->', 31, 47);
+          }
           continue;
         }
 
@@ -230,7 +243,9 @@ class TermareController with Observable {
           // print('<- ESC ->');
           i += 1;
           final String curStr = data[i];
-          if (verbose) PrintUtil.printd('preStr-> ESC curStr->$curStr', 31);
+          if (verbose) {
+            PrintUtil.printd('preStr-> ESC curStr->$curStr', 31);
+          }
           switch (curStr) {
             case '[':
               i += 1;
@@ -300,6 +315,7 @@ class TermareController with Observable {
           continue;
         }
         // PrintUtil.printd('cache.length -> ${cache.length}', 31);
+        // TODO
         if (cache.length < currentPointer.y + 1) {
           // 会越界
           cache.length = currentPointer.y + 1;
