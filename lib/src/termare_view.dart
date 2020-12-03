@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:global_repository/global_repository.dart';
 import 'package:termare/src/termare_controller.dart';
 
 import 'painter/termare_painter.dart';
 import 'utils/keyboard_handler.dart';
+import 'utils/sequences_test.dart';
 
 class TermareView extends StatefulWidget {
   const TermareView({Key key, this.controller, this.keyboardInput})
@@ -38,10 +40,16 @@ class _TermareViewState extends State<TermareView>
       const Duration(milliseconds: 200),
     );
     // SequencesTest.testMang(controller);
-    // SequencesTest.testIsOut(controller);
+    // SequencesTest.testIsOut(widget.controller);
     // SequencesTest.testColorText(controller);
     widget.controller.dirty = true;
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    SystemChannels.keyEvent.setMessageHandler(null);
+    super.dispose();
   }
 
   @override
@@ -51,31 +59,51 @@ class _TermareViewState extends State<TermareView>
         focusNode.requestFocus();
         SystemChannels.textInput.invokeMethod<void>('TextInput.show');
       },
+      onPanDown: (details) {
+        curOffset =
+            -widget.controller.startLine * widget.controller.theme.letterHeight;
+      },
       onPanUpdate: (details) {
         widget.controller.autoScroll = false;
         widget.controller.dirty = true;
         if (details.delta.dy > 0) {
+          // 往下滑动
+
+          curOffset += details.delta.dy;
           if (curOffset > 0) {
             curOffset = 0;
             return;
           }
-          curOffset += details.delta.dy;
-          print('往下滑动');
-        }
-        if (details.delta.dy < 0) {
           final int outLine = -curOffset.toInt() ~/
               widget.controller.theme.letterHeight.toInt();
-          if (widget.controller.currentPointer.dy - outLine <
-              widget.controller.rowLength) {
-            return;
-          }
-          curOffset += details.delta.dy;
-          print('controller${widget.controller.currentPointer.dy - outLine}');
-          print('往上滑动');
+          widget.controller.startLine = outLine;
         }
-        print(
-          'curOffset->$curOffset  details.delta.dy->${details.delta.dy}  details.globalPosition->${details.globalPosition}',
-        );
+        if (details.delta.dy < 0) {
+          // 往上滑动
+          // TODO
+          // 当内容还没有满一个终端高度的时候
+          if (widget.controller.cache.length > widget.controller.rowLength) {
+            curOffset += details.delta.dy;
+
+            int outLine =
+                -curOffset ~/ widget.controller.theme.letterHeight.toInt();
+            if (outLine + widget.controller.rowLength - 1 >
+                widget.controller.cache.length) {
+              outLine = widget.controller.cache.length -
+                  widget.controller.rowLength +
+                  1;
+              curOffset = -outLine * widget.controller.theme.letterHeight;
+            }
+            widget.controller.startLine = outLine;
+          }
+
+          // PrintUtil.printD(
+          //     'outLine->${widget.controller.startLine} ${widget.controller.cache.length} ${widget.controller.rowLength} ',
+          //     [31]);
+          // print('controller${widget.controller.currentPointer.dy - outLine}');
+
+        }
+
         setState(() {});
       },
       onPanEnd: (details) {
@@ -107,35 +135,44 @@ class _TermareViewState extends State<TermareView>
         animationController.addListener(() {
           final double shouldOffset = animationController.value;
           widget.controller.dirty = true;
-
-          // if (pixelsPerSecondDy > 0) {
-          //   if (shouldOffset > 0) {
-          //     curOffset = 0;
-          //   } else {
-          //     curOffset = shouldOffset;
-          //   }
-          // }
-          // print('curOffset------------>$curOffset');
-          curOffset = shouldOffset;
+          // print('shouldOffset->$shouldOffset');
           if (pixelsPerSecondDy > 0) {
-            final int outLine = -curOffset.toInt() ~/
-                widget.controller.theme.letterHeight.toInt();
-            if (widget.controller.currentPointer.dy - outLine <
-                widget.controller.rowLength) {
-              return;
-            }
+            // 往下滑动
+
             curOffset = shouldOffset;
+            if (curOffset > 0) {
+              curOffset = 0;
+              animationController.stop();
+            }
+            final int outLine =
+                -curOffset ~/ widget.controller.theme.letterHeight;
+            widget.controller.startLine = outLine;
+          }
+          if (pixelsPerSecondDy < 0) {
+            if (widget.controller.cache.length > widget.controller.rowLength) {
+              curOffset = shouldOffset;
+
+              int outLine = -curOffset ~/ widget.controller.theme.letterHeight;
+              if (outLine + widget.controller.rowLength - 1 >
+                  widget.controller.cache.length) {
+                // 做多往上滑动到输入光标上一个格子
+                outLine = widget.controller.cache.length -
+                    widget.controller.rowLength +
+                    1;
+                curOffset = -outLine * widget.controller.theme.letterHeight;
+                animationController.stop();
+              }
+              widget.controller.startLine = outLine;
+            }
+
+            // PrintUtil.printD(
+            //     'outLine->${widget.controller.startLine} ${widget.controller.cache.length} ${widget.controller.rowLength} ',
+            //     [31]);
+            // print('controller${widget.controller.currentPointer.dy - outLine}');
+
           }
 
-          if (curOffset > 0) {
-            curOffset = 0;
-          }
           setState(() {});
-          // final int outLine =
-          //     -curOffset.toInt() ~/ controller.theme.letterHeight.toInt();
-          // if (controller.currentPointer.dy - outLine < controller.rowLength) {
-          //   return;
-          // }
         });
         animationController.animateWith(clampingScrollSimulation);
       },
@@ -156,21 +193,6 @@ class _TermareViewState extends State<TermareView>
                     return CustomPaint(
                       painter: TermarePainter(
                         controller: widget.controller,
-                        defaultOffsetY: curOffset,
-                        lastLetterPositionCall: (lastLetterOffset) async {
-                          // this.lastLetterOffset = lastLetterOffset;
-                          print('lastLetterOffset : $lastLetterOffset');
-                          curOffset += lastLetterOffset;
-                          // if (!scrollLock && lastLetterOffset > 0) {
-                          //   scrollLock = true;
-                          //   await Future<void>.delayed(
-                          //     const Duration(milliseconds: 100),
-                          //   );
-                          //   curOffset -= lastLetterOffset;
-                          //   setState(() {});
-                          //   scrollLock = false;
-                          // }
-                        },
                         color: const Color(0xff811016),
                       ),
                     );
