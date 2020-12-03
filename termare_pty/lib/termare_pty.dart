@@ -29,22 +29,16 @@ class _TermarePtyState extends State<TermarePty> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     final Size size = window.physicalSize;
-    print(size);
-    print(window.devicePixelRatio);
+
     final double screenWidth = size.width / window.devicePixelRatio;
     final double screenHeight = size.height / window.devicePixelRatio;
     // 行数
     final int row = screenHeight ~/ TermareStyles.termux.letterHeight;
     // 列数
     final int column = screenWidth ~/ TermareStyles.termux.letterWidth;
-    print('< row : $row column : $column>');
+    print('$this < row : $row column : $column>');
     controller = widget.controller ??
         TermareController(
-          environment: {
-            'TERM': 'screen-256color',
-            'PATH': '/data/data/com.nightmare/files/usr/bin:' +
-                Platform.environment['PATH'],
-          },
           rowLength: row - 3,
           columnLength: column - 2,
         );
@@ -55,19 +49,13 @@ class _TermarePtyState extends State<TermarePty> with TickerProviderStateMixin {
               : 'libterm.so',
           rowLen: row,
           columnLen: column - 2,
-          environment: controller.environment,
+          environment: {
+            'TERM': 'screen-256color',
+            'PATH': '/data/data/com.nightmare/files/usr/bin:' +
+                Platform.environment['PATH'],
+          },
         );
     init();
-  }
-
-  @override
-  void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback(_onAfterRendering);
-    super.didChangeDependencies();
-  }
-
-  void _onAfterRendering(Duration timeStamp) {
-    print('$this 刷新 ${MediaQuery.of(context).viewInsets}');
   }
 
   Future<void> init() async {
@@ -78,7 +66,6 @@ class _TermarePtyState extends State<TermarePty> with TickerProviderStateMixin {
       final String cur = unixPtyC.read();
       // print(('cur->$cur'));
       if (cur.isNotEmpty) {
-        controller.currentRead = cur;
         if (cur.contains('Audio')) {
           // print('等回去');
           print(cur);
