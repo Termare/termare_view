@@ -13,9 +13,7 @@ TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 4096);
 class TermarePainter extends CustomPainter {
   TermarePainter({
     this.controller,
-    this.defaultOffsetY,
     this.color = Colors.white,
-    this.lastLetterPositionCall,
   }) {
     termWidth = controller.columnLength * controller.theme.letterWidth;
     termHeight = controller.rowLength * controller.theme.letterHeight;
@@ -44,8 +42,6 @@ class TermarePainter extends CustomPainter {
     Colors.cyan,
   ];
   final Color color;
-  final double defaultOffsetY;
-  final void Function(double lastLetterPosition) lastLetterPositionCall;
   double padding;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
 
@@ -92,19 +88,17 @@ class TermarePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
-    final int outLine =
-        -defaultOffsetY.toInt() ~/ controller.theme.letterHeight.toInt();
-    // PrintUtil.printD('outLine->$outLine', [31]);
     final int realColumnLen = math.min(
       controller.cache.length,
       controller.rowLength,
     );
     // PrintUtil.printD('realColumnLen->$realColumnLen', [31]);
     for (int y = 0; y < realColumnLen; y++) {
-      if (y + outLine >= controller.cache.length) {
+      if (y + controller.startLine >= controller.cache.length) {
         break;
       }
-      final List<LetterEntity> line = controller.cache[y + outLine];
+      final List<LetterEntity> line =
+          controller.cache[y + controller.startLine];
       if (line == null) {
         continue;
       }
@@ -131,7 +125,7 @@ class TermarePainter extends CustomPainter {
             canvas,
             Offset(
               letterEntity.position.x * controller.theme.letterWidth,
-              (letterEntity.position.y - outLine) *
+              (letterEntity.position.y - controller.startLine) *
                       controller.theme.letterHeight +
                   2,
             ),
@@ -139,21 +133,29 @@ class TermarePainter extends CustomPainter {
       }
     }
 
-    if (controller.cache.length > realColumnLen + outLine) {
-      // TODO  应该滑动上去一点
-      if (controller.autoScroll) {
-        lastLetterPositionCall(
-          -controller.theme.letterHeight *
-              (controller.cache.length - realColumnLen - outLine),
-        );
-      }
-    } else {}
     if (controller.showLine) {
       drawLine(canvas);
     }
     controller.dirty = false;
 
-    paintCursor(canvas, outLine);
+    paintCursor(canvas, controller.startLine);
+    if (controller.cache.length > realColumnLen + controller.startLine) {
+      // TODO  应该滑动上去一点
+      if (controller.autoScroll) {
+        Future.delayed(Duration(milliseconds: 10), () {
+          controller.startLine += controller.cache.length -
+              controller.startLine -
+              controller.rowLength +
+              1;
+          controller.dirty = true;
+          controller.notifyListeners();
+        });
+        // lastLetterPositionCall(
+        //   -controller.theme.letterHeight *
+        //       (controller.cache.length - realColumnLen - controller.startLine),
+        // );
+      }
+    } else {}
   }
 
   void paintText(Canvas canva) {}
