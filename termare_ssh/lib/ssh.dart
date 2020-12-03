@@ -35,7 +35,6 @@ class _MyHomePageState extends State<TermareSsh> {
     print('< row : $row column : $column>');
     controller = widget.controller ??
         TermareController(
-          environment: {},
           rowLength: row - 2,
           columnLength: column - 2,
         );
