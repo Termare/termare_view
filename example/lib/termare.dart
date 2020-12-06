@@ -10,12 +10,11 @@ class Termare extends StatefulWidget {
   _TermareState createState() => _TermareState();
 }
 
-class _TermareState extends State<Termare> with WidgetsBindingObserver {
+class _TermareState extends State<Termare> {
   TermareController controller;
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     final Size size = window.physicalSize;
     print('size->$size');
     print('window.devicePixelRatio->${window.devicePixelRatio}');
@@ -31,38 +30,14 @@ class _TermareState extends State<Termare> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeMetrics() {
-    super.didChangeMetrics();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final Size size = window.physicalSize;
-      final double screenWidth = size.width / window.devicePixelRatio;
-      final double screenHeight = size.height / window.devicePixelRatio -
-          MediaQuery.of(context).padding.top;
-      final double keyoardHeight = MediaQuery.of(context).viewInsets.bottom;
-      print('kToolbarHeight->${MediaQuery.of(context).viewInsets.top}');
-      print('kToolbarHeight->${MediaQuery.of(context).padding.top}');
-      // SafeArea()
-      print(
-        ' ${Size(screenWidth, screenHeight - keyoardHeight)}',
-      );
-      controller.setPtyWindowSize(
-        Size(screenWidth, screenHeight - keyoardHeight),
-      );
-      controller.autoScroll = true;
-      controller.dirty = true;
-      controller.notifyListeners();
-    });
-  }
-
-  @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       endDrawer: Material(
         textStyle: TextStyle(
           color: Colors.white,
