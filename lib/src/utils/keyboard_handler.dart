@@ -11,9 +11,8 @@ class KeyboardHandler {
   KeyboardHandler(this.keyboardInput);
   final KeyboardInput keyboardInput;
   bool enableShift = false;
-  Future<dynamic> handleKeyEvent(dynamic message) async {
-    final RawKeyEvent event =
-        RawKeyEvent.fromMessage(message as Map<String, dynamic>);
+  Future<dynamic> handleKeyEvent(RawKeyEvent message) async {
+    final RawKeyEvent event = message;
     print('event->$event');
     // TODO
     // shift按下时enable，抬起时enable为false
@@ -61,7 +60,13 @@ class KeyboardHandler {
           enableShift = false;
         }
       } else {
+        if (event.logicalKey.keyId == 0x10200000004) {
+          // 安卓的返回键
+          print('安卓的返回键');
+          return;
+        }
         // print(event.logicalKey);
+        print('event.logicalKey.keyId -> ${event.logicalKey.keyId}');
         keyboardInput?.call(utf8.decode([event.logicalKey.keyId]));
         // print(utf8.decode([event.logicalKey.keyId]));
       }
