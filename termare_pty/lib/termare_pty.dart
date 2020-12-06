@@ -88,10 +88,23 @@ class _TermarePtyState extends State<TermarePty> with TickerProviderStateMixin {
         unixPtyC.write(text);
       },
       child: TermareView(
+        onTextInput: (v) {
+          print('onTextInput -> ${v.text[v.selection.baseOffset - 1]}');
+          print('onTextInput -> ${v.selection.baseOffset}');
+          print('$v');
+          unixPtyC.write(v.text[v.selection.baseOffset - 1]);
+          return null;
+        },
         keyboardInput: (String data) {
           unixPtyC.write(data);
         },
         controller: controller,
+        onAction: (action) {
+          print('action->$action');
+        },
+        onKeyStroke: (key) {
+          print('key->$key');
+        },
       ),
     );
   }
