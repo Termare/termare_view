@@ -15,7 +15,7 @@ class TermareView extends StatefulWidget {
     Key key,
     this.controller,
     this.keyboardInput,
-    @required this.onTextInput,
+    this.onTextInput,
     this.onKeyStroke,
     this.onAction,
   }) : super(key: key);
@@ -104,22 +104,21 @@ class _TermareViewState extends State<TermareView>
   Widget build(BuildContext context) {
     return InputListener(
       focusNode: _focusNode,
-      onTextInput: widget.onTextInput,
-      // onTextInput: (v) {
-      //   print('onTextInput -> ${v.text[v.selection.baseOffset - 1]}');
-      //   print('onTextInput -> ${v.selection.baseOffset}');
-      //   print('$v');
-
-      //   return null;
-      // },
-      onAction: widget.onAction,
-      onKeyStroke: widget.onKeyStroke,
-      // onAction: (a) {
-      //   print('onAction -> $a');
-      // },
-      // onKeyStroke: (key) {
-      //   print('onKeyStroke -> $key');
-      // },
+      onTextInput: (TextEditingValue value) {
+        print('onTextInput -> $value');
+        widget.keyboardInput(value.text[value.selection.baseOffset - 1]);
+        return null;
+      },
+      onAction: (TextInputAction action) {
+        if (action == TextInputAction.done) {
+          widget.keyboardInput('\n');
+        }
+        widget.onAction(action);
+      },
+      onKeyStroke: (RawKeyEvent key) {
+        keyboardHandler.handleKeyEvent(key);
+        widget.onKeyStroke(key);
+      },
       child: Builder(
         builder: (context) {
           return GestureDetector(
