@@ -140,9 +140,8 @@ class TermarePainter extends CustomPainter {
 
     paintCursor(canvas, controller.startLine);
     if (controller.cache.length > realColumnLen + controller.startLine) {
-      // TODO  应该滑动上去一点
       if (controller.autoScroll) {
-        Future.delayed(Duration(milliseconds: 10), () {
+        Future.delayed(const Duration(milliseconds: 10), () {
           controller.startLine += controller.cache.length -
               controller.startLine -
               controller.rowLength +
