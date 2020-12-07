@@ -1,12 +1,10 @@
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
-import 'package:global_repository/global_repository.dart';
 import 'package:termare/src/config/cache.dart';
 import 'package:termare/src/model/letter_eneity.dart';
-import 'package:termare/src/painter/model/position.dart';
 import 'package:termare/src/termare_controller.dart';
-import 'dart:math' as math;
 
 TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 4096);
 
