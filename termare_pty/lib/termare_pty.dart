@@ -83,22 +83,12 @@ class _TermarePtyState extends State<TermarePty> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onDoubleTap: () async {
-        final String text = (await Clipboard.getData('text/plain')).text;
-        unixPtyC.write(text);
-      },
+      onDoubleTap: () async {},
       child: TermareView(
         keyboardInput: (String data) {
-          // print('keyboardInput->$data');
           unixPtyC.write(data);
         },
         controller: controller,
-        onAction: (TextInputAction action) {
-          print('action->$action');
-        },
-        onKeyStroke: (RawKeyEvent key) {
-          print('key->$key');
-        },
       ),
     );
   }
