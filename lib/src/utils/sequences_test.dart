@@ -12,8 +12,19 @@ class SequencesTest {
   }
 
   static Future<void> testMang(TermareController controller) async {
-    List<String> list = ['⣿', '⣷', '⣯', '⣟', '⡿', '⣿', '⢿', '⣻', '⣽', '⣾'];
-    for (String str in list) {
+    final List<String> list = [
+      '⣿',
+      '⣷',
+      '⣯',
+      '⣟',
+      '⡿',
+      '⣿',
+      '⢿',
+      '⣻',
+      '⣽',
+      '⣾'
+    ];
+    for (final String str in list) {
       controller.write('$str\b');
       await Future<void>.delayed(const Duration(milliseconds: 10));
     }
