@@ -25,7 +25,10 @@ class InputListener extends StatefulWidget {
     this.autofocus = false,
     this.listenKeyStroke = true,
     this.readOnly = false,
-    this.initEditingState = TextEditingValue.empty,
+    this.initEditingState = const TextEditingValue(
+      text: '  ',
+      selection: TextSelection.collapsed(offset: 1),
+    ),
   });
 
   final Widget child;
