@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:global_repository/global_repository.dart';
 import 'package:termare/src/combining_characters.dart';
-import 'package:termare/termare.dart';
 
 typedef KeyboardInput = void Function(String data);
 
