@@ -105,7 +105,7 @@ class _TermareViewState extends State<TermareView>
       onTextInput: (TextEditingValue value) {
         //
         print('onTextInput -> $value');
-        widget.keyboardInput(value.text.trim());
+        widget.keyboardInput(value.text.substring(1, value.text.length - 1));
         return const TextEditingValue(
           text: '  ',
           selection: TextSelection.collapsed(offset: 1),
@@ -127,6 +127,10 @@ class _TermareViewState extends State<TermareView>
         builder: (context) {
           return GestureDetector(
             behavior: HitTestBehavior.translucent,
+            onDoubleTap: () async {
+              final String text = (await Clipboard.getData('text/plain')).text;
+              widget.keyboardInput(text);
+            },
             onTap: () {
               InputListener.of(context).requestKeyboard();
               print('按下');
