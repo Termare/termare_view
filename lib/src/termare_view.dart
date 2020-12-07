@@ -2,13 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:global_repository/global_repository.dart';
 import 'package:termare/src/input/input_listener.dart';
 import 'package:termare/src/termare_controller.dart';
 
 import 'painter/termare_painter.dart';
 import 'utils/keyboard_handler.dart';
-import 'utils/sequences_test.dart';
 
 class TermareView extends StatefulWidget {
   const TermareView({
@@ -105,17 +103,23 @@ class _TermareViewState extends State<TermareView>
     return InputListener(
       focusNode: _focusNode,
       onTextInput: (TextEditingValue value) {
+        //
         print('onTextInput -> $value');
-        widget.keyboardInput(value.text[value.selection.baseOffset - 1]);
-        return null;
+        widget.keyboardInput(value.text.trim());
+        return const TextEditingValue(
+          text: '  ',
+          selection: TextSelection.collapsed(offset: 1),
+        );
       },
       onAction: (TextInputAction action) {
+        // 当软件盘回车按下的时候
         if (action == TextInputAction.done) {
           widget.keyboardInput('\n');
         }
         widget.onAction(action);
       },
       onKeyStroke: (RawKeyEvent key) {
+        // 26键盘之外的按键按下的时候
         keyboardHandler.handleKeyEvent(key);
         widget.onKeyStroke(key);
       },
