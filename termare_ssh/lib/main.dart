@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'ssh.dart';
+import 'termare_ssh.dart';
 
 void main() {
   runApp(MyApp());
