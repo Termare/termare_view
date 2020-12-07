@@ -49,10 +49,10 @@ class _TermarePtyState extends State<TermarePty> with TickerProviderStateMixin {
               : 'libterm.so',
           rowLen: row,
           columnLen: column - 2,
-          environment: {
+          environment: <String, String>{
             'TERM': 'screen-256color',
-            'PATH': '/data/data/com.nightmare/files/usr/bin:' +
-                Platform.environment['PATH'],
+            'PATH':
+                '/data/data/com.nightmare/files/usr/bin:${Platform.environment['PATH']}',
           },
         );
     init();
@@ -93,10 +93,10 @@ class _TermarePtyState extends State<TermarePty> with TickerProviderStateMixin {
           unixPtyC.write(data);
         },
         controller: controller,
-        onAction: (action) {
+        onAction: (TextInputAction action) {
           print('action->$action');
         },
-        onKeyStroke: (key) {
+        onKeyStroke: (RawKeyEvent key) {
           print('key->$key');
         },
       ),
