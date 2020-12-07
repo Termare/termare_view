@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
+// copy 至 xterm.dart
 typedef KeyStrokeHandler = void Function(RawKeyEvent);
 typedef InputHandler = TextEditingValue Function(TextEditingValue);
 typedef ActionHandler = void Function(TextInputAction);
@@ -157,16 +158,16 @@ class InputListenerState extends State<InputListener>
     if (_hasInputConnection) {
       _conn.show();
     } else {
-      final config = TextInputConfiguration();
+      const TextInputConfiguration config = TextInputConfiguration();
       final client = TerminalTextInputClient(onInput, onAction);
       _conn = TextInput.attach(client, config);
 
       _conn.show();
 
-      final dx = 0.0;
-      final dy = 0.0;
+      const double dx = 0.0;
+      const double dy = 0.0;
       _conn.setEditableSizeAndTransform(
-        Size(10, 10),
+        const Size(10, 10),
         Matrix4.translationValues(dx, dy, 0.0),
       );
 
@@ -202,14 +203,17 @@ class TerminalTextInputClient extends TextInputClient {
 
   TextEditingValue _savedValue;
 
+  @override
   TextEditingValue get currentTextEditingValue {
     return _savedValue;
   }
 
+  @override
   AutofillScope get currentAutofillScope {
     return null;
   }
 
+  @override
   void updateEditingValue(TextEditingValue value) {
     // print('updateEditingValue $value');
 
@@ -226,19 +230,23 @@ class TerminalTextInputClient extends TextInputClient {
     // print('updateEditingValue $value');
   }
 
+  @override
   void performAction(TextInputAction action) {
     // print('performAction $action');
     onAction(action);
   }
 
+  @override
   void updateFloatingCursor(RawFloatingCursorPoint point) {
     // print('updateFloatingCursor');
   }
 
+  @override
   void showAutocorrectionPromptRect(int start, int end) {
     // print('showAutocorrectionPromptRect');
   }
 
+  @override
   void connectionClosed() {
     // print('connectionClosed');
   }
