@@ -12,14 +12,14 @@ class KeyboardHandler {
   bool enableShift = false;
   Future<dynamic> handleKeyEvent(RawKeyEvent message) async {
     final RawKeyEvent event = message;
-    print('event->$event');
+    // print('event->$event');
     // TODO
     // shift按下时enable，抬起时enable为false
 
     if (event is RawKeyDownEvent) {
       switch (event.logicalKey.keyId) {
         case 0x10007002a:
-          print('删除');
+          // print('删除');
           keyboardInput?.call(utf8.decode(<int>[127]));
           return;
           break;

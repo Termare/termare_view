@@ -178,9 +178,10 @@ class TermareController with Observable {
   void verboseExec(void Function() call) {}
   void parseOutput(String data, {bool verbose = true}) {
     print('$red $whiteBackground parseOutput->$data');
+    print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       final List<int> codeUnits = data[i].codeUnits;
-      // print('codeUnits->${codeUnits}');
+      print('codeUnits->${codeUnits}');
       if (codeUnits.length == 1) {
         // 说明单字节
         if (eq(codeUnits, [0x07])) {
@@ -258,6 +259,23 @@ class TermareController with Observable {
               switch (curStr) {
                 // 27 91 75
                 case 'K':
+                  print(currentPointer);
+                  final TextPainter painter = painterCache.getOrPerformLayout(
+                    TextSpan(
+                      text: ' ',
+                      style: defaultStyle,
+                    ),
+                  );
+                  // PrintUtil.printD('currentPointer->$currentPointer');
+                  // PrintUtil.printD('data[i]->${data[i]}');
+
+                  cache[currentPointer.y][currentPointer.x] = LetterEntity(
+                    content: ' ',
+                    letterWidth: painter.width,
+                    letterHeight: painter.height,
+                    position: currentPointer,
+                    textStyle: defaultStyle.copyWith(fontSize: theme.fontSize),
+                  );
                   // i += 1;
                   // print(line[i - 5]);
 

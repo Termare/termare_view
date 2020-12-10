@@ -104,7 +104,7 @@ class _TermareViewState extends State<TermareView>
       focusNode: _focusNode,
       onTextInput: (TextEditingValue value) {
         //
-        print('onTextInput -> $value');
+        // print('onTextInput -> $value');
         widget.keyboardInput(value.text.substring(1, value.text.length - 1));
         return const TextEditingValue(
           text: '  ',
@@ -121,7 +121,6 @@ class _TermareViewState extends State<TermareView>
       onKeyStroke: (RawKeyEvent key) {
         // 26键盘之外的按键按下的时候
         keyboardHandler.handleKeyEvent(key);
-        widget.onKeyStroke(key);
       },
       child: Builder(
         builder: (context) {
