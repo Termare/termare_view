@@ -35,6 +35,8 @@ analyzer:
     sdk_version_async_exported_from_core: ignore
   exclude:
     - "bin/cache/**"
+    - "termare_pty/**"
+    - "termare_ssh/**"
     # the following two are relative to the stocks example and the flutter package respectively
     # see https://github.com/dart-lang/sdk/issues/28463
     - "lib/i18n/messages_*.dart"
