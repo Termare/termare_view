@@ -70,15 +70,11 @@ class _MyHomePageState extends State<TermareSsh> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: TermareView(
-          controller: controller,
-          keyboardInput: (String data) {
-            client?.sendChannelData(Uint8List.fromList(utf8.encode(data)));
-          },
-        ),
-      ),
+    return TermareView(
+      controller: controller,
+      keyboardInput: (String data) {
+        client?.sendChannelData(Uint8List.fromList(utf8.encode(data)));
+      },
     );
   }
 }
