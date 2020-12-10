@@ -2,20 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ac9f3cf1-eda8-4519-ab10-910bc362296a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/example/lib/termare.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/termare.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/example/lib/termare.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/example/lib/termare.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/painter/termare_painter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/painter/termare_painter.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/termare_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/termare_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/termare_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/termare_view.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/utils/sequences_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/lib/src/utils/sequences_test.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/termare_pty/lib/termare_pty.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/termare_pty/lib/termare_pty.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/termare_ssh/lib/ssh.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/termare_ssh/lib/ssh.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/painter/termare_painter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/painter/termare_painter.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/termare_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/termare_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/termare_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/termare_view.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/utils/sequences_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/utils/sequences_test.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/termare_pty/lib/termare_pty.dart" beforeDir="false" afterPath="$PROJECT_DIR$/termare_pty/lib/termare_pty.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/termare_ssh/lib/ssh.dart" beforeDir="false" afterPath="$PROJECT_DIR$/termare_ssh/lib/ssh.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/macos/Flutter/ephemeral/.symlinks/plugins/termare/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/termare.iml" beforeDir="false" afterPath="$PROJECT_DIR$/termare.iml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.pub/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -38,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/termare.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="19">
-              <caret line="1" column="7" lean-forward="true" selection-start-line="1" selection-start-column="7" selection-end-line="1" selection-end-column="7" />
+            <state relative-caret-position="76">
+              <caret line="4" selection-start-line="4" selection-end-line="4" />
               <folding>
                 <element signature="e#41#78#0" expanded="true" />
               </folding>
@@ -58,8 +47,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectFrameBounds">
+    <option name="x" value="17" />
     <option name="y" value="23" />
-    <option name="width" value="1920" />
+    <option name="width" value="1913" />
     <option name="height" value="986" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -68,14 +58,43 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="ProjectPane" />
       <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="termare" type="b2602c69:ProjectViewProjectNode" />
+              <item name="termare" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="termare" type="b2602c69:ProjectViewProjectNode" />
+              <item name="termare" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="termare" type="b2602c69:ProjectViewProjectNode" />
+              <item name="termare" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="termare" type="b2602c69:ProjectViewProjectNode" />
+              <item name="termare" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="input" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
       <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="dart.analysis.tool.window.force.activate" value="false" />
+    <property name="io.flutter.reload.alreadyRun" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
@@ -105,42 +124,41 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1920" height="986" extended-state="0" />
-    <editor active="true" />
+    <frame x="17" y="23" width="1913" height="986" extended-state="0" />
     <layout>
-      <window_info id="Capture Tool" />
-      <window_info id="Structure" side_tool="true" />
-      <window_info id="Favorites" side_tool="true" />
-      <window_info id="Build Variants" side_tool="true" />
-      <window_info id="Image Layers" />
-      <window_info id="Designer" />
-      <window_info id="Captures" side_tool="true" />
-      <window_info id="Resources Explorer" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24973376" />
-      <window_info anchor="bottom" id="Run" />
-      <window_info anchor="bottom" id="Dart Analysis" />
-      <window_info anchor="bottom" id="Logcat" />
-      <window_info anchor="bottom" id="TODO" />
-      <window_info anchor="bottom" id="Debug" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Android Profiler" show_stripe_button="false" />
-      <window_info anchor="right" id="Word Book" side_tool="true" />
-      <window_info anchor="right" id="Device File Explorer" side_tool="true" />
-      <window_info anchor="right" id="Capture Analysis" />
-      <window_info anchor="right" id="Theme Preview" />
-      <window_info anchor="right" id="Flutter Inspector" />
-      <window_info anchor="right" id="Flutter Outline" />
-      <window_info anchor="right" id="Palette&#9;" />
-      <window_info anchor="right" id="Flutter Performance" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24959914" />
+      <window_info id="Captures" order="1" side_tool="true" />
+      <window_info id="Structure" order="2" side_tool="true" />
+      <window_info id="Image Layers" order="3" />
+      <window_info id="Designer" order="4" />
+      <window_info id="Build Variants" order="5" side_tool="true" />
+      <window_info id="Resources Explorer" order="6" />
+      <window_info id="Capture Tool" order="7" />
+      <window_info id="Favorites" order="8" side_tool="true" />
+      <window_info anchor="bottom" id="Dart Analysis" order="0" />
+      <window_info anchor="bottom" id="Run" order="1" weight="0.32960895" />
+      <window_info anchor="bottom" id="TODO" order="2" />
+      <window_info anchor="bottom" id="Android Profiler" order="3" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Logcat" order="4" />
+      <window_info anchor="bottom" id="Debug" order="5" />
+      <window_info anchor="bottom" id="Terminal" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
+      <window_info anchor="right" id="Capture Analysis" order="1" />
+      <window_info anchor="right" id="Theme Preview" order="2" />
+      <window_info anchor="right" id="Flutter Inspector" order="3" />
+      <window_info anchor="right" id="Word Book" order="4" side_tool="true" />
+      <window_info anchor="right" id="Flutter Outline" order="5" />
+      <window_info anchor="right" id="Palette&#9;" order="6" />
+      <window_info anchor="right" id="Flutter Performance" order="7" />
     </layout>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/lib/termare.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="1" column="7" lean-forward="true" selection-start-line="1" selection-start-column="7" selection-end-line="1" selection-end-column="7" />
+        <state relative-caret-position="76">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
           <folding>
             <element signature="e#41#78#0" expanded="true" />
           </folding>
