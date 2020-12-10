@@ -60,14 +60,13 @@ class _TermarePtyState extends State<TermarePty> with TickerProviderStateMixin {
 
   Future<void> init() async {
     if (widget.autoFocus) {
-      SystemChannels.textInput.invokeMethod<void>('TextInput.show');
+
     }
     while (mounted) {
       final String cur = unixPtyC.read();
       // print(('cur->$cur'));
       if (cur.isNotEmpty) {
         if (cur.contains('Audio')) {
-          // print('等回去');
           print(cur);
         }
         controller.write(cur);
