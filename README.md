@@ -1,47 +1,4 @@
 
-# flutter_terminal
-
-Flutter重写的标准终端模拟器
-
-其实现方法参照termux在Android的实现 
-
-使用Flutter框架重写它的UI部分 
-
-并重写了termux的C语言部分
-
-## 开始使用
-在example下有一个多终端的简单例子
-
-## 现有项目集成
-### 添加依赖
-```
-    flutter_terminal:
-        git:
-          url: git://github.com/Nightmare-MY/flutter_terminal.git
-```
-
-### 添加so库
-
-目前我还没能够让此这个包能够直接被项目集成，所以你需要将prebuilt下对应平台的动态库复制到程序能获取到的地方。
-
-[prebuilt]()
-> android项目直接将对应设备的libterm.so放按libs文件夹即可
-
-### 导入包
-```dart
-import 'package:flutter_terminal/flutter_terminal.dart';
-```
-### 更改so库路径
-> 集成到安卓无需更改，只需要添加so库
-```
-NitermController.libPath=''
-```
-> 放在当前项目能获取到的地方
-
-### 注意！！！
-
-- 目前这个包还在测试阶段，里面还有大量的print输出，也请不要集成到现有的项目。
-
 ## 为何要用Flutter重写而不是安卓原生？
 
 除了个人的一系列想法之外，完全是由于Flutter的跨平台性，

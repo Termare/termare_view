@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nightmare.termare_example">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="new_term"
+        android:label="Termare_Example"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
