@@ -1,37 +1,55 @@
 # termare_view
-Flutter 开发的终端模拟器，是一个通过 canvas 渲染的上层组件，所以支持全平台。
-查看已经支持的序列？
-这个 view 就类似于 [xterm.js](https://github.com/xtermjs/xterm.js) 一样，仅仅是一个上层ui显示组件，你可以使用来自底层的终端流，亦或者是连接 ssh 服务器的终端流，只需要给这个组件输入，就能自动的解析终端序列渲染终端。
+支持全平台的终端模拟器，使用 Flutter 开发，是一个通过 canvas 渲染的上层组件，不依赖任何平台代码。
+[终端序列支持文档]()
+这个 view 就类似于 [xterm.js](https://github.com/xtermjs/xterm.js) 一样，仅仅是一个上层 UI 显示组件，你可以使用来自操作系统底层的终端流，亦或者是连接 ssh 服务器的终端流，只需要给这个组件输入，就能自动的解析终端序列渲染终端。
+
 ## 开始使用
+### 引入项目
+这是一个纯 flutter package，所以只需要在 yaml 配置文件的 dependencies 下引入:
+```
+termare_view:
+  git: https://github.com/termare/termare_view
+```
+### 创建终端控制器
+```
+TermareController controller = TermareController(
+  showBackgroundLine: true,
+);
+```
+### 使用组件
+```
+TermareView(
+  controller: controller,
+),
+```
+### 让终端显示一些东西
+```
+controller.write('hello termare_view');
+```
+代码在 example 中。
+## 更详细的例子
 
 ## 为何要用Flutter重写而不是安卓原生？
 
-除了个人的一系列想法之外，完全是由于Flutter的跨平台性，
-
-termux与Android-Terminal-Emulater的 UI 实现是通过java编写
-
-终端的创建与子进程的执行完全由jni完成
-
-它们最终只能运行于安卓设备上
-
-而其实这种创建虚拟终端的思想几乎是能用于任何UNIX平台的设备，也就是还有Macos，Linux
-
-## 为何它的表现并不如原始的安卓模拟器
-
-它截止目前只能识别一些带颜色的输出，原始的安卓模拟器带有一整套终端虚拟机的控制序列，
-Flutter当前作为很优秀的跨平台框架，我想也能用它来重写一套新的终端序列，从安卓前几代终端模拟器来看，
+- 一次编写，到处运行。
+- Flutter 当前作为非常优秀的跨平台框架，我想也能用它来编写一个全平台终端模拟器，从安卓前几代终端模拟器来看，
 这可能是一个比较漫长的过程，而我的时间并不太多，但我会尽量尝试重写。
+- 我喜欢尝试。
+更多原因请移步个人文章 -> 
 
+## 为何它的表现并不如操作系统原生的终端模拟器
 
-# 帮助开发？
+它截止目前只能解析一部分终端转义序列，并且解析的耗时受限于我的代码能力。
 
-## Terminal resources
+## 帮助开发？
+
+### Terminal resources
 
 - [XTerm control sequences](http://invisible-island.net/xterm/ctlseqs/ctlseqs.html)
 - [vt100.net](http://vt100.net/)
 - [Terminal codes (ANSI and terminfo equivalents)](http://wiki.bash-hackers.org/scripting/terminalcodes)
 
-## Terminal emulators
+### Terminal emulators
 
 - VTE (libvte): Terminal emulator widget for GTK+, mainly used in gnome-terminal.
   [Source](https://github.com/GNOME/vte), [Open Issues](https://bugzilla.gnome.org/buglist.cgi?quicksearch=product%3A%22vte%22+),
