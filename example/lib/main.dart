@@ -22,12 +22,15 @@ class Example extends StatefulWidget {
 }
 
 class _ExampleState extends State<Example> {
-  TermareController controller = TermareController();
+  TermareController controller = TermareController(
+    showBackgroundLine: true,
+  );
 
   @override
   void initState() {
     super.initState();
     controller.write('test');
+    SequencesTest.testC0(controller);
   }
 
   @override

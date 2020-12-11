@@ -22,6 +22,7 @@ class TermareController with Observable {
     this.theme,
     this.rowLength = 57,
     this.columnLength = 41,
+    this.showBackgroundLine = false,
   }) {
     theme ??= TermareStyles.termux;
     defaultStyle = TextStyle(
@@ -75,7 +76,7 @@ class TermareController with Observable {
   // 当从 pty 读出内容的时候就会自动滑动
   bool autoScroll = true;
   // 显示背景网格
-  bool showLine = false;
+  final bool showBackgroundLine;
 
   int rowLength;
   int columnLength;

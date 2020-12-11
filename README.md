@@ -1,11 +1,14 @@
 # termare_view
-Flutter 开发的文件管理器，提供快速集成、文件选择、反编译，支持桌面平台。
+Flutter 开发的终端模拟器，是一个通过 canvas 渲染的上层组件，所以支持全平台。
+查看已经支持的序列？
+这个 view 就类似于 [xterm.js](https://github.com/xtermjs/xterm.js) 一样，仅仅是一个上层ui显示组件，你可以使用来自底层的终端流，亦或者是连接 ssh 服务器的终端流，只需要给这个组件输入，就能自动的解析终端序列渲染终端。
+## 开始使用
 
 ## 为何要用Flutter重写而不是安卓原生？
 
 除了个人的一系列想法之外，完全是由于Flutter的跨平台性，
 
-termux与Android-Terminal-Emulater的UI实现是通过java编写
+termux与Android-Terminal-Emulater的 UI 实现是通过java编写
 
 终端的创建与子进程的执行完全由jni完成
 

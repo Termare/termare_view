@@ -131,7 +131,7 @@ class TermarePainter extends CustomPainter {
       }
     }
 
-    if (controller.showLine) {
+    if (controller.showBackgroundLine) {
       drawLine(canvas);
     }
     controller.dirty = false;

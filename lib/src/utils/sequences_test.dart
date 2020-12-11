@@ -53,24 +53,5 @@ class SequencesTest {
     controller.write('Line Feed\x0b\n');
     controller.write('Line Feed\x0c\n');
     controller.write('${'a' * 47}\x0dbbb\n');
-    // controller.write() 'Last login: Fri Nov 20 08:16:19 on console 啊';
-    controller.write(utf8.decode([
-      27,
-      91,
-      48,
-      49,
-      59,
-      51,
-      52,
-      109,
-      97,
-      99,
-      99,
-      116,
-      27,
-      91,
-      48,
-      109,
-    ]));
   }
 }
