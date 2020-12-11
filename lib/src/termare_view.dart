@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:termare/src/input/input_listener.dart';
-import 'package:termare/src/termare_controller.dart';
+import 'package:termare_view/src/input/input_listener.dart';
+import 'package:termare_view/src/termare_controller.dart';
 
 import 'painter/termare_painter.dart';
 import 'utils/keyboard_handler.dart';

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:termare/src/termare_controller.dart';
+import 'package:termare_view/src/termare_controller.dart';
 
 class SequencesTest {
   static Future<void> testChinese(TermareController controller) async {

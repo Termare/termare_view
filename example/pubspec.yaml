@@ -11,12 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  termare_pty:
-    path: ../termare_pty
-  termare_ssh:
-    path: ../termare_ssh
-
+  termare_view:
+    path: ../
 dev_dependencies:
   flutter_test:
     sdk: flutter

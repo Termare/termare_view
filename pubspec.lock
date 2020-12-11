@@ -86,7 +86,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "426fca163a47c971c4aa613f4e2c7bfe4c4f1237"
+      resolved-ref: e311afdf4d98b6e632bb844e36e83863f24bdc62
       url: "https://github.com/nightmare-space/global_repository"
     source: git
     version: "0.0.1"
