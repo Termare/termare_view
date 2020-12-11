@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:global_repository/global_repository.dart';
 import 'package:termare_view/src/combining_characters.dart';
 
 typedef KeyboardInput = void Function(String data);
@@ -10,6 +10,10 @@ class KeyboardHandler {
   KeyboardHandler(this.keyboardInput);
   final KeyboardInput keyboardInput;
   bool enableShift = false;
+  static bool _isdesktop() {
+    return Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+  }
+
   Future<dynamic> handleKeyEvent(RawKeyEvent message) async {
     final RawKeyEvent event = message;
     // print('event->$event');
@@ -45,7 +49,7 @@ class KeyboardHandler {
       if (enableShift) {
         print('当前shift已被按下');
         // 这儿在安卓与pc上不一样，安卓上是虚拟键盘，pc上是物理键盘
-        if (PlatformUtil.isDesktop()) {
+        if (_isdesktop()) {
           keyboardInput?.call(utf8.decode(<int>[event.logicalKey.keyId]));
         } else {
           keyboardInput?.call(

@@ -1,6 +1,6 @@
-# termare_example
+# example
 
-Demonstrates how to use the termare plugin.
+A new Flutter project.
 
 ## Getting Started
 

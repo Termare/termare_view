@@ -1,8 +1,6 @@
 import 'dart:ui';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:global_repository/global_repository.dart';
 import 'package:termare_view/src/painter/model/position.dart';
 
 import 'model/letter_eneity.dart';
@@ -31,7 +29,7 @@ class TermareController with Observable {
       fontSize: theme.fontSize,
       color: Colors.white,
       fontWeight: FontWeight.w500,
-      fontFamily: 'packages/termare/DroidSansMono',
+      fontFamily: 'packages/termare_view/DroidSansMono',
     );
     final Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
@@ -182,20 +180,19 @@ class TermareController with Observable {
     print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       final List<int> codeUnits = data[i].codeUnits;
-      print('codeUnits->${codeUnits}');
+      print('codeUnits->$codeUnits');
       if (codeUnits.length == 1) {
         // 说明单字节
         if (eq(codeUnits, [0x07])) {
-          PrintUtil.printn('<- C0 Bell ->', 31, 47);
+          // PrintUtil.printn('<- C0 Bell ->', 31, 47);
           continue;
         }
         if (eq(codeUnits, [0x08])) {
           // 光标左移动
           // verboseExec(() {});
           if (verbose) {
-            PrintUtil.printn('<- C0 Backspace ->', 31, 47);
+            // PrintUtil.printn('<- C0 Backspace ->', 31, 47);
           }
-          final Position prePosition = getToPosition(-1);
           // PrintUtil.printn(
           //     'currentPointer -> $currentPointer prePosition -> $prePosition',
           //     31,
@@ -217,7 +214,7 @@ class TermareController with Observable {
         if (eq(codeUnits, [0x09])) {
           moveToPosition(4);
           if (verbose) {
-            PrintUtil.printn('<- C0 Horizontal Tabulation ->', 31, 47);
+            // PrintUtil.printn('<- C0 Horizontal Tabulation ->', 31, 47);
           }
           // print('<- Horizontal Tabulation ->');
           continue;
@@ -227,7 +224,7 @@ class TermareController with Observable {
             eq(codeUnits, [0x0c])) {
           moveToNextLinePosition();
           if (verbose) {
-            PrintUtil.printn('<- C0 Line Feed ->', 31, 47);
+            // PrintUtil.printn('<- C0 Line Feed ->', 31, 47);
           }
           continue;
         }
@@ -235,7 +232,7 @@ class TermareController with Observable {
           // ascii 13
           moveToLineFirstPosition();
           if (verbose) {
-            PrintUtil.printn('<- C0 Carriage Return ->', 31, 47);
+            // PrintUtil.printn('<- C0 Carriage Return ->', 31, 47);
           }
           continue;
         }
@@ -245,7 +242,7 @@ class TermareController with Observable {
           i += 1;
           final String curStr = data[i];
           if (verbose) {
-            PrintUtil.printd('preStr-> ESC curStr->$curStr', 31);
+            // PrintUtil.printd('preStr-> ESC curStr->$curStr', 31);
           }
           switch (curStr) {
             case '[':
@@ -253,68 +250,69 @@ class TermareController with Observable {
               final String curStr = data[i];
               print(data.substring(i));
               if (verbose)
-                PrintUtil.printd(
-                  'preStr-> \x1b[32;7m[\x1b[31m ->curStr-> \x1b[32m$curStr\x1b[31m',
-                  31,
-                );
-              switch (curStr) {
-                // 27 91 75
-                case 'K':
-                  print(currentPointer);
-                  final TextPainter painter = painterCache.getOrPerformLayout(
-                    TextSpan(
-                      text: ' ',
-                      style: defaultStyle,
-                    ),
-                  );
-                  // PrintUtil.printD('currentPointer->$currentPointer');
-                  // PrintUtil.printD('data[i]->${data[i]}');
+                // PrintUtil.printd(
+                //   'preStr-> \x1b[32;7m[\x1b[31m ->curStr-> \x1b[32m$curStr\x1b[31m',
+                //   31,
+                // );
+                switch (curStr) {
+                  // 27 91 75
+                  case 'K':
+                    print(currentPointer);
+                    final TextPainter painter = painterCache.getOrPerformLayout(
+                      TextSpan(
+                        text: ' ',
+                        style: defaultStyle,
+                      ),
+                    );
+                    // PrintUtil.printD('currentPointer->$currentPointer');
+                    // PrintUtil.printD('data[i]->${data[i]}');
 
-                  cache[currentPointer.y][currentPointer.x] = LetterEntity(
-                    content: ' ',
-                    letterWidth: painter.width,
-                    letterHeight: painter.height,
-                    position: currentPointer,
-                    textStyle: defaultStyle.copyWith(fontSize: theme.fontSize),
-                  );
-                  // i += 1;
-                  // print(line[i - 5]);
+                    cache[currentPointer.y][currentPointer.x] = LetterEntity(
+                      content: ' ',
+                      letterWidth: painter.width,
+                      letterHeight: painter.height,
+                      position: currentPointer,
+                      textStyle:
+                          defaultStyle.copyWith(fontSize: theme.fontSize),
+                    );
+                    // i += 1;
+                    // print(line[i - 5]);
 
-                  // TODO 这个是删除的序列，写得有问题
-                  // bool isDoubleByte = doubleByteReg.hasMatch(line[i - 5]);
-                  // if (isDoubleByte) {
-                  //   // print('数按字节字符---->${line[i]}');
-                  // }
-                  // canvas.drawRect(
-                  //   Rect.fromLTWH(
-                  //     _position.dx * theme.letterWidth,
-                  //     _position.dy * theme.letterHeight +
-                  //         defaultOffsetY,
-                  //     false
-                  //         ? 2 * theme.letterWidth
-                  //         : theme.letterWidth,
-                  //     theme.letterHeight,
-                  //   ),
-                  //   Paint()..color = Colors.black,
-                  // );
-                  continue;
-                  break;
-                case '?':
-                  i += 1;
-                  final RegExp regExp = RegExp('l');
-                  final int w = data.substring(i + 1).indexOf(regExp);
-                  final String number = data.substring(i, i + w);
-                  if (number == '25') {
-                    i += 2;
-                    showCursor = false;
-                  }
-                  i += 1;
-                  if (verbose)
-                    PrintUtil.printd('[ ? 后的值->${data.substring(i)}', 31);
-                  continue;
-                  break;
-                default:
-              }
+                    // TODO 这个是删除的序列，写得有问题
+                    // bool isDoubleByte = doubleByteReg.hasMatch(line[i - 5]);
+                    // if (isDoubleByte) {
+                    //   // print('数按字节字符---->${line[i]}');
+                    // }
+                    // canvas.drawRect(
+                    //   Rect.fromLTWH(
+                    //     _position.dx * theme.letterWidth,
+                    //     _position.dy * theme.letterHeight +
+                    //         defaultOffsetY,
+                    //     false
+                    //         ? 2 * theme.letterWidth
+                    //         : theme.letterWidth,
+                    //     theme.letterHeight,
+                    //   ),
+                    //   Paint()..color = Colors.black,
+                    // );
+                    continue;
+                    break;
+                  case '?':
+                    i += 1;
+                    final RegExp regExp = RegExp('l');
+                    final int w = data.substring(i + 1).indexOf(regExp);
+                    final String number = data.substring(i, i + w);
+                    if (number == '25') {
+                      i += 2;
+                      showCursor = false;
+                    }
+                    i += 1;
+                    if (verbose)
+                      // PrintUtil.printd('[ ? 后的值->${data.substring(i)}', 31);
+                      continue;
+                    break;
+                  default:
+                }
               print('line.substring(i + 1)->${data.substring(i)}');
               final int charMindex = data.substring(i).indexOf('m');
 
