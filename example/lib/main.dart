@@ -31,6 +31,11 @@ class _ExampleState extends State<Example> {
     super.initState();
     controller.write('hello termare_view');
     SequencesTest.testC0(controller);
+    SequencesTest.testC0(controller);
+    SequencesTest.testC0(controller);
+    SequencesTest.testC0(controller);
+    SequencesTest.testC0(controller);
+    SequencesTest.testC0(controller);
   }
 
   @override
