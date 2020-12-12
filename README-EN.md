@@ -1,51 +1,63 @@
 # termare_view
-支持全平台的终端模拟器，使用 Flutter 开发，是一个通过 canvas 渲染的上层组件，不依赖任何平台代码。
+The full-platform terminal emulator, developed with Flutter, is an upper-layer component rendered by canvas and does not depend on any platform code.
 
-Language: 中文简体 | [English](README_EN.md)
+Language: English | [简体中文](README.md)
 
-[Sequence]()
-sadsad
-这个 view 就类似于 [xterm.js](https://github.com/xtermjs/xterm.js) 一样，仅仅是一个上层 UI 显示组件，你可以使用来自操作系统底层的终端流，亦或者是连接 ssh 服务器的终端流，只需要给这个组件输入，就能自动的解析终端序列渲染终端。
+[Terminal Sequence Support Document](Support_Sequences.md)
 
-## 开始使用
-### 引入项目
-这是一个纯 flutter package，所以只需要在 yaml 配置文件的 dependencies 下引入:
-```
+This view is similar to the [xterm. Js] (https://github.com/xtermjs/xterm.js), is just an upper UI display component, you can use the terminal flow from the underlying operating system, or is connected to the SSH server terminal flow, only need to input to the components, can automatically parse rendering terminal terminal sequence.
+
+## start using
+
+### introduce the project
+
+This is a pure Flutter Package, so only needs to be introduced under YAML configuration file dependencies:
+
+```yaml
 termare_view:
   git: https://github.com/termare/termare_view
 ```
-### 创建终端控制器
-```
+
+### Create the terminal controller
+
+```dart
 TermareController controller = TermareController(
   showBackgroundLine: true,
 );
 ```
-### 使用组件
-```
+### Use Widget
+
+```dart
 TermareView(
   controller: controller,
 ),
 ```
-### 让终端显示一些东西
-```
+
+### let the terminal display something
+```dart
 controller.write('hello termare_view');
 ```
-代码在 example 中。
-## 更详细的例子
 
-## 为何要用Flutter重写而不是安卓原生？
+The code is in Example.
 
-- 一次编写，到处运行。
-- Flutter 当前作为非常优秀的跨平台框架，我想也能用它来编写一个全平台终端模拟器，从安卓前几代终端模拟器来看，
-这可能是一个比较漫长的过程，而我的时间并不太多，但我会尽量尝试重写。
-- 我喜欢尝试。
-更多原因请移步个人文章 -> 
+## A more detailed example
 
-## 为何它的表现并不如操作系统原生的终端模拟器
 
-它截止目前只能解析一部分终端转义序列，并且解析的耗时受限于我的代码能力。
 
-## 帮助开发？
+## Why rewrite with Flutter instead of Android?
+
+- Write once, run everywhere.
+
+- Flutter is currently a very good cross-platform framework, and I think I can also use it to write a full-platform terminal emulator. From the previous generations of Android terminal emulators,
+It may be a long process, and I don't have much time, but I'll try to rewrite it.
+- i like to try.
+For more reasons go to my personal article ->
+
+## Why does it not behave like an operating system native terminal emulator
+
+It can only parse a portion of the terminal escape sequence so far, and the parsing time is limited by my code capability.
+
+## Help with development?
 
 ### Terminal resources
 

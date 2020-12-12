@@ -1,33 +1,33 @@
 # termare_view
 支持全平台的终端模拟器，使用 Flutter 开发，是一个通过 canvas 渲染的上层组件，不依赖任何平台代码。
 
-Language: 中文简体 | [English](README_EN.md)
+Language: 中文简体 | [English](README-EN.md)
 
-[终端序列支持文档]()
+[终端序列支持文档](Support_Sequences.md)
 
 这个 view 就类似于 [xterm.js](https://github.com/xtermjs/xterm.js) 一样，仅仅是一个上层 UI 显示组件，你可以使用来自操作系统底层的终端流，亦或者是连接 ssh 服务器的终端流，只需要给这个组件输入，就能自动的解析终端序列渲染终端。
 
 ## 开始使用
 ### 引入项目
 这是一个纯 flutter package，所以只需要在 yaml 配置文件的 dependencies 下引入:
-```
+```dart
 termare_view:
   git: https://github.com/termare/termare_view
 ```
 ### 创建终端控制器
-```
+```dart
 TermareController controller = TermareController(
   showBackgroundLine: true,
 );
 ```
 ### 使用组件
-```
+```dart
 TermareView(
   controller: controller,
 ),
 ```
 ### 让终端显示一些东西
-```
+```dart
 controller.write('hello termare_view');
 ```
 代码在 example 中。
