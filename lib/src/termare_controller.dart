@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,6 @@ class TermareController with Observable {
       fontSize: theme.fontSize,
       color: Colors.white,
       fontWeight: FontWeight.w500,
-      // fontFamily: 'sarasa',
       fontFamily: 'packages/termare_view/DroidSansMono',
     );
     final Stopwatch stopwatch = Stopwatch();
@@ -181,7 +181,16 @@ class TermareController with Observable {
     // print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       final List<int> codeUnits = data[i].codeUnits;
-      // print('codeUnits->$codeUnits');
+      final List<int> utf8CodeUnits = utf8.encode(data[i]);
+      print('codeUnits->$codeUnits');
+      print('utf8CodeUnits->$utf8CodeUnits');
+      if (utf8CodeUnits.length == 1) {
+        defaultStyle = defaultStyle.copyWith(
+            fontFamily: 'packages/termare_view/DroidSansMono');
+      } else {
+        defaultStyle = defaultStyle.copyWith(
+            fontFamily: 'SourceCodeProMediumforPowerline');
+      }
       if (codeUnits.length == 1) {
         // 说明单字节
         if (eq(codeUnits, [0x07])) {
@@ -358,7 +367,8 @@ class TermareController with Observable {
           position: currentPointer,
           textStyle: defaultStyle.copyWith(fontSize: theme.fontSize),
         );
-
+        print('painter->${painter.width}');
+        print('painter->${painter.height}');
         if (painter.width == painter.height) {
           // 只有双字节字符宽高相等
           // 这儿应该有更好的方法
