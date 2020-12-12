@@ -51,7 +51,7 @@ The code is in Example.
 - Flutter is currently a very good cross-platform framework, and I think I can also use it to write a full-platform terminal emulator. From the previous generations of Android terminal emulators,
 It may be a long process, and I don't have much time, but I'll try to rewrite it.
 - i like to try.
-For more reasons go to my personal article ->
+> For more reasons go to my personal article ->
 
 ## Why does it not behave like an operating system native terminal emulator
 
