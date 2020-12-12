@@ -3,8 +3,8 @@
 
 Language: 中文简体 | [English](README_EN.md)
 
-[终端序列支持文档]()
-
+[Sequence]()
+sadsad
 这个 view 就类似于 [xterm.js](https://github.com/xtermjs/xterm.js) 一样，仅仅是一个上层 UI 显示组件，你可以使用来自操作系统底层的终端流，亦或者是连接 ssh 服务器的终端流，只需要给这个组件输入，就能自动的解析终端序列渲染终端。
 
 ## 开始使用

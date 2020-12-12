@@ -61,15 +61,7 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
       final double screenHeight = size.height / window.devicePixelRatio -
           MediaQuery.of(context).padding.top;
       final double keyoardHeight = MediaQuery.of(context).viewInsets.bottom;
-      // print('kToolbarHeight->${MediaQuery.of(context).viewInsets.top}');
-      // print(
-      //     'MediaQuery.of(context).padding.top->${MediaQuery.of(context).padding.top}');
-      // // SafeArea()
-      // print(
-      //   ' ${Size(screenWidth, screenHeight - keyoardHeight)}',
-      // );
-      // print('keyoardHeight->${MediaQuery.of(context).viewInsets.bottom}');
-      // print('keyoardHeight->${MediaQuery.of(context).padding.bottom}');
+
       widget.controller.setPtyWindowSize(
         Size(screenWidth, screenHeight - keyoardHeight),
       );
@@ -78,8 +70,6 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
           widget.controller.startLine -=
               widget.controller.cache.length - widget.controller.startLine - 1;
         }
-        // print('------${widget.controller.cache.length - widget.controller.startLine}');
-        // controller.startLine=controller.startLine-;
       }
       widget.controller.autoScroll = true;
       widget.controller.dirty = true;
@@ -119,13 +109,16 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
         );
       },
       onAction: (TextInputAction action) {
+        print('onAction  ->  $action');
         // 当软件盘回车按下的时候
         if (action == TextInputAction.done) {
           widget.keyboardInput('\n');
         }
-        widget.onAction(action);
+        widget?.onAction(action);
       },
       onKeyStroke: (RawKeyEvent key) {
+        print('onKeyStroke');
+        print(key);
         // 26键盘之外的按键按下的时候
         keyboardHandler.handleKeyEvent(key);
       },

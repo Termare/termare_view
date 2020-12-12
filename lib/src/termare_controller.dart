@@ -176,11 +176,11 @@ class TermareController with Observable {
 
   void verboseExec(void Function() call) {}
   void parseOutput(String data, {bool verbose = true}) {
-    print('$red $whiteBackground parseOutput->$data');
-    print('$red $whiteBackground parseOutput->${data.codeUnits}');
+    // print('$red $whiteBackground parseOutput->$data');
+    // print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       final List<int> codeUnits = data[i].codeUnits;
-      print('codeUnits->$codeUnits');
+      // print('codeUnits->$codeUnits');
       if (codeUnits.length == 1) {
         // 说明单字节
         if (eq(codeUnits, [0x07])) {
