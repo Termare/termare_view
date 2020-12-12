@@ -29,7 +29,9 @@ class _ExampleState extends State<Example> {
   @override
   void initState() {
     super.initState();
-    controller.write('hello termare_view');
+    controller.write('hello termare_view\n');
+    controller.write('\x1B[1;31mhello termare_view\x1B[0m\n');
+    controller.write('\x1B[1;32mhello termare_view\x1B[0m\n');
   }
 
   @override
