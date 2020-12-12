@@ -29,6 +29,7 @@ class TermareController with Observable {
       fontSize: theme.fontSize,
       color: Colors.white,
       fontWeight: FontWeight.w500,
+      // fontFamily: 'sarasa',
       fontFamily: 'packages/termare_view/DroidSansMono',
     );
     final Stopwatch stopwatch = Stopwatch();

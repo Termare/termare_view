@@ -15,16 +15,6 @@ class TermarePainter extends CustomPainter {
   }) {
     termWidth = controller.columnLength * controller.theme.letterWidth;
     termHeight = controller.rowLength * controller.theme.letterHeight;
-    defaultStyle = TextStyle(
-      textBaseline: TextBaseline.ideographic,
-      height: 1,
-      fontSize: controller.theme.letterHeight - 2,
-      color: Colors.white,
-      fontWeight: FontWeight.w500,
-      // backgroundColor: Colors.black,
-      // backgroundColor: Colors.red,
-      fontFamily: 'monospace',
-    );
   }
   final TermareController controller;
   double termWidth;
@@ -42,9 +32,7 @@ class TermarePainter extends CustomPainter {
   final Color color;
   double padding;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
-
   final Stopwatch stopwatch = Stopwatch();
-  TextStyle defaultStyle;
   void drawLine(Canvas canvas) {
     final Paint paint = Paint();
     paint.strokeWidth = 1;
