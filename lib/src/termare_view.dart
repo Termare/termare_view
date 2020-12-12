@@ -128,10 +128,12 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
             behavior: HitTestBehavior.translucent,
             onDoubleTap: () async {
               final String text = (await Clipboard.getData('text/plain')).text;
-              widget.keyboardInput(text);
+              widget.keyboardInput?.call(text);
             },
             onTap: () {
-              InputListener.of(context).requestKeyboard();
+              if (widget.keyboardInput != null) {
+                InputListener.of(context).requestKeyboard();
+              }
               print('按下');
             },
             child: ScrollViewTerm(
