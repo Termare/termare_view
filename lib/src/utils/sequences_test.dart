@@ -6,7 +6,23 @@ class SequencesTest {
   }
 
   static Future<void> testColorText(TermareController controller) async {
-    controller.write('\x1B[1;31m Text\x1B[0m\n');
+    // 用来测试颜色序列
+    controller.write(' \x1B[1;31m红色字\x1B[0m\n');
+    controller.write(' \x1B[1;32m绿色字\x1B[0m\n');
+    controller.write(' \x1B[1;33m黄色字\x1B[0m\n');
+    controller.write(' \x1B[1;34m蓝色字\x1B[0m\n');
+    controller.write(' \x1B[1;35m紫色字\x1B[0m\n');
+    controller.write(' \x1B[1;36m天蓝字\x1B[0m\n');
+    controller.write(' \x1B[1;37m白色字\x1B[0m\n');
+    //
+    controller.write(' \x1B[40;37m黑底白字\x1B[0m\n');
+    controller.write(' \x1B[41;37m红底白字\x1B[0m\n');
+    controller.write(' \x1B[42;37m绿底白字\x1B[0m\n');
+    controller.write(' \x1B[43;37m黄底白字\x1B[0m\n');
+    controller.write(' \x1B[44;37m蓝底白字\x1B[0m\n');
+    controller.write(' \x1B[45;37m紫底白字\x1B[0m\n');
+    controller.write(' \x1B[46;37m天蓝底白字\x1B[0m\n');
+    controller.write(' \x1B[47;30m白底黑字\x1B[0m\n');
   }
 
   static Future<void> testMang(TermareController controller) async {
@@ -29,6 +45,7 @@ class SequencesTest {
   }
 
   static Future<void> testIsOut(TermareController controller) async {
+    // 测试终端自动滚动
     controller.write('\n');
     for (int i = 0; i < 5500; i++) {
       controller.write('${'${i % 10}' * 40}\n');

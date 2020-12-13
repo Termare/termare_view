@@ -3,6 +3,8 @@ import 'package:termare_view/src/painter/model/position.dart';
 
 class LetterEntity {
   LetterEntity({
+    this.doubleWidth = false,
+    this.backgroundColor = Colors.transparent,
     @required this.content,
     @required this.letterWidth,
     @required this.letterHeight,
@@ -14,4 +16,6 @@ class LetterEntity {
   final double letterHeight;
   final Position position;
   final TextStyle textStyle;
+  final Color backgroundColor;
+  final bool doubleWidth;
 }

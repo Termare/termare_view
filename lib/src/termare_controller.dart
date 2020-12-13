@@ -25,7 +25,7 @@ class TermareController with Observable {
   }) {
     theme ??= TermareStyles.termux;
     defaultStyle = TextStyle(
-      textBaseline: TextBaseline.ideographic,
+      textBaseline: TextBaseline.alphabetic,
       height: 1,
       fontSize: theme.fontSize,
       color: Colors.white,
@@ -75,7 +75,7 @@ class TermareController with Observable {
   // 当从 pty 读出内容的时候就会自动滑动
   bool autoScroll = true;
   // 显示背景网格
-  final bool showBackgroundLine;
+  bool showBackgroundLine;
 
   int rowLength;
   int columnLength;
@@ -359,13 +359,17 @@ class TermareController with Observable {
         );
         // PrintUtil.printD('currentPointer->$currentPointer');
         // PrintUtil.printD('data[i]->${data[i]}');
-
+        final TextStyle curTextStyle = defaultStyle.copyWith(
+          fontSize: theme.fontSize,
+        );
         cache[currentPointer.y][currentPointer.x] = LetterEntity(
           content: data[i],
           letterWidth: painter.width,
           letterHeight: painter.height,
           position: currentPointer,
-          textStyle: defaultStyle.copyWith(fontSize: theme.fontSize),
+          textStyle: curTextStyle,
+          backgroundColor: curTextStyle.backgroundColor,
+          doubleWidth: painter.width == painter.height,
         );
         print('painter->${painter.width}');
         print('painter->${painter.height}');
@@ -424,11 +428,47 @@ class TermareController with Observable {
           color: theme.white,
         );
         break;
+      case '40':
+        return preTextStyle.copyWith(
+          backgroundColor: theme.black,
+        );
+        break;
+      case '41':
+        return preTextStyle.copyWith(
+          backgroundColor: theme.red,
+        );
+        break;
       case '42':
         return preTextStyle.copyWith(
           backgroundColor: theme.green,
         );
         break;
+      case '43':
+        return preTextStyle.copyWith(
+          backgroundColor: theme.yellow,
+        );
+        break;
+      case '44':
+        return preTextStyle.copyWith(
+          backgroundColor: theme.blue,
+        );
+        break;
+      case '45':
+        return preTextStyle.copyWith(
+          backgroundColor: theme.purplishRed,
+        );
+        break;
+      case '46':
+        return preTextStyle.copyWith(
+          backgroundColor: theme.cyan,
+        );
+        break;
+      case '47':
+        return preTextStyle.copyWith(
+          backgroundColor: theme.white,
+        );
+        break;
+
       case '49':
         return preTextStyle.copyWith(
           backgroundColor: theme.black,

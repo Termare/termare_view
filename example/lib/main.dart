@@ -23,8 +23,8 @@ class Example extends StatefulWidget {
 
 class _ExampleState extends State<Example> {
   TermareController controller = TermareController(
-    showBackgroundLine: true,
-  );
+      // showBackgroundLine: true,
+      );
 
   @override
   void initState() {
@@ -32,6 +32,7 @@ class _ExampleState extends State<Example> {
     controller.write('hello termare_view\n');
     controller.write('\x1B[1;31mhello termare_view\x1B[0m\n');
     controller.write('\x1B[1;32mhello termare_view\x1B[0m\n');
+    SequencesTest.testColorText(controller);
   }
 
   @override

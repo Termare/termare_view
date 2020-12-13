@@ -99,9 +99,32 @@ class TermarePainter extends CustomPainter {
             text: letterEntity.content,
             style: letterEntity.textStyle.copyWith(
               fontSize: controller.theme.fontSize,
+              backgroundColor: Colors.transparent,
+              height: 1.0,
             ),
           ),
         );
+        final Offset offset = Offset(
+          letterEntity.position.x * controller.theme.letterWidth,
+          (letterEntity.position.y - controller.startLine) *
+              controller.theme.letterHeight,
+        );
+        print('$this -> ${painter.width}:${painter.height}');
+        if (letterEntity.backgroundColor != null) {
+          // 当字符背景颜色不为空的时候
+          canvas.drawRect(
+            Rect.fromLTWH(
+              offset.dx,
+              offset.dy,
+              letterEntity.doubleWidth
+                  ? controller.theme.letterWidth * 2
+                  : controller.theme.letterWidth,
+              controller.theme.letterHeight,
+            ),
+            Paint()..color = letterEntity.backgroundColor,
+          );
+        }
+
         painter
           ..layout(
             maxWidth: controller.theme.letterWidth * 2,
@@ -109,12 +132,8 @@ class TermarePainter extends CustomPainter {
           )
           ..paint(
             canvas,
-            Offset(
-              letterEntity.position.x * controller.theme.letterWidth,
-              (letterEntity.position.y - controller.startLine) *
-                      controller.theme.letterHeight +
-                  2,
-            ),
+            offset +
+                Offset(0, (controller.theme.letterHeight - painter.height) / 2),
           );
       }
     }
