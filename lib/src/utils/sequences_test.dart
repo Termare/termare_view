@@ -69,4 +69,9 @@ class SequencesTest {
     controller.write('Line Feed\x0c\n');
     controller.write('${'a' * 47}\x0dbbb\n');
   }
+
+  static void testDECSEL(TermareController controller) {
+    controller.write('\n');
+    controller.write('Backspace Teaa\x08\x1b[k\x08\x1b[kst\n');
+  }
 }
