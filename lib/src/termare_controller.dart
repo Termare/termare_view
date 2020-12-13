@@ -158,231 +158,332 @@ class TermareController with Observable {
   }
 
   void moveToPrePosition() {
-    // PrintUtil.printd('moveToPrePosition', 35);
     moveToPosition(-1);
   }
 
   void moveToNextPosition() {
-    // PrintUtil.printd('moveToNextPosition', 32);
     moveToPosition(1);
   }
 
   void moveToNextLinePosition() {
-    currentPointer = Position(0, currentPointer.y + 1);
+    currentPointer = Position(currentPointer.x, currentPointer.y + 1);
   }
 
   void moveToLineFirstPosition() {
     currentPointer = Position(0, currentPointer.y);
   }
 
-  void verboseExec(void Function() call) {}
+  // 不能放在 parseOutput 内部，可能存在一次流的末尾为终端序列的情况
+  bool csiEnable = false;
+  bool escapeEnable = false;
   void parseOutput(String data, {bool verbose = true}) {
     // print('$red $whiteBackground parseOutput->$data');
     // print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       final List<int> codeUnits = data[i].codeUnits;
+      // dart 的 codeUnits 是 utf32
       final List<int> utf8CodeUnits = utf8.encode(data[i]);
-      print('codeUnits->$codeUnits');
-      print('utf8CodeUnits->$utf8CodeUnits');
+      // print('codeUnits->$codeUnits');
+      // print('utf8CodeUnits->$utf8CodeUnits');
       if (utf8CodeUnits.length == 1) {
         defaultStyle = defaultStyle.copyWith(
-            fontFamily: 'packages/termare_view/DroidSansMono');
+          fontFamily: 'packages/termare_view/DroidSansMono',
+        );
       } else {
         defaultStyle = defaultStyle.copyWith(
-            fontFamily: 'SourceCodeProMediumforPowerline');
+          fontFamily: 'SourceCodeProMediumforPowerline',
+        );
       }
-      if (codeUnits.length == 1) {
+      if (utf8CodeUnits.length == 1) {
         // 说明单字节
+        /// ------------------------------- c0 --------------------------------
+        /// 考虑过用switch case，但是用了eq这个加强判断的库
+        if (csiEnable) {
+          csiEnable = false;
+          if (data[i] == 'k' || data[i] == 'K') {
+            // 删除字符
+            // print('删除字符');
+            print(cache[currentPointer.y][currentPointer.x - 1].content);
+            final TextPainter painter = painterCache.getOrPerformLayout(
+              TextSpan(
+                text: ' ',
+                style: defaultStyle,
+              ),
+            );
+
+            cache[currentPointer.y][currentPointer.x] = LetterEntity(
+              content: ' ',
+              letterWidth: painter.width,
+              letterHeight: painter.height,
+              position: currentPointer,
+              textStyle: defaultStyle.copyWith(fontSize: theme.fontSize),
+            );
+
+            continue;
+          }
+          print('line.substring($i + 1)->${data.substring(i)}');
+          final int charMindex = data.substring(i).indexOf('m');
+
+          print('charMindex=======>$charMindex');
+          String header = '';
+          header = data.substring(i, i + charMindex);
+          print('header->$header');
+          header.split(';').forEach((element) {
+            defaultStyle = getTextStyle(element, defaultStyle);
+          });
+          i += header.length;
+          continue;
+        }
+        if (escapeEnable) {
+          escapeEnable = false;
+          if (eq(codeUnits, [0x5b])) {
+            // ascii 91 是字符->[，‘esc [’开启了 csi 序列。
+            csiEnable = true;
+          }
+          continue;
+        }
         if (eq(codeUnits, [0x07])) {
+          print('$red<- C0 Bell ->');
           // PrintUtil.printn('<- C0 Bell ->', 31, 47);
           continue;
-        }
-        if (eq(codeUnits, [0x08])) {
+        } else if (eq(codeUnits, [0x08])) {
           // 光标左移动
-          // verboseExec(() {});
           if (verbose) {
-            // PrintUtil.printn('<- C0 Backspace ->', 31, 47);
+            print('$red<- C0 Backspace ->');
           }
-          // PrintUtil.printn(
-          //     'currentPointer -> $currentPointer prePosition -> $prePosition',
-          //     31,
-          //     47);
-          // LetterEntity preEntity = cache[prePosition.y][prePosition.x];
-          // if (preEntity == null) {
-          //   prePosition = getToPosition(-2);
-          //   preEntity = cache[prePosition.y][prePosition.x];
-          // }
-          // if (isDoubleByte) {
-          //   // print('双字节字符---->${line[i]}');
-          //   moveToPrePosition();
-          // }
           moveToPrePosition();
-          // cache[prePosition.y][prePosition.x] = null;
           continue;
-        }
-
-        if (eq(codeUnits, [0x09])) {
+        } else if (eq(codeUnits, [0x09])) {
           moveToPosition(4);
+          print('$red<- C0 Horizontal Tabulation ->');
           if (verbose) {
             // PrintUtil.printn('<- C0 Horizontal Tabulation ->', 31, 47);
           }
-          // print('<- Horizontal Tabulation ->');
           continue;
-        }
-        if (eq(codeUnits, [0x0a]) ||
+        } else if (eq(codeUnits, [0x0a]) ||
             eq(codeUnits, [0x0b]) ||
             eq(codeUnits, [0x0c])) {
           moveToNextLinePosition();
+          moveToLineFirstPosition();
           if (verbose) {
-            // PrintUtil.printn('<- C0 Line Feed ->', 31, 47);
+            print('$red<- C0 Line Feed ->');
           }
           continue;
-        }
-        if (eq(codeUnits, [0x0d])) {
+        } else if (eq(codeUnits, [0x0d])) {
           // ascii 13
           moveToLineFirstPosition();
           if (verbose) {
-            // PrintUtil.printn('<- C0 Carriage Return ->', 31, 47);
+            print('$red<- C0 Carriage Return ->');
+          }
+          continue;
+        } else if (eq(codeUnits, [0x0e])) {
+          // TODO
+          if (verbose) {
+            print('$red<- C0 Shift Out ->');
+          }
+          continue;
+        } else if (eq(codeUnits, [0x0f])) {
+          // TODO
+          if (verbose) {
+            print('$red<- C0 Shift In ->');
+          }
+          continue;
+        } else if (eq(codeUnits, [0x84])) {
+          // c1 序列
+          moveToNextLinePosition();
+          moveToLineFirstPosition();
+          if (verbose) {
+            print('$red<- C1 Index ->');
+          }
+          continue;
+        } else if (eq(codeUnits, [0x85])) {
+          moveToNextLinePosition();
+          moveToLineFirstPosition();
+          if (verbose) {
+            print('$red<- C1 	Next Line ->');
+          }
+          continue;
+        } else if (eq(codeUnits, [0x88])) {
+          moveToPosition(4);
+          if (verbose) {
+            print('$red<- C1 Horizontal Tabulation Set ->');
+          }
+          continue;
+        } else if (eq(codeUnits, [0x90])) {
+          // TODO
+          // Start of a DCS sequence.
+          if (verbose) {
+            print('$red<- C1	Device Control String ->');
+          }
+          continue;
+        } else if (eq(codeUnits, [0x9b])) {
+          // TODO
+          // 	Start of a CSI sequence.
+          if (verbose) {
+            print('$red<- C1 Control Sequence Introducer ->');
+          }
+          continue;
+        } else if (eq(codeUnits, [0x9c])) {
+          // TODO
+          if (verbose) {
+            print('$red<- C1 String Terminator ->');
+          }
+          continue;
+        } else if (eq(codeUnits, [0x9d])) {
+          // TODO
+          if (verbose) {
+            print('$red<- C1 Operating System Command ->');
+          }
+          continue;
+        } else if (eq(codeUnits, [0x9e])) {
+          // TODO
+          if (verbose) {
+            print('$red<- C1 Privacy Message ->');
+          }
+          continue;
+        } else if (eq(codeUnits, [0x9f])) {
+          // TODO
+          if (verbose) {
+            print('$red<- C1 Application Program Comman ->');
           }
           continue;
         }
 
         if (eq(codeUnits, [0x1b])) {
-          // print('<- ESC ->');
-          i += 1;
-          final String curStr = data[i];
-          if (verbose) {
-            // PrintUtil.printd('preStr-> ESC curStr->$curStr', 31);
-          }
-          switch (curStr) {
-            case '[':
-              i += 1;
-              final String curStr = data[i];
-              print(data.substring(i));
-              if (verbose)
-                // PrintUtil.printd(
-                //   'preStr-> \x1b[32;7m[\x1b[31m ->curStr-> \x1b[32m$curStr\x1b[31m',
-                //   31,
-                // );
-                switch (curStr) {
-                  // 27 91 75
-                  case 'K':
-                    print(currentPointer);
-                    final TextPainter painter = painterCache.getOrPerformLayout(
-                      TextSpan(
-                        text: ' ',
-                        style: defaultStyle,
-                      ),
-                    );
-                    // PrintUtil.printD('currentPointer->$currentPointer');
-                    // PrintUtil.printD('data[i]->${data[i]}');
+          print('$red<- 0 Escape ->');
 
-                    cache[currentPointer.y][currentPointer.x] = LetterEntity(
-                      content: ' ',
-                      letterWidth: painter.width,
-                      letterHeight: painter.height,
-                      position: currentPointer,
-                      textStyle:
-                          defaultStyle.copyWith(fontSize: theme.fontSize),
-                    );
-                    // i += 1;
-                    // print(line[i - 5]);
-
-                    // TODO 这个是删除的序列，写得有问题
-                    // bool isDoubleByte = doubleByteReg.hasMatch(line[i - 5]);
-                    // if (isDoubleByte) {
-                    //   // print('数按字节字符---->${line[i]}');
-                    // }
-                    // canvas.drawRect(
-                    //   Rect.fromLTWH(
-                    //     _position.dx * theme.letterWidth,
-                    //     _position.dy * theme.letterHeight +
-                    //         defaultOffsetY,
-                    //     false
-                    //         ? 2 * theme.letterWidth
-                    //         : theme.letterWidth,
-                    //     theme.letterHeight,
-                    //   ),
-                    //   Paint()..color = Colors.black,
-                    // );
-                    continue;
-                    break;
-                  case '?':
-                    i += 1;
-                    final RegExp regExp = RegExp('l');
-                    final int w = data.substring(i + 1).indexOf(regExp);
-                    final String number = data.substring(i, i + w);
-                    if (number == '25') {
-                      i += 2;
-                      showCursor = false;
-                    }
-                    i += 1;
-                    if (verbose)
-                      // PrintUtil.printd('[ ? 后的值->${data.substring(i)}', 31);
-                      continue;
-                    break;
-                  default:
-                }
-              print('line.substring(i + 1)->${data.substring(i)}');
-              final int charMindex = data.substring(i).indexOf('m');
-
-              print('charMindex=======>$charMindex');
-              String header = '';
-              // TODO  有错
-              header = data.substring(i, i + charMindex);
-              print('header->$header');
-              header.split(';').forEach((element) {
-                defaultStyle = getTextStyle(element, defaultStyle);
-              });
-              i += header.length;
-              break;
-            default:
-          }
+          escapeEnable = true;
           continue;
-        }
-        // PrintUtil.printd('cache.length -> ${cache.length}', 31);
-        // TODO
-        if (cache.length < currentPointer.y + 1) {
-          // 会越界
-          cache.length = currentPointer.y + 1;
-          cache[currentPointer.y] = [];
-          cache[currentPointer.y].length = columnLength;
-        }
-        // print(' data[i]->${data[i]}');
-        // PrintUtil.printd('posistion -> $currentPointer', 31);
-        // PrintUtil.printd('cache -> $cache', 31);
-        final TextPainter painter = painterCache.getOrPerformLayout(
-          TextSpan(
-            text: data[i],
-            style: defaultStyle,
-          ),
-        );
-        // PrintUtil.printD('currentPointer->$currentPointer');
-        // PrintUtil.printD('data[i]->${data[i]}');
-        final TextStyle curTextStyle = defaultStyle.copyWith(
-          fontSize: theme.fontSize,
-        );
-        cache[currentPointer.y][currentPointer.x] = LetterEntity(
-          content: data[i],
-          letterWidth: painter.width,
-          letterHeight: painter.height,
-          position: currentPointer,
-          textStyle: curTextStyle,
-          backgroundColor: curTextStyle.backgroundColor,
-          doubleWidth: painter.width == painter.height,
-        );
-        print('painter->${painter.width}');
-        print('painter->${painter.height}');
-        if (painter.width == painter.height) {
-          // 只有双字节字符宽高相等
-          // 这儿应该有更好的方法
-          moveToNextPosition();
-        }
+          // i += 1;
+          // final String curStr = data[i];
+          // if (verbose) {
+          //   // PrintUtil.printd('preStr-> ESC curStr->$curStr', 31);
+          // }
+          // switch (curStr) {
+          //   case '[':
+          //     i += 1;
+          //     final String curStr = data[i];
+          //     print(data.substring(i));
+          //     if (verbose)
+          //       // PrintUtil.printd(
+          //       //   'preStr-> \x1b[32;7m[\x1b[31m ->curStr-> \x1b[32m$curStr\x1b[31m',
+          //       //   31,
+          //       // );
+          //       switch (curStr) {
+          //         // 27 91 75
+          //         case 'K':
+          //           print(currentPointer);
+          //           final TextPainter painter = painterCache.getOrPerformLayout(
+          //             TextSpan(
+          //               text: ' ',
+          //               style: defaultStyle,
+          //             ),
+          //           );
+          //           // PrintUtil.printD('currentPointer->$currentPointer');
+          //           // PrintUtil.printD('data[i]->${data[i]}');
 
-        moveToNextPosition();
+          //           cache[currentPointer.y][currentPointer.x] = LetterEntity(
+          //             content: ' ',
+          //             letterWidth: painter.width,
+          //             letterHeight: painter.height,
+          //             position: currentPointer,
+          //             textStyle:
+          //                 defaultStyle.copyWith(fontSize: theme.fontSize),
+          //           );
+          //           // i += 1;
+          //           // print(line[i - 5]);
 
-        /// ------------------ c0 ----------------------
+          //           // TODO 这个是删除的序列，写得有问题
+          //           // bool isDoubleByte = doubleByteReg.hasMatch(line[i - 5]);
+          //           // if (isDoubleByte) {
+          //           //   // print('数按字节字符---->${line[i]}');
+          //           // }
+          //           // canvas.drawRect(
+          //           //   Rect.fromLTWH(
+          //           //     _position.dx * theme.letterWidth,
+          //           //     _position.dy * theme.letterHeight +
+          //           //         defaultOffsetY,
+          //           //     false
+          //           //         ? 2 * theme.letterWidth
+          //           //         : theme.letterWidth,
+          //           //     theme.letterHeight,
+          //           //   ),
+          //           //   Paint()..color = Colors.black,
+          //           // );
+          //           continue;
+          //           break;
+          //         case '?':
+          //           i += 1;
+          //           final RegExp regExp = RegExp('l');
+          //           final int w = data.substring(i + 1).indexOf(regExp);
+          //           final String number = data.substring(i, i + w);
+          //           if (number == '25') {
+          //             i += 2;
+          //             showCursor = false;
+          //           }
+          //           i += 1;
+          //           if (verbose)
+          //             // PrintUtil.printd('[ ? 后的值->${data.substring(i)}', 31);
+          //             continue;
+          //           break;
+          //         default:
+          //       }
+          //     print('line.substring(i + 1)->${data.substring(i)}');
+          //     final int charMindex = data.substring(i).indexOf('m');
+
+          //     print('charMindex=======>$charMindex');
+          //     String header = '';
+          //     // TODO  有错
+          //     header = data.substring(i, i + charMindex);
+          //     print('header->$header');
+          //     header.split(';').forEach((element) {
+          //       defaultStyle = getTextStyle(element, defaultStyle);
+          //     });
+          //     i += header.length;
+          //     break;
+          //   default:
+          // }
+          // continue;
+        }
       }
+      // PrintUtil.printd('cache.length -> ${cache.length}', 31);
+      // TODO
+      if (cache.length < currentPointer.y + 1) {
+        // 会越界
+        cache.length = currentPointer.y + 1;
+        cache[currentPointer.y] = [];
+        cache[currentPointer.y].length = columnLength;
+      }
+      // print(' data[i]->${data[i]}');
+      // PrintUtil.printd('posistion -> $currentPointer', 31);
+      // PrintUtil.printd('cache -> $cache', 31);
+      final TextPainter painter = painterCache.getOrPerformLayout(
+        TextSpan(
+          text: data[i],
+          style: defaultStyle,
+        ),
+      );
+      // PrintUtil.printD('currentPointer->$currentPointer');
+      // PrintUtil.printD('data[i]->${data[i]}');
+      final TextStyle curTextStyle = defaultStyle.copyWith(
+        fontSize: theme.fontSize,
+      );
+      cache[currentPointer.y][currentPointer.x] = LetterEntity(
+        content: data[i],
+        letterWidth: painter.width,
+        letterHeight: painter.height,
+        position: currentPointer,
+        textStyle: curTextStyle,
+        backgroundColor: curTextStyle.backgroundColor,
+        doubleWidth: painter.width == painter.height,
+      );
+      if (painter.width == painter.height) {
+        // 只有双字节字符宽高相等
+        // 这儿应该有更好的方法
+        moveToNextPosition();
+      }
+
+      moveToNextPosition();
     }
   }
 
