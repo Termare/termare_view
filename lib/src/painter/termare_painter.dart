@@ -109,7 +109,6 @@ class TermarePainter extends CustomPainter {
           (letterEntity.position.y - controller.startLine) *
               controller.theme.letterHeight,
         );
-        print('$this -> ${painter.width}:${painter.height}');
         if (letterEntity.backgroundColor != null) {
           // 当字符背景颜色不为空的时候
           canvas.drawRect(
