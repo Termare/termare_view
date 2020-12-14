@@ -101,7 +101,7 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
     return InputListener(
       focusNode: _focusNode,
       onTextInput: (TextEditingValue value) {
-        if (Platform.isMacOS || Platform.isWindows) {
+        if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
           return null;
         }
         //
@@ -113,7 +113,7 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
         );
       },
       onAction: (TextInputAction action) {
-        if (Platform.isMacOS || Platform.isWindows) {
+        if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
           return null;
         }
         print('onAction  ->  $action');
