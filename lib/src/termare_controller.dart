@@ -582,6 +582,12 @@ class TermareController with Observable {
           backgroundColor: Colors.transparent,
         );
         break;
+      case '00':
+        return preTextStyle.copyWith(
+          color: theme.defaultColor,
+          backgroundColor: Colors.transparent,
+        );
+        break;
       default:
         return preTextStyle;
     }
