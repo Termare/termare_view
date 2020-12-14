@@ -175,6 +175,8 @@ class TermareController with Observable {
 
   // 不能放在 parseOutput 内部，可能存在一次流的末尾为终端序列的情况
   bool csiEnable = false;
+  // 3f 是字符 ?
+  bool csiAnd3fEnable = false;
   bool escapeEnable = false;
   void parseOutput(String data, {bool verbose = true}) {
     // print('$red $whiteBackground parseOutput->$data');
@@ -198,11 +200,38 @@ class TermareController with Observable {
         // 说明单字节
         /// ------------------------------- c0 --------------------------------
         /// 考虑过用switch case，但是用了eq这个加强判断的库
+        if (csiAnd3fEnable) {
+          csiAnd3fEnable = false;
+          final int charWordindex = data.substring(i).indexOf(RegExp('[a-z]'));
+          print('line.substring($i)->${data.substring(i).split('\n').first}');
+          String header = '';
+          header = data.substring(i, i + charWordindex);
+          final String sequenceChar = data.substring(i)[charWordindex];
+          if (sequenceChar == 'l') {
+            header.split(';').forEach((element) {
+              print('ESC[?l序列 $element');
+              if (element == '25') {
+                showCursor = false;
+              }
+            });
+          }
+          if (sequenceChar == 'h') {
+            header.split(';').forEach((element) {
+              print('ESC[?h序列 $element');
+              if (element == '25') {
+                showCursor = true;
+              }
+            });
+          }
+          print('header->$header');
+
+          i += header.length;
+          continue;
+        }
         if (csiEnable) {
           csiEnable = false;
-          if (data[i] == 'k' || data[i] == 'K') {
+          if (data[i] == 'K') {
             // 删除字符
-            // print('删除字符');
             print(cache[currentPointer.y][currentPointer.x - 1].content);
             final TextPainter painter = painterCache.getOrPerformLayout(
               TextSpan(
@@ -210,7 +239,6 @@ class TermareController with Observable {
                 style: defaultStyle,
               ),
             );
-
             cache[currentPointer.y][currentPointer.x] = LetterEntity(
               content: ' ',
               letterWidth: painter.width,
@@ -218,20 +246,54 @@ class TermareController with Observable {
               position: currentPointer,
               textStyle: defaultStyle.copyWith(fontSize: theme.fontSize),
             );
-
             continue;
           }
-          print('line.substring($i + 1)->${data.substring(i)}');
-          final int charMindex = data.substring(i).indexOf('m');
+          if (data[i] == '?') {
+            csiAnd3fEnable = true;
+            continue;
+          }
+          final int charWordindex =
+              data.substring(i).indexOf(RegExp('[A-Za-z]'));
+          if (charWordindex == -1) {
+            continue;
+          }
+          // print('charMindex=======>$charMindex');
 
-          print('charMindex=======>$charMindex');
+          print('line.substring($i)->${data.substring(i).split('\n').first}');
           String header = '';
-          header = data.substring(i, i + charMindex);
-          print('header->$header');
-          header.split(';').forEach((element) {
-            defaultStyle = getTextStyle(element, defaultStyle);
-          });
-          i += header.length;
+          header = data.substring(i, i + charWordindex);
+
+          final String sequenceChar = data.substring(i)[charWordindex];
+          if (sequenceChar == 'm') {
+            print('ESC[ pm m header -> $header');
+            header.split(';').forEach((element) {
+              defaultStyle = getTextStyle(element, defaultStyle);
+            });
+            if (header.isEmpty) {
+              defaultStyle = getTextStyle('0', defaultStyle);
+            }
+            i += header.length;
+          }
+          if (sequenceChar == 'C') {
+            print('ESC[ ps C header -> $header');
+            moveToPosition(int.tryParse(header));
+            // header.split(';').forEach((element) {
+            //   defaultStyle = getTextStyle(element, defaultStyle);
+            // });
+            i += header.length;
+          }
+          if (sequenceChar == 'A') {
+            print('ESC[ ps A header -> $header');
+            currentPointer = Position(
+              currentPointer.x,
+              currentPointer.y - int.tryParse(header),
+            );
+            i += header.length;
+          }
+          if (sequenceChar == 'D') {
+            print('ESC[ ps D header -> $header');
+            i += header.length;
+          }
           continue;
         }
         if (escapeEnable) {
@@ -266,14 +328,14 @@ class TermareController with Observable {
           moveToNextLinePosition();
           moveToLineFirstPosition();
           if (verbose) {
-            print('$red<- C0 Line Feed ->');
+            // print('$red<- C0 Line Feed ->');
           }
           continue;
         } else if (eq(codeUnits, [0x0d])) {
           // ascii 13
           moveToLineFirstPosition();
           if (verbose) {
-            print('$red<- C0 Carriage Return ->');
+            // print('$red<- C0 Carriage Return ->');
           }
           continue;
         } else if (eq(codeUnits, [0x0e])) {
@@ -350,100 +412,9 @@ class TermareController with Observable {
         }
 
         if (eq(codeUnits, [0x1b])) {
-          print('$red<- 0 Escape ->');
-
+          // print('$red<- 0 Escape ->');
           escapeEnable = true;
           continue;
-          // i += 1;
-          // final String curStr = data[i];
-          // if (verbose) {
-          //   // PrintUtil.printd('preStr-> ESC curStr->$curStr', 31);
-          // }
-          // switch (curStr) {
-          //   case '[':
-          //     i += 1;
-          //     final String curStr = data[i];
-          //     print(data.substring(i));
-          //     if (verbose)
-          //       // PrintUtil.printd(
-          //       //   'preStr-> \x1b[32;7m[\x1b[31m ->curStr-> \x1b[32m$curStr\x1b[31m',
-          //       //   31,
-          //       // );
-          //       switch (curStr) {
-          //         // 27 91 75
-          //         case 'K':
-          //           print(currentPointer);
-          //           final TextPainter painter = painterCache.getOrPerformLayout(
-          //             TextSpan(
-          //               text: ' ',
-          //               style: defaultStyle,
-          //             ),
-          //           );
-          //           // PrintUtil.printD('currentPointer->$currentPointer');
-          //           // PrintUtil.printD('data[i]->${data[i]}');
-
-          //           cache[currentPointer.y][currentPointer.x] = LetterEntity(
-          //             content: ' ',
-          //             letterWidth: painter.width,
-          //             letterHeight: painter.height,
-          //             position: currentPointer,
-          //             textStyle:
-          //                 defaultStyle.copyWith(fontSize: theme.fontSize),
-          //           );
-          //           // i += 1;
-          //           // print(line[i - 5]);
-
-          //           // TODO 这个是删除的序列，写得有问题
-          //           // bool isDoubleByte = doubleByteReg.hasMatch(line[i - 5]);
-          //           // if (isDoubleByte) {
-          //           //   // print('数按字节字符---->${line[i]}');
-          //           // }
-          //           // canvas.drawRect(
-          //           //   Rect.fromLTWH(
-          //           //     _position.dx * theme.letterWidth,
-          //           //     _position.dy * theme.letterHeight +
-          //           //         defaultOffsetY,
-          //           //     false
-          //           //         ? 2 * theme.letterWidth
-          //           //         : theme.letterWidth,
-          //           //     theme.letterHeight,
-          //           //   ),
-          //           //   Paint()..color = Colors.black,
-          //           // );
-          //           continue;
-          //           break;
-          //         case '?':
-          //           i += 1;
-          //           final RegExp regExp = RegExp('l');
-          //           final int w = data.substring(i + 1).indexOf(regExp);
-          //           final String number = data.substring(i, i + w);
-          //           if (number == '25') {
-          //             i += 2;
-          //             showCursor = false;
-          //           }
-          //           i += 1;
-          //           if (verbose)
-          //             // PrintUtil.printd('[ ? 后的值->${data.substring(i)}', 31);
-          //             continue;
-          //           break;
-          //         default:
-          //       }
-          //     print('line.substring(i + 1)->${data.substring(i)}');
-          //     final int charMindex = data.substring(i).indexOf('m');
-
-          //     print('charMindex=======>$charMindex');
-          //     String header = '';
-          //     // TODO  有错
-          //     header = data.substring(i, i + charMindex);
-          //     print('header->$header');
-          //     header.split(';').forEach((element) {
-          //       defaultStyle = getTextStyle(element, defaultStyle);
-          //     });
-          //     i += header.length;
-          //     break;
-          //   default:
-          // }
-          // continue;
         }
       }
       // PrintUtil.printd('cache.length -> ${cache.length}', 31);
