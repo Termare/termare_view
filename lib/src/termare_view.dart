@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -100,6 +101,9 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
     return InputListener(
       focusNode: _focusNode,
       onTextInput: (TextEditingValue value) {
+        if (Platform.isMacOS) {
+          return null;
+        }
         //
         // print('onTextInput -> $value');
         widget.keyboardInput(value.text.substring(1, value.text.length - 1));
@@ -109,6 +113,9 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
         );
       },
       onAction: (TextInputAction action) {
+        if (Platform.isMacOS) {
+          return null;
+        }
         print('onAction  ->  $action');
         // 当软件盘回车按下的时候
         if (action == TextInputAction.done) {
