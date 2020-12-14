@@ -175,12 +175,13 @@ class TermareController with Observable {
 
   // 不能放在 parseOutput 内部，可能存在一次流的末尾为终端序列的情况
   bool csiEnable = false;
+  bool oscEnable = false;
   // 3f 是字符 ?
   bool csiAnd3fEnable = false;
   bool escapeEnable = false;
   void parseOutput(String data, {bool verbose = true}) {
     // print('$red $whiteBackground parseOutput->$data');
-    // print('$red $whiteBackground parseOutput->${data.codeUnits}');
+    print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       final List<int> codeUnits = data[i].codeUnits;
       // dart 的 codeUnits 是 utf32
@@ -227,6 +228,19 @@ class TermareController with Observable {
 
           i += header.length;
           continue;
+        }
+        if (oscEnable) {
+          oscEnable = false;
+          print('line.substring($i)->${data.substring(i).split('\n').first}');
+          final int charWordindex =
+              data.substring(i).indexOf(String.fromCharCode(7));
+          if (charWordindex == -1) {
+            continue;
+          }
+          String header = '';
+          header = data.substring(i, i + charWordindex);
+          print('osc  -> $header');
+          i += header.length + 1;
         }
         if (csiEnable) {
           csiEnable = false;
@@ -294,6 +308,14 @@ class TermareController with Observable {
             print('ESC[ ps D header -> $header');
             i += header.length;
           }
+          if (sequenceChar == 'B') {
+            print('ESC[ ps D header -> $header');
+            currentPointer = Position(
+              currentPointer.x,
+              currentPointer.y + int.tryParse(header),
+            );
+            i += header.length;
+          }
           continue;
         }
         if (escapeEnable) {
@@ -301,6 +323,11 @@ class TermareController with Observable {
           if (eq(codeUnits, [0x5b])) {
             // ascii 91 是字符->[，‘esc [’开启了 csi 序列。
             csiEnable = true;
+          }
+          if (eq(codeUnits, [0x5d])) {
+            // ascii 93 是字符->]，‘esc ]’开启了 osc 序列。
+            print('$red oscEnable');
+            oscEnable = true;
           }
           continue;
         }
