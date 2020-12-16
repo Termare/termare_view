@@ -32,22 +32,27 @@ class TermareView extends StatefulWidget {
 class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
   final FocusNode _focusNode = FocusNode();
   KeyboardHandler keyboardHandler;
+  // 记录键盘高度
+  double keyoardHeight;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     keyboardHandler = KeyboardHandler(widget.keyboardInput);
     widget.controller.addListener(() {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
     testSequence();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
     resizeWindow();
   }
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   resizeWindow();
+  // }
 
   @override
   void didChangeMetrics() {
@@ -61,16 +66,23 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
       final double screenWidth = size.width / window.devicePixelRatio;
       final double screenHeight = size.height / window.devicePixelRatio -
           MediaQuery.of(context).padding.top;
-      final double keyoardHeight = MediaQuery.of(context).viewInsets.bottom;
-
+      final double curKeyoardHeight = MediaQuery.of(context).viewInsets.bottom;
       widget.controller.setPtyWindowSize(
-        Size(screenWidth, screenHeight - keyoardHeight),
+        Size(screenWidth, screenHeight - curKeyoardHeight),
       );
-      if (keyoardHeight == 0) {
+      if (curKeyoardHeight == 0) {
+        // 键盘放下
+        // print('键盘放下');
         if (widget.controller.cache.length > widget.controller.rowLength) {
-          widget.controller.startLine -=
-              widget.controller.cache.length - widget.controller.startLine - 1;
+          print(
+              '当缓存的高度大于终端高度时 ${keyoardHeight ~/ widget.controller.theme.letterHeight}');
+          // 当缓存的高度大于终端高度时
+          widget.controller.startLine -= widget.controller.rowLength -
+              1 -
+              (widget.controller.cache.length - widget.controller.startLine);
         }
+      } else {
+        keyoardHeight ??= curKeyoardHeight;
       }
       widget.controller.autoScroll = true;
       widget.controller.dirty = true;
@@ -124,8 +136,8 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
         widget?.onAction(action);
       },
       onKeyStroke: (RawKeyEvent key) {
-        print('onKeyStroke');
-        print(key);
+        // print('onKeyStroke');
+        // print(key);
         // 26键盘之外的按键按下的时候
         keyboardHandler.handleKeyEvent(key);
       },
@@ -146,7 +158,7 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
             child: ScrollViewTerm(
               controller: widget.controller,
               child: Scaffold(
-                backgroundColor: Colors.black,
+                backgroundColor: widget.controller.theme.backgroundColor,
                 body: SafeArea(
                   child: CustomPaint(
                     painter: TermarePainter(
