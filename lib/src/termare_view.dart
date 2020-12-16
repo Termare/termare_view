@@ -18,12 +18,14 @@ class TermareView extends StatefulWidget {
     this.onTextInput,
     this.onKeyStroke,
     this.onAction,
+    this.bottomBar,
   }) : super(key: key);
   final TermareController controller;
   final KeyboardInput keyboardInput;
   final InputHandler onTextInput;
   final KeyStrokeHandler onKeyStroke;
   final ActionHandler onAction;
+  final Widget bottomBar;
 
   @override
   _TermareViewState createState() => _TermareViewState();
@@ -32,13 +34,14 @@ class TermareView extends StatefulWidget {
 class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
   final FocusNode _focusNode = FocusNode();
   KeyboardHandler keyboardHandler;
+  Size painterSize = Size(0, 0);
   // 记录键盘高度
-  double keyoardHeight;
+  double keyoardHeight = 0;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    keyboardHandler = KeyboardHandler(widget.keyboardInput);
+    keyboardHandler = KeyboardHandler();
     widget.controller.addListener(() {
       if (mounted) {
         setState(() {});
@@ -61,16 +64,21 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
   }
 
   void resizeWindow() {
+    print('resizeWindow');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final Size size = window.physicalSize;
       final double screenWidth = size.width / window.devicePixelRatio;
-      final double screenHeight = size.height / window.devicePixelRatio -
-          MediaQuery.of(context).padding.top;
-      final double curKeyoardHeight = MediaQuery.of(context).viewInsets.bottom;
+      double screenHeight = size.height / window.devicePixelRatio;
+      if (widget.bottomBar != null) {
+        /// TODO
+        screenHeight -= 32;
+      }
+      screenHeight -= MediaQuery.of(context).padding.top;
+      keyoardHeight = MediaQuery.of(context).viewInsets.bottom;
       widget.controller.setPtyWindowSize(
-        Size(screenWidth, screenHeight - curKeyoardHeight),
+        painterSize = Size(screenWidth, screenHeight - keyoardHeight),
       );
-      if (curKeyoardHeight == 0) {
+      if (keyoardHeight == 0) {
         // 键盘放下
         // print('键盘放下');
         if (widget.controller.cache.length > widget.controller.rowLength) {
@@ -81,12 +89,10 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
               1 -
               (widget.controller.cache.length - widget.controller.startLine);
         }
-      } else {
-        keyoardHeight ??= curKeyoardHeight;
       }
       widget.controller.autoScroll = true;
       widget.controller.dirty = true;
-      widget.controller.notifyListeners();
+      setState(() {});
     });
   }
 
@@ -136,10 +142,13 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
         widget?.onAction(action);
       },
       onKeyStroke: (RawKeyEvent key) {
-        // print('onKeyStroke');
+        print('onKeyStroke');
         // print(key);
         // 26键盘之外的按键按下的时候
-        keyboardHandler.handleKeyEvent(key);
+        final String input = keyboardHandler.getKeyEvent(key);
+        if (input != null) {
+          widget.keyboardInput(input);
+        }
       },
       child: Builder(
         builder: (context) {
@@ -157,16 +166,34 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
             },
             child: ScrollViewTerm(
               controller: widget.controller,
-              child: Scaffold(
-                backgroundColor: widget.controller.theme.backgroundColor,
-                body: SafeArea(
-                  child: CustomPaint(
-                    painter: TermarePainter(
-                      controller: widget.controller,
-                      color: const Color(0xff811016),
+              child: Stack(
+                children: [
+                  Material(
+                    color: widget.controller.theme.backgroundColor,
+                    child: SafeArea(
+                      child: CustomPaint(
+                        size: painterSize,
+                        painter: TermarePainter(
+                          controller: widget.controller,
+                          color: const Color(0xff811016),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  if (widget.bottomBar != null)
+                    Padding(
+                      padding: EdgeInsets.only(
+                        bottom: keyoardHeight,
+                      ),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: SizedBox(
+                          height: 32,
+                          child: widget.bottomBar,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           );

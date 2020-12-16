@@ -9,6 +9,7 @@ import 'model/letter_eneity.dart';
 import 'observable.dart';
 import 'painter/termare_painter.dart';
 import 'theme/term_theme.dart';
+import 'utils/keyboard_handler.dart';
 
 /// Flutter Controller 的思想
 /// 一个TermView对应一个 Controller
@@ -32,6 +33,8 @@ class TermareController with Observable {
   final String fontFamily;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
   final int cacheLine = 1000;
+
+  KeyboardInput keyboardInput;
 
   /// 通过这个值来判断终端是否需要刷新
   /// 每次从 pty 中读出数据的时候会将当前终端页标记为脏，在下一帧页终端就会进执行刷新
@@ -131,11 +134,11 @@ class TermareController with Observable {
   }
 
   // 不能放在 parseOutput 内部，可能存在一次流的末尾为终端序列的情况
-  bool csiEnable = false;
-  bool oscEnable = false;
+  bool csiStart = false;
+  bool oscStart = false;
   // 3f 是字符 ?
-  bool csiAnd3fEnable = false;
-  bool escapeEnable = false;
+  bool csiAnd3fStart = false;
+  bool escapeStart = false;
   void changeEntityStyle(String tag) {
     final int intTag = int.tryParse(tag);
     if (intTag == 0 || tag.isEmpty) {
@@ -155,8 +158,8 @@ class TermareController with Observable {
   }
 
   void parseOutput(String data, {bool verbose = true}) {
-    // print('$red $whiteBackground parseOutput->$data');
-    // print('$red $whiteBackground parseOutput->${data.codeUnits}');
+    print('$red $whiteBackground parseOutput->$data');
+    print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       if (i > data.length - 1) {
         break;
@@ -179,8 +182,8 @@ class TermareController with Observable {
         // 说明单字节
         /// ------------------------------- c0 --------------------------------
         /// 考虑过用switch case，但是用了eq这个加强判断的库
-        if (csiAnd3fEnable) {
-          csiAnd3fEnable = false;
+        if (csiAnd3fStart) {
+          csiAnd3fStart = false;
           final int charWordindex = data.substring(i).indexOf(RegExp('[a-z]'));
           print('line.substring($i)->${data.substring(i).split('\n').first}');
           String header = '';
@@ -207,8 +210,8 @@ class TermareController with Observable {
           i += header.length;
           continue;
         }
-        if (oscEnable) {
-          oscEnable = false;
+        if (oscStart) {
+          oscStart = false;
           print('line.substring($i)->${data.substring(i).split('\n').first}');
           final int charWordindex = data.substring(i).indexOf(
                 String.fromCharCode(7),
@@ -222,8 +225,8 @@ class TermareController with Observable {
           i += header.length;
           continue;
         }
-        if (csiEnable) {
-          csiEnable = false;
+        if (csiStart) {
+          csiStart = false;
           if (data[i] == 'K') {
             // 删除字符
             // 可能存在光标的位置在最后一行的开始，但是开始那一行并没有任何的字符，所例如cache.length为10，光标在11行的第一个格子
@@ -253,7 +256,7 @@ class TermareController with Observable {
             continue;
           }
           if (data[i] == '?') {
-            csiAnd3fEnable = true;
+            csiAnd3fStart = true;
             continue;
           }
           final int charWordindex =
@@ -337,16 +340,16 @@ class TermareController with Observable {
           }
           continue;
         }
-        if (escapeEnable) {
-          escapeEnable = false;
+        if (escapeStart) {
+          escapeStart = false;
           if (eq(codeUnits, [0x5b])) {
             // ascii 91 是字符->[，‘esc [’开启了 csi 序列。
-            csiEnable = true;
+            csiStart = true;
           }
           if (eq(codeUnits, [0x5d])) {
             // ascii 93 是字符->]，‘esc ]’开启了 osc 序列。
-            print('$red oscEnable');
-            oscEnable = true;
+            print('$red oscStart');
+            oscStart = true;
           }
           continue;
         }
@@ -459,7 +462,7 @@ class TermareController with Observable {
 
         if (eq(codeUnits, [0x1b])) {
           // print('$red<- 0 Escape ->');
-          escapeEnable = true;
+          escapeStart = true;
           continue;
         }
       }
@@ -474,9 +477,16 @@ class TermareController with Observable {
       final TextPainter painter = painterCache.getOrPerformLayout(
         TextSpan(
           text: data[i],
+          style: TextStyle(
+            // 误删，有用的，用来判断双宽度字符还是单宽度字符
+            fontSize: theme.fontSize,
+            height: 1,
+          ),
         ),
       );
       // print('$red currentPointer->$currentPointer');
+      // print('$red  painter width->${painter.width}');
+      // print('$red  painter height->${painter.height}');
       // PrintUtil.printD('data[i]->${data[i]}');
 
       if (cache[currentPointer.y] == null) {
