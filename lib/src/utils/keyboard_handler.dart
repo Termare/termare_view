@@ -68,8 +68,18 @@ class KeyboardHandler {
           print('安卓的返回键');
           return;
         }
+        if (event.logicalKey.keyId == 0x100070052) {
+          print('安卓的上键');
+          keyboardInput?.call(utf8.decode([112 - 96]));
+          return;
+        }
+        if (event.logicalKey.keyId == 0x100070051) {
+          print('安卓的上键');
+          keyboardInput?.call(utf8.decode([110 - 96]));
+          return;
+        }
         // print(event.logicalKey);
-        print('event.logicalKey.keyId -> ${event.logicalKey.keyId}');
+        // print('event.logicalKey.keyId -> ${event.logicalKey.keyId}');
         keyboardInput?.call(utf8.decode([event.logicalKey.keyId]));
         // print(utf8.decode([event.logicalKey.keyId]));
       }
