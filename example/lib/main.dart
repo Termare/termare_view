@@ -31,10 +31,10 @@ class _ExampleState extends State<Example> {
     super.initState();
     // controller.write('hello termare_view\n');
     // SequencesTest.testC0(controller);
-    controller.write('\x1B[1;31mhello termare_view\x1B[0m\n');
-    SequencesTest.testDECSEL(controller);
-    SequencesTest.testColorText(controller);
-    // controller.write('\x1B[1;32mhello termare_view\x1B[0m\n');
+    // controller.write('\x1B[1;31mhello termare_view\x1B[0m\n');
+    // SequencesTest.testDECSEL(controller);
+    // SequencesTest.testColorText(controller);
+    controller.write('      asdad█████阿                    |\n');
     // SequencesTest.testColorText(controller);
   }
 
