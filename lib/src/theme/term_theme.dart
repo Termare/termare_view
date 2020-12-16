@@ -50,6 +50,7 @@ class TermareStyle {
     this.lightWhite,
   });
   TermareStyle copyWith({
+    double fontSize = 12,
     Color cursorColor,
     Color backgroundColor,
     Color defaultColor,
@@ -71,6 +72,7 @@ class TermareStyle {
     Color lightWhite,
   }) {
     return TermareStyle(
+      fontSize: fontSize ?? this.fontSize,
       cursorColor: cursorColor ?? this.cursorColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
       defaultColor: defaultColor ?? this.defaultColor,
@@ -123,6 +125,10 @@ class TermareStyle {
   double get letterWidth => letterWidthMap[fontSize.toInt()];
   double get letterHeight => letterWidth * 2;
   double fontSize;
+  @override
+  String toString() {
+    return '';
+  }
 }
 
 class TermareStyles {
@@ -130,43 +136,43 @@ class TermareStyles {
   static TermareStyle termux = TermareStyle(
     cursorColor: Colors.grey,
     backgroundColor: Colors.black,
-    black: Color(0xff000000),
-    lightBlack: Color(0xff7f7f7f),
-    red: Color(0xffcc0001),
-    lightRed: Color(0xfffe0000),
-    green: Color(0xff00cd00),
-    lightGreen: Color(0xff00ff01),
-    yellow: Color(0xffcecd00),
-    lightYellow: Color(0xffffff00),
-    blue: Color(0xff6395ec),
-    lightBlue: Color(0xff5d5cff),
-    purplishRed: Color(0xffce00cd),
-    lightPurplishRed: Color(0xffff00fe),
-    cyan: Color(0xff00cece),
-    lightCyan: Color(0xff00ffff),
-    white: Color(0xffe5e5e5),
-    lightWhite: Color(0xffffffff),
+    black: const Color(0xff000000),
+    lightBlack: const Color(0xff7f7f7f),
+    red: const Color(0xffcc0001),
+    lightRed: const Color(0xfffe0000),
+    green: const Color(0xff00cd00),
+    lightGreen: const Color(0xff00ff01),
+    yellow: const Color(0xffcecd00),
+    lightYellow: const Color(0xffffff00),
+    blue: const Color(0xff6395ec),
+    lightBlue: const Color(0xff5d5cff),
+    purplishRed: const Color(0xffce00cd),
+    lightPurplishRed: const Color(0xffff00fe),
+    cyan: const Color(0xff00cece),
+    lightCyan: const Color(0xff00ffff),
+    white: const Color(0xffe5e5e5),
+    lightWhite: const Color(0xffffffff),
   );
   // static const  TermTheme manjaro;
   static TermareStyle macos = TermareStyle(
     defaultColor: Colors.black,
-    backgroundColor: Color(0xffffffff),
-    black: Color(0xff040404),
-    lightBlack: Color(0xff030102),
-    red: Color(0xffd50403),
-    lightRed: Color(0xffd50304),
-    green: Color(0xff05d329),
-    lightGreen: Color(0xff08d424),
-    yellow: Color(0xffb0c20c),
-    lightYellow: Color(0xffabc017),
-    blue: Color(0xff8109f1),
-    lightBlue: Color(0xff8005ea),
-    purplishRed: Color(0xfffd04e4),
-    lightPurplishRed: Color(0xfff503dd),
-    cyan: Color(0xff04c5d5),
-    lightCyan: Color(0xff0cc5db),
-    white: Color(0xffdccecd),
-    lightWhite: Color(0xffd9d2d5),
+    backgroundColor: const Color(0xffffffff),
+    black: const Color(0xff000000),
+    lightBlack: const Color(0xff666666),
+    red: const Color(0xff990000),
+    lightRed: const Color(0xffe50000),
+    green: const Color(0xff00a600),
+    lightGreen: const Color(0xff01d900),
+    yellow: const Color(0xff999900),
+    lightYellow: const Color(0xffe6e500),
+    blue: const Color(0xff0000b3),
+    lightBlue: const Color(0xff0000ff),
+    purplishRed: const Color(0xffb200b3),
+    lightPurplishRed: const Color(0xffe500e6),
+    cyan: const Color(0xff00a6b3),
+    lightCyan: const Color(0xff01e5e6),
+    white: const Color(0xffbfbfbf),
+    lightWhite: const Color(0xffe6e5e6),
   );
   static TermareStyle manjaro = TermareStyle(
     defaultColor: Color(0xffaaaaaa),
