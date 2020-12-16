@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:termare_view/src/painter/model/position.dart';
 
+import 'core/safe_list.dart';
 import 'model/letter_eneity.dart';
 import 'observable.dart';
 import 'painter/termare_painter.dart';
@@ -22,46 +23,13 @@ class TermareController with Observable {
     this.rowLength = 57,
     this.columnLength = 41,
     this.showBackgroundLine = false,
+    this.fontFamily = 'packages/termare_view/DroidSansMono',
   }) {
     theme ??= TermareStyles.termux;
-    defaultStyle = TextStyle(
-      textBaseline: TextBaseline.alphabetic,
-      height: 1,
-      fontSize: theme.fontSize,
-      color: Colors.white,
-      fontWeight: FontWeight.w500,
-      fontFamily: 'packages/termare_view/DroidSansMono',
-    );
     final Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
-    // cache.length = cacheLine;
-    // for (int i = 0; i < cacheLine; i++) {
-    //   cache[i] = [];
-    //   cache[i].length = columnLength;
-    // }
-
-    // print('\x1b[31m${stopwatch.elapsed}');
-    // PrintUtil.printd('posistion -> $currentPointer', 31);
-    // for (int i = 0; i < columnLength; i++) {
-    //   moveToNextPosition();
-    //   PrintUtil.printd('posistion -> $currentPointer', 31);
-    // }
-    // for (int i = 0; i < columnLength; i++) {
-    //   moveToNextPosition();
-    //   PrintUtil.printd('posistion -> $currentPointer', 31);
-    // }
-    // for (int i = 0; i < columnLength; i++) {
-    //   moveToNextPosition();
-    //   PrintUtil.printd('posistion -> $currentPointer', 31);
-    // }
-    // for (int i = 0; i < columnLength; i++) {
-    //   moveToPrePosition();
-    //   PrintUtil.printd('posistion -> $currentPointer', 31);
-    // }
-    // print(cache);
   }
-  // final Map<String, String> environment;
-
+  final String fontFamily;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
   final int cacheLine = 1000;
 
@@ -70,7 +38,7 @@ class TermareController with Observable {
   bool dirty = false;
   // String out = '';
   TermareStyle theme;
-  List<List<LetterEntity>> cache = [];
+  SafeList<SafeList<LetterEntity>> cache = SafeList();
   bool showCursor = true;
   // 当从 pty 读出内容的时候就会自动滑动
   bool autoScroll = true;
@@ -80,9 +48,10 @@ class TermareController with Observable {
   int rowLength;
   int columnLength;
 
+  String fontColorTag = '0';
+  String backgroundColorTag = '0';
+  String fontStyleTag = '0';
   // void write(String data) => unixPthC.write(data);
-
-  TextStyle defaultStyle;
 
   /// 直接指向 pty write 函数
   void write(String data) {
@@ -97,25 +66,13 @@ class TermareController with Observable {
   int startLine = 0;
 
   void moveToPosition(int x) {
-    if (currentPointer.x + x >= columnLength) {
-      // 说明在行尾
-      currentPointer = Position(
-        currentPointer.x + x - columnLength,
-        currentPointer.y + 1,
-      );
-    } else if (currentPointer.x + x <= 0) {
-      // 说明在行首
-      int yShould = currentPointer.y - 1;
-      if (yShould < 0) {
-        yShould = 0;
-      }
-      currentPointer = Position(
-        columnLength - 1,
-        yShould,
-      );
-    } else {
-      currentPointer = Position(currentPointer.x + x, currentPointer.y);
+    // 玄学勿碰
+    final int n = currentPointer.y * columnLength + currentPointer.x;
+    int target = n + x;
+    if (target < 0) {
+      target = 0;
     }
+    currentPointer = Position(target % columnLength, target ~/ columnLength);
   }
 
   void setPtyWindowSize(Size size) {
@@ -179,24 +136,45 @@ class TermareController with Observable {
   // 3f 是字符 ?
   bool csiAnd3fEnable = false;
   bool escapeEnable = false;
+  void changeEntityStyle(String tag) {
+    final int intTag = int.tryParse(tag);
+    if (intTag == 0 || tag.isEmpty) {
+      fontColorTag = '0';
+      backgroundColorTag = '0';
+      fontStyleTag = '0';
+    }
+    if (0 < intTag && intTag < 7) {
+      fontStyleTag = tag;
+    }
+    if (30 <= intTag && intTag <= 37) {
+      fontColorTag = tag;
+    }
+    if (40 <= intTag && intTag <= 47) {
+      backgroundColorTag = tag;
+    }
+  }
+
   void parseOutput(String data, {bool verbose = true}) {
     // print('$red $whiteBackground parseOutput->$data');
-    print('$red $whiteBackground parseOutput->${data.codeUnits}');
+    // print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
+      if (i > data.length - 1) {
+        break;
+      }
       final List<int> codeUnits = data[i].codeUnits;
       // dart 的 codeUnits 是 utf32
       final List<int> utf8CodeUnits = utf8.encode(data[i]);
       // print('codeUnits->$codeUnits');
       // print('utf8CodeUnits->$utf8CodeUnits');
-      if (utf8CodeUnits.length == 1) {
-        defaultStyle = defaultStyle.copyWith(
-          fontFamily: 'packages/termare_view/DroidSansMono',
-        );
-      } else {
-        defaultStyle = defaultStyle.copyWith(
-          fontFamily: 'SourceCodeProMediumforPowerline',
-        );
-      }
+      // if (utf8CodeUnits.length == 1) {
+      //   defaultStyle = defaultStyle.copyWith(
+      //     fontFamily: 'packages/termare_view/DroidSansMono',
+      //   );
+      // } else {
+      //   defaultStyle = defaultStyle.copyWith(
+      //     fontFamily: 'packages/termare_view/DroidSansMono',
+      //   );
+      // }
       if (utf8CodeUnits.length == 1) {
         // 说明单字节
         /// ------------------------------- c0 --------------------------------
@@ -232,34 +210,46 @@ class TermareController with Observable {
         if (oscEnable) {
           oscEnable = false;
           print('line.substring($i)->${data.substring(i).split('\n').first}');
-          final int charWordindex =
-              data.substring(i).indexOf(String.fromCharCode(7));
+          final int charWordindex = data.substring(i).indexOf(
+                String.fromCharCode(7),
+              );
           if (charWordindex == -1) {
             continue;
           }
           String header = '';
           header = data.substring(i, i + charWordindex);
-          print('osc  -> $header');
-          i += header.length + 1;
+          print('osc -> $header\a');
+          i += header.length;
+          continue;
         }
         if (csiEnable) {
           csiEnable = false;
           if (data[i] == 'K') {
             // 删除字符
-            print(cache[currentPointer.y][currentPointer.x - 1].content);
-            final TextPainter painter = painterCache.getOrPerformLayout(
-              TextSpan(
-                text: ' ',
-                style: defaultStyle,
-              ),
-            );
-            cache[currentPointer.y][currentPointer.x] = LetterEntity(
-              content: ' ',
-              letterWidth: painter.width,
-              letterHeight: painter.height,
-              position: currentPointer,
-              textStyle: defaultStyle.copyWith(fontSize: theme.fontSize),
-            );
+            // 可能存在光标的位置在最后一行的开始，但是开始那一行并没有任何的字符，所例如cache.length为10，光标在11行的第一个格子
+            for (int c = currentPointer.x; c < columnLength; c++) {
+              if (cache[currentPointer.y] == null) {
+                continue;
+              }
+              cache[currentPointer.y][c] = null;
+            }
+            // TODO 拿来测试
+            //      |█████                           | 8.1 MB 2.1 MB/s eta 0:00:21
+
+            // print(cache[currentPointer.y][currentPointer.x - 1].content);
+            // final TextPainter painter = painterCache.getOrPerformLayout(
+            //   TextSpan(
+            //     text: ' ',
+            //     style: defaultStyle,
+            //   ),
+            // );
+            // cache[currentPointer.y][currentPointer.x] = LetterEntity(
+            //   content: ' ',
+            //   letterWidth: painter.width,
+            //   letterHeight: painter.height,
+            //   position: currentPointer,
+            //   textStyle: defaultStyle.copyWith(fontSize: theme.fontSize),
+            // );
             continue;
           }
           if (data[i] == '?') {
@@ -280,12 +270,19 @@ class TermareController with Observable {
           final String sequenceChar = data.substring(i)[charWordindex];
           if (sequenceChar == 'm') {
             print('ESC[ pm m header -> $header');
-            header.split(';').forEach((element) {
-              defaultStyle = getTextStyle(element, defaultStyle);
-            });
+
             if (header.isEmpty) {
-              defaultStyle = getTextStyle('0', defaultStyle);
+              changeEntityStyle('0');
+            } else {
+              header.split(';').forEach((element) {
+                changeEntityStyle(element);
+                // defaultStyle = getTextStyle(element, defaultStyle);
+              });
             }
+            i += header.length;
+          }
+          if (sequenceChar == 'r') {
+            print('DECSTBM	Set Top and Bottom Margin -> $header');
             i += header.length;
           }
           if (sequenceChar == 'C') {
@@ -304,8 +301,30 @@ class TermareController with Observable {
             );
             i += header.length;
           }
+          if (sequenceChar == 'J') {
+            print(
+                'ED	Erase In Display -> $header $currentPointer ${cache.length}');
+            for (int r = currentPointer.y; r < cache.length; r++) {
+              for (int c = currentPointer.x; c < columnLength + 1; c++) {
+                cache[r][c] = null;
+              }
+            }
+            // i += header.length;
+          }
+          if (sequenceChar == 'f') {
+            print('CUP	Cursor Position -> $header');
+            currentPointer = Position(
+              int.tryParse(header.split(';')[1]),
+              int.tryParse(header.split(';')[0]),
+            );
+            i += header.length;
+          }
           if (sequenceChar == 'D') {
             print('ESC[ ps D header -> $header');
+            final int backStep = int.tryParse(header);
+            if (backStep < 100) {
+              moveToPosition(-backStep);
+            }
             i += header.length;
           }
           if (sequenceChar == 'B') {
@@ -446,34 +465,32 @@ class TermareController with Observable {
       }
       // PrintUtil.printd('cache.length -> ${cache.length}', 31);
       // TODO
-      if (cache.length < currentPointer.y + 1) {
-        // 会越界
-        cache.length = currentPointer.y + 1;
-        cache[currentPointer.y] = [];
-        cache[currentPointer.y].length = columnLength;
-      }
+
       // print(' data[i]->${data[i]}');
       // PrintUtil.printd('posistion -> $currentPointer', 31);
       // PrintUtil.printd('cache -> $cache', 31);
+
+      // print('$red getOrPerformLayout $i');
       final TextPainter painter = painterCache.getOrPerformLayout(
         TextSpan(
           text: data[i],
-          style: defaultStyle,
         ),
       );
-      // PrintUtil.printD('currentPointer->$currentPointer');
+      // print('$red currentPointer->$currentPointer');
       // PrintUtil.printD('data[i]->${data[i]}');
-      final TextStyle curTextStyle = defaultStyle.copyWith(
-        fontSize: theme.fontSize,
-      );
+
+      if (cache[currentPointer.y] == null) {
+        cache[currentPointer.y] = SafeList<LetterEntity>();
+      }
       cache[currentPointer.y][currentPointer.x] = LetterEntity(
         content: data[i],
         letterWidth: painter.width,
         letterHeight: painter.height,
         position: currentPointer,
-        textStyle: curTextStyle,
-        backgroundColor: curTextStyle.backgroundColor,
         doubleWidth: painter.width == painter.height,
+        fontColorTag: fontColorTag,
+        backgroundColorTag: backgroundColorTag,
+        fontStyleTag: fontStyleTag,
       );
       if (painter.width == painter.height) {
         // 只有双字节字符宽高相等

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:termare_view/src/config/cache.dart';
+import 'package:termare_view/src/core/safe_list.dart';
 import 'package:termare_view/src/model/letter_eneity.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
@@ -83,7 +84,7 @@ class TermarePainter extends CustomPainter {
       if (y + controller.startLine >= controller.cache.length) {
         break;
       }
-      final List<LetterEntity> line =
+      final SafeList<LetterEntity> line =
           controller.cache[y + controller.startLine];
       if (line == null) {
         continue;
@@ -97,10 +98,13 @@ class TermarePainter extends CustomPainter {
         final TextPainter painter = painterCache.getOrPerformLayout(
           TextSpan(
             text: letterEntity.content,
-            style: letterEntity.textStyle.copyWith(
+            style: TextStyle(
               fontSize: controller.theme.fontSize,
               backgroundColor: Colors.transparent,
-              height: 1.0,
+              color: getFontColor(letterEntity.fontColorTag),
+              fontWeight: FontWeight.w600,
+              fontFamily: controller.fontFamily,
+              // fontStyle: FontStyle
             ),
           ),
         );
@@ -109,18 +113,22 @@ class TermarePainter extends CustomPainter {
           (letterEntity.position.y - controller.startLine) *
               controller.theme.letterHeight,
         );
-        if (letterEntity.backgroundColor != null) {
+        if (letterEntity.backgroundColorTag != '0') {
           // 当字符背景颜色不为空的时候
           canvas.drawRect(
             Rect.fromLTWH(
-              offset.dx,
+              // 下面是扫办法，解决neofetch显示的颜色方块中有缝隙
+              offset.dx - 1,
               offset.dy,
               letterEntity.doubleWidth
-                  ? controller.theme.letterWidth * 2
-                  : controller.theme.letterWidth,
+                  ? controller.theme.letterWidth * 2 + 2
+                  : controller.theme.letterWidth + 2,
               controller.theme.letterHeight,
             ),
-            Paint()..color = letterEntity.backgroundColor,
+            Paint()
+              ..color = getBackgroundColor(
+                letterEntity.backgroundColorTag,
+              ),
           );
         }
 
@@ -159,6 +167,68 @@ class TermarePainter extends CustomPainter {
         // );
       }
     } else {}
+  }
+
+  Color getFontColor(String tag) {
+    switch (tag) {
+      case '30':
+        return controller.theme.black;
+        break;
+      case '31':
+        return controller.theme.red;
+        break;
+      case '32':
+        return controller.theme.green;
+        break;
+      case '33':
+        return controller.theme.yellow;
+        break;
+      case '34':
+        return controller.theme.blue;
+        break;
+      case '35':
+        return controller.theme.purplishRed;
+        break;
+      case '36':
+        return controller.theme.cyan;
+        break;
+      case '37':
+        return controller.theme.white;
+        break;
+      default:
+        return controller.theme.defaultColor;
+    }
+  }
+
+  Color getBackgroundColor(String tag) {
+    switch (tag) {
+      case '40':
+        return controller.theme.black;
+        break;
+      case '41':
+        return controller.theme.red;
+        break;
+      case '42':
+        return controller.theme.green;
+        break;
+      case '43':
+        return controller.theme.yellow;
+        break;
+      case '44':
+        return controller.theme.blue;
+        break;
+      case '45':
+        return controller.theme.purplishRed;
+        break;
+      case '46':
+        return controller.theme.cyan;
+        break;
+      case '47':
+        return controller.theme.white;
+        break;
+      default:
+        return controller.theme.black;
+    }
   }
 
   void paintText(Canvas canva) {}
