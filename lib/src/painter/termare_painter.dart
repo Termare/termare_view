@@ -101,7 +101,10 @@ class TermarePainter extends CustomPainter {
             style: TextStyle(
               fontSize: controller.theme.fontSize,
               backgroundColor: Colors.transparent,
-              color: getFontColor(letterEntity.fontColorTag),
+              color: getFontColor(
+                letterEntity.fontColorTag,
+                letterEntity.foregroundColor,
+              ),
               fontWeight: FontWeight.w600,
               fontFamily: controller.fontFamily,
               // fontStyle: FontStyle
@@ -128,6 +131,7 @@ class TermarePainter extends CustomPainter {
             Paint()
               ..color = getBackgroundColor(
                 letterEntity.backgroundColorTag,
+                letterEntity.backgroundColor,
               ),
           );
         }
@@ -169,62 +173,213 @@ class TermarePainter extends CustomPainter {
     } else {}
   }
 
-  Color getFontColor(String tag) {
+  Color getFontColor(String tag, String hightTag) {
+    final bool higlt = hightTag == '38';
+    switch (tag) {
+      case '8':
+        if (higlt) {
+          return controller.theme.black;
+        }
+        return controller.theme.lightBlack;
+        break;
+      case '9':
+        if (higlt) {
+          return controller.theme.red;
+        }
+        return controller.theme.lightRed;
+        break;
+      case '10':
+        if (higlt) {
+          return controller.theme.green;
+        }
+        return controller.theme.lightGreen;
+        break;
+      case '11':
+        if (higlt) {
+          return controller.theme.yellow;
+        }
+        return controller.theme.lightYellow;
+        break;
+      case '12':
+        if (higlt) {
+          return controller.theme.blue;
+        }
+        return controller.theme.lightBlue;
+        break;
+      case '13':
+        if (higlt) {
+          return controller.theme.purplishRed;
+        }
+        return controller.theme.lightPurplishRed;
+        break;
+      case '14':
+        if (higlt) {
+          return controller.theme.cyan;
+        }
+        return controller.theme.lightCyan;
+        break;
+      case '15':
+        if (higlt) {
+          return controller.theme.white;
+        }
+        return controller.theme.lightWhite;
+        break;
+    }
     switch (tag) {
       case '30':
-        return controller.theme.black;
+        if (higlt) {
+          return controller.theme.black;
+        }
+        return controller.theme.lightBlack;
         break;
       case '31':
-        return controller.theme.red;
+        if (higlt) {
+          return controller.theme.red;
+        }
+        return controller.theme.lightRed;
         break;
       case '32':
-        return controller.theme.green;
+        if (higlt) {
+          return controller.theme.green;
+        }
+        return controller.theme.lightGreen;
         break;
       case '33':
-        return controller.theme.yellow;
+        if (higlt) {
+          return controller.theme.yellow;
+        }
+        return controller.theme.lightYellow;
         break;
       case '34':
-        return controller.theme.blue;
+        if (higlt) {
+          return controller.theme.blue;
+        }
+        return controller.theme.lightBlue;
         break;
       case '35':
-        return controller.theme.purplishRed;
+        if (higlt) {
+          return controller.theme.purplishRed;
+        }
+        return controller.theme.lightPurplishRed;
         break;
       case '36':
-        return controller.theme.cyan;
+        if (higlt) {
+          return controller.theme.cyan;
+        }
+        return controller.theme.lightCyan;
         break;
       case '37':
-        return controller.theme.white;
+        if (higlt) {
+          return controller.theme.white;
+        }
+        return controller.theme.lightWhite;
         break;
       default:
         return controller.theme.defaultColor;
     }
   }
 
-  Color getBackgroundColor(String tag) {
+  Color getBackgroundColor(String tag, String hightTag) {
+    final bool defaultColor = hightTag == '49';
+    print('hightTag->${hightTag}');
+    switch (tag) {
+      case '8':
+        if (defaultColor) {
+          return controller.theme.black;
+        }
+        return controller.theme.lightBlack;
+        break;
+      case '9':
+        if (defaultColor) {
+          return controller.theme.red;
+        }
+        return controller.theme.lightRed;
+        break;
+      case '10':
+        if (defaultColor) {
+          return controller.theme.green;
+        }
+        return controller.theme.lightGreen;
+        break;
+      case '11':
+        if (defaultColor) {
+          return controller.theme.yellow;
+        }
+        return controller.theme.lightYellow;
+        break;
+      case '12':
+        if (defaultColor) {
+          return controller.theme.blue;
+        }
+        return controller.theme.lightBlue;
+        break;
+      case '13':
+        if (defaultColor) {
+          return controller.theme.purplishRed;
+        }
+        return controller.theme.lightPurplishRed;
+        break;
+      case '14':
+        if (defaultColor) {
+          return controller.theme.cyan;
+        }
+        return controller.theme.lightCyan;
+        break;
+      case '15':
+        if (defaultColor) {
+          return controller.theme.white;
+        }
+        return controller.theme.lightWhite;
+        break;
+    }
     switch (tag) {
       case '40':
-        return controller.theme.black;
+        if (defaultColor) {
+          return controller.theme.black;
+        }
+        return controller.theme.lightBlack;
         break;
       case '41':
-        return controller.theme.red;
+        if (defaultColor) {
+          return controller.theme.red;
+        }
+        return controller.theme.lightRed;
         break;
       case '42':
-        return controller.theme.green;
+        if (defaultColor) {
+          return controller.theme.green;
+        }
+        return controller.theme.lightGreen;
         break;
       case '43':
-        return controller.theme.yellow;
+        if (defaultColor) {
+          return controller.theme.yellow;
+        }
+        return controller.theme.lightYellow;
         break;
       case '44':
-        return controller.theme.blue;
+        if (defaultColor) {
+          return controller.theme.blue;
+        }
+        return controller.theme.lightBlue;
         break;
       case '45':
-        return controller.theme.purplishRed;
+        if (defaultColor) {
+          return controller.theme.purplishRed;
+        }
+        return controller.theme.lightPurplishRed;
         break;
       case '46':
-        return controller.theme.cyan;
+        if (defaultColor) {
+          return controller.theme.cyan;
+        }
+        return controller.theme.lightCyan;
         break;
       case '47':
-        return controller.theme.white;
+        if (defaultColor) {
+          return controller.theme.white;
+        }
+        return controller.theme.lightWhite;
         break;
       default:
         return controller.theme.black;

@@ -54,6 +54,9 @@ class TermareController with Observable {
   String fontColorTag = '0';
   String backgroundColorTag = '0';
   String fontStyleTag = '0';
+  // 39 是 default
+  String foregroundColor = '39';
+  String backgroundColor = '49';
   // void write(String data) => unixPthC.write(data);
 
   /// 直接指向 pty write 函数
@@ -149,8 +152,25 @@ class TermareController with Observable {
     if (0 < intTag && intTag < 7) {
       fontStyleTag = tag;
     }
+    if (8 <= intTag && intTag <= 15) {
+      fontColorTag = tag;
+      backgroundColorTag = tag;
+    }
     if (30 <= intTag && intTag <= 37) {
       fontColorTag = tag;
+    }
+    // TODO 38前景色 48 背景色
+    if (tag == '38') {
+      foregroundColor = tag;
+    }
+    if (tag == '39') {
+      foregroundColor = tag;
+    }
+    if (tag == '48') {
+      backgroundColor = tag;
+    }
+    if (tag == '49') {
+      backgroundColor = tag;
     }
     if (40 <= intTag && intTag <= 47) {
       backgroundColorTag = tag;
@@ -278,8 +298,8 @@ class TermareController with Observable {
               changeEntityStyle('0');
             } else {
               header.split(';').forEach((element) {
+                print('ESC[ pm m header element -> $element');
                 changeEntityStyle(element);
-                // defaultStyle = getTextStyle(element, defaultStyle);
               });
             }
             i += header.length;
@@ -501,6 +521,8 @@ class TermareController with Observable {
         fontColorTag: fontColorTag,
         backgroundColorTag: backgroundColorTag,
         fontStyleTag: fontStyleTag,
+        backgroundColor: backgroundColor,
+        foregroundColor: foregroundColor,
       );
       if (painter.width == painter.height) {
         // 只有双字节字符宽高相等

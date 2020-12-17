@@ -3,6 +3,8 @@ import 'package:termare_view/src/painter/model/position.dart';
 
 class LetterEntity {
   LetterEntity({
+    this.foregroundColor,
+    this.backgroundColor,
     this.fontColorTag,
     this.backgroundColorTag,
     this.fontStyleTag,
@@ -20,4 +22,7 @@ class LetterEntity {
   final String fontColorTag;
   final String backgroundColorTag;
   final String fontStyleTag;
+  //TODO
+  final String backgroundColor;
+  final String foregroundColor;
 }
