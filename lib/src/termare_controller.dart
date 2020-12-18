@@ -34,6 +34,7 @@ class TermareController with Observable {
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
   final int cacheLine = 1000;
 
+  void Function() onBell;
   KeyboardInput keyboardInput;
 
   /// 通过这个值来判断终端是否需要刷新
@@ -263,7 +264,6 @@ class TermareController with Observable {
               cache[currentPointer.y][c] = null;
             }
             // TODO 拿来测试
-            //      |█████                           | 8.1 MB 2.1 MB/s eta 0:00:21
 
             // print(cache[currentPointer.y][currentPointer.x - 1].content);
             // final TextPainter painter = painterCache.getOrPerformLayout(
@@ -383,6 +383,8 @@ class TermareController with Observable {
           // print('$red<- C0 NULL ->');
           continue;
         } else if (eq(codeUnits, [0x07])) {
+          onBell?.call();
+          print('onBell?.call();  $onBell');
           print('$red<- C0 Bell ->');
           continue;
         } else if (eq(codeUnits, [0x08])) {

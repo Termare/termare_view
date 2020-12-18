@@ -19,12 +19,14 @@ class TermareView extends StatefulWidget {
     this.onKeyStroke,
     this.onAction,
     this.bottomBar,
+    this.onBell,
   }) : super(key: key);
   final TermareController controller;
   final KeyboardInput keyboardInput;
   final InputHandler onTextInput;
   final KeyStrokeHandler onKeyStroke;
   final ActionHandler onAction;
+  final void Function() onBell;
   final Widget bottomBar;
 
   @override
@@ -40,6 +42,8 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    print('widget.controller.onBell = widget.onBell;');
+    widget.controller.onBell = widget.onBell;
     WidgetsBinding.instance.addObserver(this);
     keyboardHandler = KeyboardHandler();
     widget.controller.addListener(() {
@@ -114,6 +118,28 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  final initEditingState = const TextEditingValue(
+    text: '  ',
+    selection: TextSelection.collapsed(offset: 1),
+  );
+  TextEditingValue onTextEdit(
+    TextEditingValue value,
+  ) {
+    if (value.text.length > initEditingState.text.length) {
+      widget.keyboardInput(value.text.substring(1, value.text.length - 1));
+    } else if (value.text.length < initEditingState.text.length) {
+      widget.keyboardInput(String.fromCharCode(127));
+    } else {
+      if (value.selection.baseOffset < 1) {
+        widget.keyboardInput(String.fromCharCode(2));
+      } else if (value.selection.baseOffset > 1) {
+        widget.keyboardInput(String.fromCharCode(6));
+      }
+    }
+
+    return initEditingState;
+  }
+
   @override
   Widget build(BuildContext context) {
     return InputListener(
@@ -124,17 +150,15 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
         }
         //
         // print('onTextInput -> $value');
-        widget.keyboardInput(value.text.substring(1, value.text.length - 1));
-        return const TextEditingValue(
-          text: '  ',
-          selection: TextSelection.collapsed(offset: 1),
+        return onTextEdit(
+          value,
         );
       },
       onAction: (TextInputAction action) {
+        print('onAction  ->  $action');
         if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
           return null;
         }
-        print('onAction  ->  $action');
         // 当软件盘回车按下的时候
         if (action == TextInputAction.done) {
           widget.keyboardInput('\n');
