@@ -34,7 +34,8 @@ class _ExampleState extends State<Example> {
     // controller.write('\x1B[1;31mhello termare_view\x1B[0m\n');
     // SequencesTest.testDECSEL(controller);
     // SequencesTest.testColorText(controller);
-    controller.write('      asdad█████阿                    |\n');
+    SequencesTest.testOSC(controller);
+    // controller.write('      asdad█████阿                    |\n');
     // SequencesTest.testColorText(controller);
   }
 

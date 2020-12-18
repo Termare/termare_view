@@ -59,7 +59,6 @@ class SequencesTest {
   }
 
   static void testC0(TermareController controller) {
-    controller.write('\n');
     controller.write('bell test\x07\n');
     controller.write('Backspace Teaa\x08\x08st\n');
     controller.write('Horizontal\x09Tabulation\n');
@@ -73,5 +72,10 @@ class SequencesTest {
   static void testDECSEL(TermareController controller) {
     controller.write('\n');
     controller.write('Backspace Teaa\x08\x1b[k\x08\x1b[kst\n');
+  }
+
+  static void testOSC(TermareController controller) {
+    // controller.write('\x1b\x5d0;termare \x07set title to termare\n');
+    controller.write('\x9d0;termare \x07set title to termare\n');
   }
 }

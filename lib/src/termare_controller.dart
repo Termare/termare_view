@@ -142,6 +142,7 @@ class TermareController with Observable {
   // 3f 是字符 ?
   bool csiAnd3fStart = false;
   bool escapeStart = false;
+  bool dcsStart = false;
   void changeEntityStyle(String tag) {
     final int intTag = int.tryParse(tag);
     if (intTag == 0 || tag.isEmpty) {
@@ -179,6 +180,7 @@ class TermareController with Observable {
 
   void parseOutput(String data, {bool verbose = true}) {
     print('$red $whiteBackground parseOutput->$data');
+    print('$red $whiteBackground parseOutput->${utf8.encode(data)}');
     print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       if (i > data.length - 1) {
@@ -231,7 +233,11 @@ class TermareController with Observable {
           continue;
         }
         if (oscStart) {
+          // TODO 有三种，没写完
           oscStart = false;
+          if (verbose) {
+            print('$red Set window title and icon name');
+          }
           print('line.substring($i)->${data.substring(i).split('\n').first}');
           final int charWordindex = data.substring(i).indexOf(
                 String.fromCharCode(7),
@@ -373,9 +379,11 @@ class TermareController with Observable {
           }
           continue;
         }
-        if (eq(codeUnits, [0x07])) {
+        if (eq(codeUnits, [0])) {
+          // print('$red<- C0 NULL ->');
+          continue;
+        } else if (eq(codeUnits, [0x07])) {
           print('$red<- C0 Bell ->');
-          // PrintUtil.printn('<- C0 Bell ->', 31, 47);
           continue;
         } else if (eq(codeUnits, [0x08])) {
           // 光标左移动
@@ -386,14 +394,14 @@ class TermareController with Observable {
           continue;
         } else if (eq(codeUnits, [0x09])) {
           moveToPosition(4);
-          print('$red<- C0 Horizontal Tabulation ->');
           if (verbose) {
-            // PrintUtil.printn('<- C0 Horizontal Tabulation ->', 31, 47);
+            print('$red<- C0 Horizontal Tabulation ->');
           }
           continue;
         } else if (eq(codeUnits, [0x0a]) ||
             eq(codeUnits, [0x0b]) ||
             eq(codeUnits, [0x0c])) {
+          // TODO 有问题，应该是指向下移动光标才对
           moveToNextLinePosition();
           moveToLineFirstPosition();
           if (verbose) {
@@ -413,76 +421,79 @@ class TermareController with Observable {
             print('$red<- C0 Shift Out ->');
           }
           continue;
-        } else if (eq(codeUnits, [0x0f])) {
+        } else if (eq(utf8CodeUnits, [0x0f])) {
           // TODO
           if (verbose) {
             print('$red<- C0 Shift In ->');
           }
           continue;
-        } else if (eq(codeUnits, [0x84])) {
+        } else if (eq(utf8CodeUnits, [0x1b])) {
+          if (verbose) {
+            print('$red<- 0 Escape ->');
+          }
+          escapeStart = true;
+          continue;
+        }
+      } else {
+        // 双字节 0x84 在 utf8中一个字节是保存不下来的，按照utf8的编码规则，8位的第一位为1那么一定是两个字节
+        // ，其中第一位需要拿来当符号位，但是dart是utf32，可以通过一个字节来解析
+        if (eq(utf8CodeUnits, [0xc2, 0x84])) {
           // c1 序列
           moveToNextLinePosition();
-          moveToLineFirstPosition();
           if (verbose) {
             print('$red<- C1 Index ->');
           }
           continue;
-        } else if (eq(codeUnits, [0x85])) {
+        } else if (eq(utf8CodeUnits, [0xc2, 0x85])) {
           moveToNextLinePosition();
           moveToLineFirstPosition();
           if (verbose) {
             print('$red<- C1 	Next Line ->');
           }
           continue;
-        } else if (eq(codeUnits, [0x88])) {
+        } else if (eq(utf8CodeUnits, [0xc2, 0x88])) {
           moveToPosition(4);
           if (verbose) {
             print('$red<- C1 Horizontal Tabulation Set ->');
           }
           continue;
-        } else if (eq(codeUnits, [0x90])) {
-          // TODO
+        } else if (eq(utf8CodeUnits, [0xc2, 0x90])) {
           // Start of a DCS sequence.
+          dcsStart = true;
           if (verbose) {
             print('$red<- C1	Device Control String ->');
           }
           continue;
-        } else if (eq(codeUnits, [0x9b])) {
-          // TODO
+        } else if (eq(utf8CodeUnits, [0xc2, 0x9b])) {
+          csiStart = true;
           // 	Start of a CSI sequence.
           if (verbose) {
             print('$red<- C1 Control Sequence Introducer ->');
           }
           continue;
-        } else if (eq(codeUnits, [0x9c])) {
+        } else if (eq(utf8CodeUnits, [0xc2, 0x9c])) {
           // TODO
           if (verbose) {
             print('$red<- C1 String Terminator ->');
           }
           continue;
-        } else if (eq(codeUnits, [0x9d])) {
-          // TODO
+        } else if (eq(utf8CodeUnits, [0xc2, 0x9d])) {
+          oscStart = true;
           if (verbose) {
             print('$red<- C1 Operating System Command ->');
           }
           continue;
-        } else if (eq(codeUnits, [0x9e])) {
+        } else if (eq(utf8CodeUnits, [0xc2, 0x9e])) {
           // TODO
           if (verbose) {
             print('$red<- C1 Privacy Message ->');
           }
           continue;
-        } else if (eq(codeUnits, [0x9f])) {
+        } else if (eq(utf8CodeUnits, [0xc2, 0x9f])) {
           // TODO
           if (verbose) {
             print('$red<- C1 Application Program Comman ->');
           }
-          continue;
-        }
-
-        if (eq(codeUnits, [0x1b])) {
-          // print('$red<- 0 Escape ->');
-          escapeStart = true;
           continue;
         }
       }
