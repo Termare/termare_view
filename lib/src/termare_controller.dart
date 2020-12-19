@@ -180,9 +180,9 @@ class TermareController with Observable {
   }
 
   void parseOutput(String data, {bool verbose = true}) {
-    print('$red $whiteBackground parseOutput->$data');
-    print('$red $whiteBackground parseOutput->${utf8.encode(data)}');
-    print('$red $whiteBackground parseOutput->${data.codeUnits}');
+    // print('$red $whiteBackground parseOutput->$data');
+    // print('$red $whiteBackground parseOutput->${utf8.encode(data)}');
+    // print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       if (i > data.length - 1) {
         break;

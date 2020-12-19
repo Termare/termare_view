@@ -42,15 +42,10 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    print('widget.controller.onBell = widget.onBell;');
     widget.controller.onBell = widget.onBell;
     WidgetsBinding.instance.addObserver(this);
     keyboardHandler = KeyboardHandler();
-    widget.controller.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
+    widget.controller.addListener(updateTerm);
     testSequence();
     resizeWindow();
   }
@@ -60,6 +55,11 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
   //   super.didChangeDependencies();
   //   resizeWindow();
   // }
+  void updateTerm() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   void didChangeMetrics() {
@@ -115,6 +115,8 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _focusNode.dispose();
+
+    widget.controller.removeListener(updateTerm);
     super.dispose();
   }
 
@@ -179,8 +181,8 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
           return GestureDetector(
             behavior: HitTestBehavior.translucent,
             onDoubleTap: () async {
-              final String text = (await Clipboard.getData('text/plain')).text;
-              widget.keyboardInput?.call(text);
+              // final String text = (await Clipboard.getData('text/plain')).text;
+              // widget.keyboardInput?.call(text);
             },
             onTap: () {
               if (widget.keyboardInput != null) {
