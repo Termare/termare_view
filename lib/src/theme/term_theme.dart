@@ -7,6 +7,10 @@ import 'package:flutter/material.dart';
 //   final bool showCursor;
 // }
 const Map<int, double> letterWidthMap = {
+  4: 3.0,
+  5: 4.0,
+  6: 4.0,
+  7: 5.0,
   8: 5.0,
   9: 6.0,
   10: 6.0,
