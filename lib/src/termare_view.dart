@@ -36,7 +36,7 @@ class TermareView extends StatefulWidget {
 class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
   final FocusNode _focusNode = FocusNode();
   KeyboardHandler keyboardHandler;
-  Size painterSize = Size(0, 0);
+  Size painterSize = const Size(0, 0);
   // 记录键盘高度
   double keyoardHeight = 0;
   @override

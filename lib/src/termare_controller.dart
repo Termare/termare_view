@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:termare_view/src/painter/model/position.dart';
 
@@ -179,7 +180,7 @@ class TermareController with Observable {
     }
   }
 
-  void parseOutput(String data, {bool verbose = true}) {
+  void parseOutput(String data, {bool verbose = !kReleaseMode}) {
     // print('$red $whiteBackground parseOutput->$data');
     // print('$red $whiteBackground parseOutput->${utf8.encode(data)}');
     // print('$red $whiteBackground parseOutput->${data.codeUnits}');
