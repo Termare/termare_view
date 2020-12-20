@@ -72,6 +72,12 @@ class TermareController with Observable {
   Position currentPointer = Position(0, 0);
   // 通过这个变量来滑动终端
   int startLine = 0;
+  void clear() {
+    cache = SafeList();
+    currentPointer = Position(0, 0);
+    dirty = true;
+    notifyListeners();
+  }
 
   void moveToPosition(int x) {
     // 玄学勿碰
