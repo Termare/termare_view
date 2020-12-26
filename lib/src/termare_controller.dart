@@ -15,7 +15,9 @@ import 'utils/keyboard_handler.dart';
 /// Flutter Controller 的思想
 /// 一个TermView对应一个 Controller
 String red = '\x1b[31m';
+String pink = '\x1b[34m';
 
+String blue = '\x1b[34m';
 String whiteBackground = '\x1b[47m';
 String defaultColor = '\x1b[0m';
 
@@ -51,6 +53,7 @@ class TermareController with Observable {
   bool showBackgroundLine;
 
   int rowLength;
+  int paddingBottom = 0;
   int columnLength;
 
   String fontColorTag = '0';
@@ -76,7 +79,6 @@ class TermareController with Observable {
     cache = SafeList();
     currentPointer = Position(0, 0);
     dirty = true;
-    notifyListeners();
   }
 
   void moveToPosition(int x) {
@@ -95,6 +97,7 @@ class TermareController with Observable {
     final int column = size.width ~/ theme.letterWidth;
     rowLength = row;
     columnLength = column;
+    print('setPtyWindowSize $size $rowLength $columnLength');
     dirty = true;
     notifyListeners();
   }
@@ -187,9 +190,9 @@ class TermareController with Observable {
   }
 
   void parseOutput(String data, {bool verbose = !kReleaseMode}) {
-    // print('$red $whiteBackground parseOutput->$data');
-    // print('$red $whiteBackground parseOutput->${utf8.encode(data)}');
-    // print('$red $whiteBackground parseOutput->${data.codeUnits}');
+    print('$red $whiteBackground parseOutput->$data');
+    print('$red $whiteBackground parseOutput->${utf8.encode(data)}');
+    print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       if (i > data.length - 1) {
         break;
@@ -246,7 +249,7 @@ class TermareController with Observable {
           if (verbose) {
             print('$red Set window title and icon name');
           }
-          print('line.substring($i)->${data.substring(i).split('\n').first}');
+          // print('line.substring($i)->${data.substring(i).split('\n').first}');
           final int charWordindex = data.substring(i).indexOf(
                 String.fromCharCode(7),
               );
@@ -297,28 +300,27 @@ class TermareController with Observable {
           if (charWordindex == -1) {
             continue;
           }
-          // print('charMindex=======>$charMindex');
-
-          print('line.substring($i)->${data.substring(i).split('\n').first}');
           String header = '';
           header = data.substring(i, i + charWordindex);
 
           final String sequenceChar = data.substring(i)[charWordindex];
           if (sequenceChar == 'm') {
-            print('ESC[ pm m header -> $header');
+            // print('ESC[ pm m header -> $header');
 
             if (header.isEmpty) {
               changeEntityStyle('0');
             } else {
               header.split(';').forEach((element) {
-                print('ESC[ pm m header element -> $element');
+                // print('ESC[ pm m header element -> $element');
                 changeEntityStyle(element);
               });
             }
             i += header.length;
           }
+          // print('line.substring($i)->${data.substring(i).split('\n').first}');
           if (sequenceChar == 'r') {
-            print('DECSTBM	Set Top and Bottom Margin -> $header');
+            print('$blue CSI Set Top and Bottom Margin -> $header');
+            // print('\ header -> $header');
             i += header.length;
           }
           if (sequenceChar == 'C') {
@@ -330,7 +332,8 @@ class TermareController with Observable {
             i += header.length;
           }
           if (sequenceChar == 'A') {
-            print('ESC[ ps A header -> $header');
+            print('$blue CSI Cursor Up');
+            // print('ESC[ ps A header -> $header');
             currentPointer = Position(
               currentPointer.x,
               currentPointer.y - int.tryParse(header),
@@ -351,7 +354,7 @@ class TermareController with Observable {
             print('CUP	Cursor Position -> $header');
             currentPointer = Position(
               int.tryParse(header.split(';')[1]),
-              int.tryParse(header.split(';')[0]),
+              int.tryParse(header.split(';')[0]) - 1 - startLine,
             );
             i += header.length;
           }
@@ -387,11 +390,12 @@ class TermareController with Observable {
           continue;
         }
         if (eq(codeUnits, [0])) {
-          // print('$red<- C0 NULL ->');
+          if (verbose) {
+            print('$red<- C0 NULL ->');
+          }
           continue;
         } else if (eq(codeUnits, [0x07])) {
           onBell?.call();
-          print('onBell?.call();  $onBell');
           print('$red<- C0 Bell ->');
           continue;
         } else if (eq(codeUnits, [0x08])) {
@@ -402,7 +406,7 @@ class TermareController with Observable {
           moveToPrePosition();
           continue;
         } else if (eq(codeUnits, [0x09])) {
-          moveToPosition(4);
+          moveToPosition(2);
           if (verbose) {
             print('$red<- C0 Horizontal Tabulation ->');
           }
@@ -421,7 +425,7 @@ class TermareController with Observable {
           // ascii 13
           moveToLineFirstPosition();
           if (verbose) {
-            // print('$red<- C0 Carriage Return ->');
+            print('$red<- C0 Carriage Return ->');
           }
           continue;
         } else if (eq(codeUnits, [0x0e])) {
@@ -438,7 +442,7 @@ class TermareController with Observable {
           continue;
         } else if (eq(utf8CodeUnits, [0x1b])) {
           if (verbose) {
-            print('$red<- 0 Escape ->');
+            print('$red<- C0 Escape ->');
           }
           escapeStart = true;
           continue;
@@ -450,58 +454,58 @@ class TermareController with Observable {
           // c1 序列
           moveToNextLinePosition();
           if (verbose) {
-            print('$red<- C1 Index ->');
+            print('$pink<- C1 Index ->');
           }
           continue;
         } else if (eq(utf8CodeUnits, [0xc2, 0x85])) {
           moveToNextLinePosition();
           moveToLineFirstPosition();
           if (verbose) {
-            print('$red<- C1 	Next Line ->');
+            print('$pink<- C1 	Next Line ->');
           }
           continue;
         } else if (eq(utf8CodeUnits, [0xc2, 0x88])) {
-          moveToPosition(4);
+          // moveToPosition(4);
           if (verbose) {
-            print('$red<- C1 Horizontal Tabulation Set ->');
+            print('$pink<- C1 Horizontal Tabulation Set ->');
           }
           continue;
         } else if (eq(utf8CodeUnits, [0xc2, 0x90])) {
           // Start of a DCS sequence.
           dcsStart = true;
           if (verbose) {
-            print('$red<- C1	Device Control String ->');
+            print('$pink<- C1	Device Control String ->');
           }
           continue;
         } else if (eq(utf8CodeUnits, [0xc2, 0x9b])) {
           csiStart = true;
           // 	Start of a CSI sequence.
           if (verbose) {
-            print('$red<- C1 Control Sequence Introducer ->');
+            print('$pink<- C1 Control Sequence Introducer ->');
           }
           continue;
         } else if (eq(utf8CodeUnits, [0xc2, 0x9c])) {
           // TODO
           if (verbose) {
-            print('$red<- C1 String Terminator ->');
+            print('$pink<- C1 String Terminator ->');
           }
           continue;
         } else if (eq(utf8CodeUnits, [0xc2, 0x9d])) {
           oscStart = true;
           if (verbose) {
-            print('$red<- C1 Operating System Command ->');
+            print('$pink<- C1 Operating System Command ->');
           }
           continue;
         } else if (eq(utf8CodeUnits, [0xc2, 0x9e])) {
-          // TODO
+          // TODO 不太清除实际的行为
           if (verbose) {
-            print('$red<- C1 Privacy Message ->');
+            print('$pink<- C1 Privacy Message ->');
           }
           continue;
         } else if (eq(utf8CodeUnits, [0xc2, 0x9f])) {
           // TODO
           if (verbose) {
-            print('$red<- C1 Application Program Comman ->');
+            print('$pink<- C1 Application Program Comman ->');
           }
           continue;
         }
