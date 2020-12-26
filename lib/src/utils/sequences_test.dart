@@ -58,20 +58,106 @@ class SequencesTest {
     controller.write('${'c' * 40}\n');
   }
 
+  static String _spiltLine(String title) {
+    return '${'-' * ((60 - title.length) ~/ 2)} $title ${'-' * ((60 - title.length) ~/ 2)}\n';
+  }
+
+  static String getTestChar(String rawChar, String char) {
+    return '\x1b[32m➜\x1b[0m' + rawChar + '    \x1b[35m➜\x1b[0m' + char + '\n';
+  }
+
   static void testC0(TermareController controller) {
-    controller.write('bell test\x07\n');
-    controller.write('Backspace Teaa\x08\x08st\n');
-    controller.write('Horizontal\x09Tabulation\n');
-    // 因为\x0a转换成string就是\n，所以不会被序列单独检测到
-    controller.write('Line Feed\x0a\n');
-    controller.write('Line Feed\x0b\n');
-    controller.write('Line Feed\x0c\n');
-    controller.write('${'a' * 47}\x0dbbb\n');
+    print(_spiltLine('C0 TEST START'));
+    controller.write(_spiltLine('C0 TEST START'));
+    controller.write(getTestChar(r'Null\x00', 'Null\x00'));
+    controller.write(getTestChar(r'bell\x07', 'bell\x07'));
+    controller.write(
+      getTestChar(r'Backspace Tea\x08st', 'Backspace Tea\x08st'),
+    );
+    controller.write(
+      getTestChar(r'Horizontal\x09Tabulation', 'Horizontal\x09Tabulation'),
+    );
+    controller.write(
+      getTestChar(r'Line Feed\x0a', 'Line Feed\x0a'),
+    );
+    controller.write(
+      getTestChar(r'Line Feed\x0b', 'Line Feed\x0b'),
+    );
+    controller.write(
+      getTestChar(r'Line Feed\x0c', 'Line Feed\x0c'),
+    );
+    controller.write(
+      getTestChar(
+          r'tmp tmp tmp\x0dCarriage Return', 'tmp tmp tmp\x0dCarriage Return'),
+    );
+    controller.write(
+      getTestChar(r'Shift Out \x0e', 'Shift Out \x0e'),
+    );
+    controller.write(
+      getTestChar(r'Shift In \x0f', 'Shift In \x0f'),
+    );
+    controller.write(
+      getTestChar(r'Escape \x1b', 'Escape \x1b '),
+    );
+    controller.write(_spiltLine('C0 TEST END'));
+    print(_spiltLine('C0 TEST END'));
   }
 
   static void testDECSEL(TermareController controller) {
     controller.write('\n');
     controller.write('Backspace Teaa\x08\x1b[k\x08\x1b[kst\n');
+  }
+
+  static void testC1(TermareController controller) {
+    print(_spiltLine('C1 TEST START'));
+    controller.write(_spiltLine('C1 TEST START'));
+    controller.write(
+      getTestChar(r'Index\x84', 'Index\x84'),
+    );
+    controller.write(
+      getTestChar(r'Next Line\x85', 'Next Line\x85'),
+    );
+    controller.write(
+      getTestChar(
+        r'Horizontal\x88 Tabulation Set',
+        'Horizontal\x88 Tabulation Set',
+      ),
+    );
+    controller.write(
+      getTestChar(r'Device Control String\x90', 'Device Control String\x90'),
+    );
+    controller.write(
+      getTestChar(
+        r'Control Sequence Introducer\x9b',
+        'Control Sequence Introducer\x9b ',
+      ),
+    );
+    controller.write(
+      getTestChar(
+        r'String Terminator\x9c',
+        'String Terminator\x9c',
+      ),
+    );
+    controller.write(
+      getTestChar(
+        r'Operating System Command\x9d ',
+        'Operating System Command\x9d ',
+      ),
+    );
+    controller.write(
+      getTestChar(
+        r'Privacy Message\x9e',
+        'Privacy Message\x9e',
+      ),
+    );
+    controller.write(
+      getTestChar(
+        r'Application Program Command\x9f',
+        'Application Program Command\x9f',
+      ),
+    );
+    controller.write(_spiltLine('C1 TEST END'));
+    print(_spiltLine('C1 TEST END'));
   }
 
   static void testOSC(TermareController controller) {

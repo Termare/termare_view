@@ -26,7 +26,9 @@ class TermareView extends StatefulWidget {
   final InputHandler onTextInput;
   final KeyStrokeHandler onKeyStroke;
   final ActionHandler onAction;
+  // 触发响铃会回调这个函数
   final void Function() onBell;
+  // 底部栏，可以任意扩展
   final Widget bottomBar;
 
   @override
@@ -46,15 +48,9 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     keyboardHandler = KeyboardHandler();
     widget.controller.addListener(updateTerm);
-    testSequence();
     resizeWindow();
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   resizeWindow();
-  // }
   void updateTerm() {
     if (mounted) {
       setState(() {});
@@ -100,22 +96,10 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
     });
   }
 
-  Future<void> testSequence() async {
-    await Future<void>.delayed(
-      const Duration(milliseconds: 200),
-    );
-    // SequencesTest.testMang(controller);
-    // SequencesTest.testIsOut(widget.controller);
-    // SequencesTest.testColorText(controller);
-    widget.controller.dirty = true;
-    setState(() {});
-  }
-
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _focusNode.dispose();
-
     widget.controller.removeListener(updateTerm);
     super.dispose();
   }
