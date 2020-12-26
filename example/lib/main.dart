@@ -29,14 +29,19 @@ class _ExampleState extends State<Example> {
   @override
   void initState() {
     super.initState();
+    startTest();
     // controller.write('hello termare_view\n');
-    // SequencesTest.testC0(controller);
     // controller.write('\x1B[1;31mhello termare_view\x1B[0m\n');
     // SequencesTest.testDECSEL(controller);
     // SequencesTest.testColorText(controller);
-    SequencesTest.testOSC(controller);
+    // SequencesTest.testOSC(controller);
     // controller.write('      asdad█████阿                    |\n');
     // SequencesTest.testColorText(controller);
+  }
+
+  Future<void> startTest() async {
+    await Future<void>.delayed(Duration(milliseconds: 100));
+    SequencesTest.testC1(controller);
   }
 
   @override
