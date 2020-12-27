@@ -101,10 +101,7 @@ class TermarePainter extends CustomPainter {
             style: TextStyle(
               fontSize: controller.theme.fontSize,
               backgroundColor: Colors.transparent,
-              color: getFontColor(
-                letterEntity.fontColorTag,
-                letterEntity.foregroundColor,
-              ),
+              color: letterEntity.textAttributes.foreground(controller),
               fontWeight: FontWeight.w600,
               fontFamily: controller.fontFamily,
               // fontStyle: FontStyle
@@ -116,11 +113,11 @@ class TermarePainter extends CustomPainter {
           (letterEntity.position.y - controller.startLine) *
               controller.theme.letterHeight,
         );
-        if (letterEntity.backgroundColorTag != '0') {
+        if (letterEntity.textAttributes.background(controller) != null) {
           // 当字符背景颜色不为空的时候
           canvas.drawRect(
             Rect.fromLTWH(
-              // 下面是扫办法，解决neofetch显示的颜色方块中有缝隙
+              // 下面是sao办法，解决neofetch显示的颜色方块中有缝隙
               offset.dx - 1,
               offset.dy,
               letterEntity.doubleWidth
@@ -128,11 +125,7 @@ class TermarePainter extends CustomPainter {
                   : controller.theme.letterWidth + 2,
               controller.theme.letterHeight,
             ),
-            Paint()
-              ..color = getBackgroundColor(
-                letterEntity.backgroundColorTag,
-                letterEntity.backgroundColor,
-              ),
+            Paint()..color = letterEntity.textAttributes.background(controller),
           );
         }
 
@@ -173,217 +166,11 @@ class TermarePainter extends CustomPainter {
     } else {}
   }
 
-  Color getFontColor(String tag, String hightTag) {
-    final bool higlt = hightTag == '38';
-    switch (tag) {
-      case '8':
-        if (higlt) {
-          return controller.theme.black;
-        }
-        return controller.theme.lightBlack;
-        break;
-      case '9':
-        if (higlt) {
-          return controller.theme.red;
-        }
-        return controller.theme.lightRed;
-        break;
-      case '10':
-        if (higlt) {
-          return controller.theme.green;
-        }
-        return controller.theme.lightGreen;
-        break;
-      case '11':
-        if (higlt) {
-          return controller.theme.yellow;
-        }
-        return controller.theme.lightYellow;
-        break;
-      case '12':
-        if (higlt) {
-          return controller.theme.blue;
-        }
-        return controller.theme.lightBlue;
-        break;
-      case '13':
-        if (higlt) {
-          return controller.theme.purplishRed;
-        }
-        return controller.theme.lightPurplishRed;
-        break;
-      case '14':
-        if (higlt) {
-          return controller.theme.cyan;
-        }
-        return controller.theme.lightCyan;
-        break;
-      case '15':
-        if (higlt) {
-          return controller.theme.white;
-        }
-        return controller.theme.lightWhite;
-        break;
-    }
-    switch (tag) {
-      case '30':
-        if (higlt) {
-          return controller.theme.black;
-        }
-        return controller.theme.lightBlack;
-        break;
-      case '31':
-        if (higlt) {
-          return controller.theme.red;
-        }
-        return controller.theme.lightRed;
-        break;
-      case '32':
-        if (higlt) {
-          return controller.theme.green;
-        }
-        return controller.theme.lightGreen;
-        break;
-      case '33':
-        if (higlt) {
-          return controller.theme.yellow;
-        }
-        return controller.theme.lightYellow;
-        break;
-      case '34':
-        if (higlt) {
-          return controller.theme.blue;
-        }
-        return controller.theme.lightBlue;
-        break;
-      case '35':
-        if (higlt) {
-          return controller.theme.purplishRed;
-        }
-        return controller.theme.lightPurplishRed;
-        break;
-      case '36':
-        if (higlt) {
-          return controller.theme.cyan;
-        }
-        return controller.theme.lightCyan;
-        break;
-      case '37':
-        if (higlt) {
-          return controller.theme.white;
-        }
-        return controller.theme.lightWhite;
-        break;
-      default:
-        return controller.theme.defaultColor;
-    }
-  }
+  Color getFontColor(String tag, String hightTag) {}
 
   Color getBackgroundColor(String tag, String hightTag) {
     final bool defaultColor = hightTag == '49';
     print('hightTag->${hightTag}');
-    switch (tag) {
-      case '8':
-        if (defaultColor) {
-          return controller.theme.black;
-        }
-        return controller.theme.lightBlack;
-        break;
-      case '9':
-        if (defaultColor) {
-          return controller.theme.red;
-        }
-        return controller.theme.lightRed;
-        break;
-      case '10':
-        if (defaultColor) {
-          return controller.theme.green;
-        }
-        return controller.theme.lightGreen;
-        break;
-      case '11':
-        if (defaultColor) {
-          return controller.theme.yellow;
-        }
-        return controller.theme.lightYellow;
-        break;
-      case '12':
-        if (defaultColor) {
-          return controller.theme.blue;
-        }
-        return controller.theme.lightBlue;
-        break;
-      case '13':
-        if (defaultColor) {
-          return controller.theme.purplishRed;
-        }
-        return controller.theme.lightPurplishRed;
-        break;
-      case '14':
-        if (defaultColor) {
-          return controller.theme.cyan;
-        }
-        return controller.theme.lightCyan;
-        break;
-      case '15':
-        if (defaultColor) {
-          return controller.theme.white;
-        }
-        return controller.theme.lightWhite;
-        break;
-    }
-    switch (tag) {
-      case '40':
-        if (defaultColor) {
-          return controller.theme.black;
-        }
-        return controller.theme.lightBlack;
-        break;
-      case '41':
-        if (defaultColor) {
-          return controller.theme.red;
-        }
-        return controller.theme.lightRed;
-        break;
-      case '42':
-        if (defaultColor) {
-          return controller.theme.green;
-        }
-        return controller.theme.lightGreen;
-        break;
-      case '43':
-        if (defaultColor) {
-          return controller.theme.yellow;
-        }
-        return controller.theme.lightYellow;
-        break;
-      case '44':
-        if (defaultColor) {
-          return controller.theme.blue;
-        }
-        return controller.theme.lightBlue;
-        break;
-      case '45':
-        if (defaultColor) {
-          return controller.theme.purplishRed;
-        }
-        return controller.theme.lightPurplishRed;
-        break;
-      case '46':
-        if (defaultColor) {
-          return controller.theme.cyan;
-        }
-        return controller.theme.lightCyan;
-        break;
-      case '47':
-        if (defaultColor) {
-          return controller.theme.white;
-        }
-        return controller.theme.lightWhite;
-        break;
-      default:
-        return controller.theme.black;
-    }
   }
 
   void paintText(Canvas canva) {}

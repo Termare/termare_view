@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:termare_view/src/painter/model/position.dart';
 
+import 'text_attributes.dart';
+
 class LetterEntity {
   LetterEntity({
-    this.foregroundColor,
-    this.backgroundColor,
-    this.fontColorTag,
-    this.backgroundColorTag,
-    this.fontStyleTag,
+    this.textAttributes,
     this.doubleWidth = false,
     @required this.content,
     @required this.letterWidth,
@@ -19,10 +17,5 @@ class LetterEntity {
   final double letterHeight;
   final Position position;
   final bool doubleWidth;
-  final String fontColorTag;
-  final String backgroundColorTag;
-  final String fontStyleTag;
-  //TODO
-  final String backgroundColor;
-  final String foregroundColor;
+  final TextAttributes textAttributes;
 }

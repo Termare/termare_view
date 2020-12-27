@@ -7,6 +7,7 @@ import 'package:termare_view/src/painter/model/position.dart';
 
 import 'core/safe_list.dart';
 import 'model/letter_eneity.dart';
+import 'model/text_attributes.dart';
 import 'observable.dart';
 import 'painter/termare_painter.dart';
 import 'theme/term_theme.dart';
@@ -14,10 +15,10 @@ import 'utils/keyboard_handler.dart';
 
 /// Flutter Controller 的思想
 /// 一个TermView对应一个 Controller
-String red = '\x1b[31m';
-String pink = '\x1b[34m';
-
-String blue = '\x1b[34m';
+String red = '\x1b[1;41;37m';
+String pink = '\x1b[1;45;37m';
+String green = '\x1B[1;42;31m';
+String blue = '\x1b[1;46;37m';
 String whiteBackground = '\x1b[47m';
 String defaultColor = '\x1b[0m';
 
@@ -56,12 +57,7 @@ class TermareController with Observable {
   int paddingBottom = 0;
   int columnLength;
 
-  String fontColorTag = '0';
-  String backgroundColorTag = '0';
-  String fontStyleTag = '0';
-  // 39 是 default
-  String foregroundColor = '39';
-  String backgroundColor = '49';
+  TextAttributes textAttributes = TextAttributes('0');
   // void write(String data) => unixPthC.write(data);
 
   /// 直接指向 pty write 函数
@@ -73,6 +69,8 @@ class TermareController with Observable {
 
   // 光标的位置；
   Position currentPointer = Position(0, 0);
+  // 用来适配ESC 7/8 这个序列，保存当前的光标位置
+  Position tmpPointer = Position(0, 0);
   // 通过这个变量来滑动终端
   int startLine = 0;
   void clear() {
@@ -154,45 +152,45 @@ class TermareController with Observable {
   bool csiAnd3fStart = false;
   bool escapeStart = false;
   bool dcsStart = false;
-  void changeEntityStyle(String tag) {
-    final int intTag = int.tryParse(tag);
-    if (intTag == 0 || tag.isEmpty) {
-      fontColorTag = '0';
-      backgroundColorTag = '0';
-      fontStyleTag = '0';
-    }
-    if (0 < intTag && intTag < 7) {
-      fontStyleTag = tag;
-    }
-    if (8 <= intTag && intTag <= 15) {
-      fontColorTag = tag;
-      backgroundColorTag = tag;
-    }
-    if (30 <= intTag && intTag <= 37) {
-      fontColorTag = tag;
-    }
-    // TODO 38前景色 48 背景色
-    if (tag == '38') {
-      foregroundColor = tag;
-    }
-    if (tag == '39') {
-      foregroundColor = tag;
-    }
-    if (tag == '48') {
-      backgroundColor = tag;
-    }
-    if (tag == '49') {
-      backgroundColor = tag;
-    }
-    if (40 <= intTag && intTag <= 47) {
-      backgroundColorTag = tag;
-    }
-  }
+  // void changeEntityStyle(String tag) {
+  //   final int intTag = int.tryParse(tag);
+  //   if (intTag == 0 || tag.isEmpty) {
+  //     foregroundColor = '0';
+  //     backgroundColorTag = '0';
+  //     fontStyleTag = '0';
+  //   }
+  //   if (0 < intTag && intTag < 7) {
+  //     fontStyleTag = tag;
+  //   }
+  //   if (8 <= intTag && intTag <= 15) {
+  //     foregroundColor = tag;
+  //     backgroundColorTag = tag;
+  //   }
+  //   if (30 <= intTag && intTag <= 37) {
+  //     foregroundColor = tag;
+  //   }
+  //   // TODO 38前景色 48 背景色
+  //   if (tag == '38') {
+  //     foregroundColor = tag;
+  //   }
+  //   if (tag == '39') {
+  //     foregroundColor = tag;
+  //   }
+  //   if (tag == '48') {
+  //     backgroundColor = tag;
+  //   }
+  //   if (tag == '49') {
+  //     backgroundColor = tag;
+  //   }
+  //   if (40 <= intTag && intTag <= 47) {
+  //     backgroundColorTag = tag;
+  //   }
+  // }
 
   void parseOutput(String data, {bool verbose = !kReleaseMode}) {
-    print('$red $whiteBackground parseOutput->$data');
-    print('$red $whiteBackground parseOutput->${utf8.encode(data)}');
-    print('$red $whiteBackground parseOutput->${data.codeUnits}');
+    // print('$red $whiteBackground parseOutput->$data');
+    // print('$red $whiteBackground parseOutput->${utf8.encode(data)}');
+    // print('$red $whiteBackground parseOutput->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       if (i > data.length - 1) {
         break;
@@ -247,7 +245,7 @@ class TermareController with Observable {
           // TODO 有三种，没写完
           oscStart = false;
           if (verbose) {
-            print('$red Set window title and icon name');
+            print('$red OSC < Set window title and icon name >');
           }
           // print('line.substring($i)->${data.substring(i).split('\n').first}');
           final int charWordindex = data.substring(i).indexOf(
@@ -308,12 +306,9 @@ class TermareController with Observable {
             // print('ESC[ pm m header -> $header');
 
             if (header.isEmpty) {
-              changeEntityStyle('0');
+              textAttributes = TextAttributes.normal();
             } else {
-              header.split(';').forEach((element) {
-                // print('ESC[ pm m header element -> $element');
-                changeEntityStyle(element);
-              });
+              textAttributes = TextAttributes(header);
             }
             i += header.length;
           }
@@ -377,15 +372,20 @@ class TermareController with Observable {
           continue;
         }
         if (escapeStart) {
+          final String currentChar = data[i];
+          print('currentChar -> $pink< $currentChar >');
           escapeStart = false;
           if (eq(codeUnits, [0x5b])) {
-            // ascii 91 是字符->[，‘esc [’开启了 csi 序列。
+            // ascii 91 是字符 -> [，‘esc [’开启了 csi 序列。
             csiStart = true;
-          }
-          if (eq(codeUnits, [0x5d])) {
-            // ascii 93 是字符->]，‘esc ]’开启了 osc 序列。
+          } else if (eq(codeUnits, [0x5d])) {
+            // ascii 93 是字符 -> ]，‘esc ]’开启了 osc 序列。
             print('$red oscStart');
             oscStart = true;
+          } else if (currentChar == '7') {
+            tmpPointer = currentPointer;
+
+            print(' -> $green< 保存光标以及字符属性 >');
           }
           continue;
         }
@@ -542,11 +542,7 @@ class TermareController with Observable {
         letterHeight: painter.height,
         position: currentPointer,
         doubleWidth: painter.width == painter.height,
-        fontColorTag: fontColorTag,
-        backgroundColorTag: backgroundColorTag,
-        fontStyleTag: fontStyleTag,
-        backgroundColor: backgroundColor,
-        foregroundColor: foregroundColor,
+        textAttributes: textAttributes,
       );
       if (painter.width == painter.height) {
         // 只有双字节字符宽高相等
