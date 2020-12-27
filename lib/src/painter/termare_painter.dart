@@ -166,13 +166,6 @@ class TermarePainter extends CustomPainter {
     } else {}
   }
 
-  Color getFontColor(String tag, String hightTag) {}
-
-  Color getBackgroundColor(String tag, String hightTag) {
-    final bool defaultColor = hightTag == '49';
-    print('hightTag->${hightTag}');
-  }
-
   void paintText(Canvas canva) {}
 
   void paintCursor(Canvas canvas, int outLine) {

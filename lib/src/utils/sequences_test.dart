@@ -160,6 +160,56 @@ class SequencesTest {
     print(_spiltLine('C1 TEST END'));
   }
 
+  static void testESC(TermareController controller) {
+    print(_spiltLine('ESC TEST START'));
+    controller.write(_spiltLine('ESC TEST START'));
+    controller.write(getTestChar(
+      r'\x1b[31m\x1b7',
+      '\x1b[41;37m\x1b7 hello\x1b[0mdefault textAttributes',
+    ));
+    controller.write(getTestChar(r'\x1b8\x1b[0m\n', '\x1b8\x1b[0m\n'));
+    controller.write(getTestChar(r'\x1bD', '\x1bD'));
+    controller.write(getTestChar(r'\x1bE', '\x1bE'));
+    controller.write(getTestChar(r'\x1bH', '\x1bH'));
+    controller.write(getTestChar(r'\x1bM', '\x1bM'));
+    controller.write(getTestChar(r'\x1bP', '\x1bP'));
+    controller.write(getTestChar(r'\x1b[', '\x1b[ '));
+    controller.write(getTestChar(r'\x1b]', '\x1b] '));
+    controller.write(getTestChar(r'\x1b^', '\x1b^'));
+    controller.write(getTestChar(r'\x1b_', '\x1b_'));
+    // controller.write(getTestChar(r'bell\x07', 'bell\x07'));
+    // controller.write(
+    //   getTestChar(r'Backspace Tea\x08st', 'Backspace Tea\x08st'),
+    // );
+    // controller.write(
+    //   getTestChar(r'Horizontal\x09Tabulation', 'Horizontal\x09Tabulation'),
+    // );
+    // controller.write(
+    //   getTestChar(r'Line Feed\x0a', 'Line Feed\x0a'),
+    // );
+    // controller.write(
+    //   getTestChar(r'Line Feed\x0b', 'Line Feed\x0b'),
+    // );
+    // controller.write(
+    //   getTestChar(r'Line Feed\x0c', 'Line Feed\x0c'),
+    // );
+    // controller.write(
+    //   getTestChar(
+    //       r'tmp tmp tmp\x0dCarriage Return', 'tmp tmp tmp\x0dCarriage Return'),
+    // );
+    // controller.write(
+    //   getTestChar(r'Shift Out \x0e', 'Shift Out \x0e'),
+    // );
+    // controller.write(
+    //   getTestChar(r'Shift In \x0f', 'Shift In \x0f'),
+    // );
+    // controller.write(
+    //   getTestChar(r'Escape \x1b', 'Escape \x1b '),
+    // );
+    controller.write(_spiltLine('ESC TEST END'));
+    print(_spiltLine('ESC TEST END'));
+  }
+
   static void testOSC(TermareController controller) {
     // controller.write('\x1b\x5d0;termare \x07set title to termare\n');
     controller.write('\x9d0;termare \x07set title to termare\n');

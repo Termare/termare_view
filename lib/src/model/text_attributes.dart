@@ -37,6 +37,9 @@ class TextAttributes {
     '37'
   ];
   Color foreground(TermareController controller) {
+    if (textAttributes == '0') {
+      return controller.theme.defaultColor;
+    }
     for (final String tag in textAttributes.split(';')) {
       if (foregroundList.contains(tag)) {
         switch (tag) {
@@ -89,6 +92,9 @@ class TextAttributes {
   }
 
   Color background(TermareController controller) {
+    if (textAttributes == '0') {
+      return controller.theme.black;
+    }
     for (final String tag in textAttributes.split(';')) {
       if (backgroundList.contains(tag)) {
         switch (tag) {

@@ -23,8 +23,8 @@ class Example extends StatefulWidget {
 
 class _ExampleState extends State<Example> {
   TermareController controller = TermareController(
-    showBackgroundLine: true,
-  );
+      // showBackgroundLine: true,
+      );
 
   @override
   void initState() {
@@ -41,7 +41,9 @@ class _ExampleState extends State<Example> {
 
   Future<void> startTest() async {
     await Future<void>.delayed(Duration(milliseconds: 100));
-    SequencesTest.testC1(controller);
+    // SequencesTest.testColorText(controller);
+    // SequencesTest.testC1(controller);
+    SequencesTest.testESC(controller);
   }
 
   @override
