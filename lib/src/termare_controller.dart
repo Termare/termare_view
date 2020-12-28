@@ -547,6 +547,7 @@ class TermareController with Observable {
           style: TextStyle(
             // 误删，有用的，用来判断双宽度字符还是单宽度字符
             fontSize: theme.fontSize,
+            fontFamily: fontFamily,
             height: 1,
           ),
         ),
@@ -554,7 +555,7 @@ class TermareController with Observable {
       // log('$red currentPointer->$currentPointer');
       // log('$red  painter width->${painter.width}');
       // log('$red  painter height->${painter.height}');
-      // logUtil.logD('data[i]->${data[i]}');
+      // log('data[i]->${data[i]}');
 
       if (cache[currentPointer.y] == null) {
         cache[currentPointer.y] = SafeList<LetterEntity>();
@@ -574,112 +575,6 @@ class TermareController with Observable {
       }
 
       moveToNextPosition();
-    }
-  }
-
-  TextStyle getTextStyle(String tag, TextStyle preTextStyle) {
-    switch (tag) {
-      case '30':
-        return preTextStyle.copyWith(
-          color: theme.black,
-        );
-        break;
-      case '31':
-        return preTextStyle.copyWith(
-          color: theme.red,
-        );
-        break;
-      case '32':
-        return preTextStyle.copyWith(
-          color: theme.green,
-        );
-        break;
-      case '33':
-        return preTextStyle.copyWith(
-          color: theme.yellow,
-        );
-        break;
-      case '34':
-        return preTextStyle.copyWith(
-          color: theme.blue,
-        );
-        break;
-      case '35':
-        return preTextStyle.copyWith(
-          color: theme.purplishRed,
-        );
-        break;
-      case '36':
-        return preTextStyle.copyWith(
-          color: theme.cyan,
-        );
-        break;
-      case '37':
-        return preTextStyle.copyWith(
-          color: theme.white,
-        );
-        break;
-      case '40':
-        return preTextStyle.copyWith(
-          backgroundColor: theme.black,
-        );
-        break;
-      case '41':
-        return preTextStyle.copyWith(
-          backgroundColor: theme.red,
-        );
-        break;
-      case '42':
-        return preTextStyle.copyWith(
-          backgroundColor: theme.green,
-        );
-        break;
-      case '43':
-        return preTextStyle.copyWith(
-          backgroundColor: theme.yellow,
-        );
-        break;
-      case '44':
-        return preTextStyle.copyWith(
-          backgroundColor: theme.blue,
-        );
-        break;
-      case '45':
-        return preTextStyle.copyWith(
-          backgroundColor: theme.purplishRed,
-        );
-        break;
-      case '46':
-        return preTextStyle.copyWith(
-          backgroundColor: theme.cyan,
-        );
-        break;
-      case '47':
-        return preTextStyle.copyWith(
-          backgroundColor: theme.white,
-        );
-        break;
-
-      case '49':
-        return preTextStyle.copyWith(
-          backgroundColor: theme.black,
-          color: theme.defaultColor,
-        );
-        break;
-      case '0':
-        return preTextStyle.copyWith(
-          color: theme.defaultColor,
-          backgroundColor: Colors.transparent,
-        );
-        break;
-      case '00':
-        return preTextStyle.copyWith(
-          color: theme.defaultColor,
-          backgroundColor: Colors.transparent,
-        );
-        break;
-      default:
-        return preTextStyle;
     }
   }
 }

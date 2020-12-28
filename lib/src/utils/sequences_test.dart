@@ -2,7 +2,7 @@ import 'package:termare_view/src/termare_controller.dart';
 
 class SequencesTest {
   static Future<void> testChinese(TermareController controller) async {
-    controller.write('${'啊' * 17}\x08\x08 \n');
+    controller.write('${'啊' * 17}\x08\x08 WWww\n');
   }
 
   static Future<void> testColorText(TermareController controller) async {

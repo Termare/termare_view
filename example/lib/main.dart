@@ -44,6 +44,7 @@ class _ExampleState extends State<Example> {
     // SequencesTest.testColorText(controller);
     // SequencesTest.testC1(controller);
     SequencesTest.testESC(controller);
+    SequencesTest.testChinese(controller);
   }
 
   @override
