@@ -40,7 +40,7 @@ class _ExampleState extends State<Example> {
   }
 
   Future<void> startTest() async {
-    await Future<void>.delayed(Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
     // SequencesTest.testColorText(controller);
     // SequencesTest.testC1(controller);
     SequencesTest.testESC(controller);

@@ -64,6 +64,7 @@ class TermareController with Observable {
   /// 直接指向 pty write 函数
   void write(String data) {
     dirty = true;
+
     parseOutput(data);
     notifyListeners();
   }
@@ -153,40 +154,7 @@ class TermareController with Observable {
   bool csiAnd3fStart = false;
   bool escapeStart = false;
   bool dcsStart = false;
-  // void changeEntityStyle(String tag) {
-  //   final int intTag = int.tryParse(tag);
-  //   if (intTag == 0 || tag.isEmpty) {
-  //     foregroundColor = '0';
-  //     backgroundColorTag = '0';
-  //     fontStyleTag = '0';
-  //   }
-  //   if (0 < intTag && intTag < 7) {
-  //     fontStyleTag = tag;
-  //   }
-  //   if (8 <= intTag && intTag <= 15) {
-  //     foregroundColor = tag;
-  //     backgroundColorTag = tag;
-  //   }
-  //   if (30 <= intTag && intTag <= 37) {
-  //     foregroundColor = tag;
-  //   }
-  //   // TODO 38前景色 48 背景色
-  //   if (tag == '38') {
-  //     foregroundColor = tag;
-  //   }
-  //   if (tag == '39') {
-  //     foregroundColor = tag;
-  //   }
-  //   if (tag == '48') {
-  //     backgroundColor = tag;
-  //   }
-  //   if (tag == '49') {
-  //     backgroundColor = tag;
-  //   }
-  //   if (40 <= intTag && intTag <= 47) {
-  //     backgroundColorTag = tag;
-  //   }
-  // }
+
   void log(Object object) {
     if (!kReleaseMode) {
       print(object);
@@ -262,7 +230,7 @@ class TermareController with Observable {
           }
           String header = '';
           header = data.substring(i, i + charWordindex);
-          log('osc -> $header\a');
+          log('osc -> $header');
           i += header.length;
           continue;
         }
@@ -314,7 +282,7 @@ class TermareController with Observable {
             if (header.isEmpty) {
               textAttributes = TextAttributes.normal();
             } else {
-              textAttributes = TextAttributes(header);
+              textAttributes = textAttributes.copyWith(header);
             }
             i += header.length;
           }
@@ -334,10 +302,16 @@ class TermareController with Observable {
           }
           if (sequenceChar == 'A') {
             log('$blue CSI Cursor Up');
-            // log('ESC[ ps A header -> $header');
+            log('ESC[ ps A header -> $header');
+            int upIndex;
+            if (header.isEmpty) {
+              upIndex = 1;
+            } else {
+              upIndex = int.tryParse(header);
+            }
             currentPointer = Position(
               currentPointer.x,
-              currentPointer.y - int.tryParse(header),
+              currentPointer.y - upIndex,
             );
             i += header.length;
           }
@@ -389,7 +363,7 @@ class TermareController with Observable {
         }
         if (escapeStart) {
           final String currentChar = data[i];
-          log('currentChar -> $pink< $currentChar >');
+          // log('currentChar -> $pink< $currentChar >');
           escapeStart = false;
           if (eq(codeUnits, [0x5b])) {
             // ascii 91 是字符 -> [，‘esc [’开启了 csi 序列。

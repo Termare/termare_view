@@ -64,12 +64,12 @@ class TermarePainter extends CustomPainter {
     }
   }
 
-  void drawBackground(Canvas canvas) {
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, termWidth, termHeight),
-      Paint()..color = Colors.black,
-    );
-  }
+  // void drawBackground(Canvas canvas) {
+  //   canvas.drawRect(
+  //     Rect.fromLTWH(0, 0, termWidth, termHeight),
+  //     Paint()..color = Colors.black,
+  //   );
+  // }
 
   @override
   void paint(Canvas canvas, Size size) {
