@@ -7,6 +7,8 @@ import 'package:termare_view/src/widget/input_listener.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
 import 'painter/termare_painter.dart';
+import 'term_size.dart';
+import 'theme/term_theme.dart';
 import 'utils/keyboard_handler.dart';
 import 'widget/scroll_view.dart';
 
@@ -30,6 +32,15 @@ class TermareView extends StatefulWidget {
   final void Function() onBell;
   // 底部栏，可以任意扩展
   final Widget bottomBar;
+  static TermSize getTermSize(Size size) {
+    final double screenWidth = size.width / window.devicePixelRatio;
+    final double screenHeight = size.height / window.devicePixelRatio;
+    // 行数
+    final int row = screenHeight ~/ TermareStyles.termux.letterHeight;
+    // 列数
+    final int column = screenWidth ~/ TermareStyles.termux.letterWidth;
+    return TermSize(row, column);
+  }
 
   @override
   _TermareViewState createState() => _TermareViewState();

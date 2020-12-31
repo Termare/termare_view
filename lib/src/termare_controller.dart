@@ -162,8 +162,8 @@ class TermareController with Observable {
   }
 
   void parseOutput(String data, {bool verbose = !kReleaseMode}) {
-    log('$red parseOutput->$data');
-    log('$red utf8.encode(data)->${utf8.encode(data)}');
+    // log('$red parseOutput->$data');
+    // log('$red utf8.encode(data)->${utf8.encode(data)}');
     // log('$red data.codeUnits->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       if (i > data.length - 1) {
