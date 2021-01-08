@@ -178,7 +178,7 @@ class TermarePainter extends CustomPainter {
           controller.theme.letterWidth,
           controller.theme.letterHeight,
         ),
-        Paint()..color = Colors.grey.withOpacity(0.4),
+        Paint()..color = controller.theme.cursorColor.withOpacity(0.4),
       );
     }
   }
