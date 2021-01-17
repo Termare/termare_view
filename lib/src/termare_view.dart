@@ -125,8 +125,10 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
     if (value.text.length > initEditingState.text.length) {
       widget.keyboardInput(value.text.substring(1, value.text.length - 1));
     } else if (value.text.length < initEditingState.text.length) {
+      // 说明删除了字符
       widget.keyboardInput(String.fromCharCode(127));
     } else {
+      // 当字符长度相等，就存在光标移动问题
       if (value.selection.baseOffset < 1) {
         widget.keyboardInput(String.fromCharCode(2));
       } else if (value.selection.baseOffset > 1) {
@@ -146,7 +148,7 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
           return null;
         }
         //
-        // print('onTextInput -> $value');
+        print('onTextInput -> $value');
         return onTextEdit(
           value,
         );
@@ -164,7 +166,7 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
       },
       onKeyStroke: (RawKeyEvent key) {
         print('onKeyStroke');
-        // print(key);
+        print(key);
         // 26键盘之外的按键按下的时候
         final String input = keyboardHandler.getKeyEvent(key);
         if (input != null) {
