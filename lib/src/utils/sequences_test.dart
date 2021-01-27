@@ -141,7 +141,7 @@ class SequencesTest {
     controller.write(
       getTestChar(
         r'Operating System Command\x9d ',
-        'Operating System Command\x9d ',
+        'Operating System Command\x9d0;termare\x07 ',
       ),
     );
     controller.write(
@@ -167,7 +167,7 @@ class SequencesTest {
       r'\x1b[31m\x1b7',
       '\x1b[41;37m\x1b7 hello\x1b[0mdefault textAttributes',
     ));
-    controller.write(getTestChar(r'\x1b8\x1b[0m\n', '\x1b8\x1b[0m\n'));
+    controller.write(getTestChar(r'\x1b8\x1b[0m\n', '\x1b8back\x1b[0m\n'));
     controller.write(getTestChar(r'\x1bD', '\x1bD'));
     controller.write(getTestChar(r'\x1bE', '\x1bE'));
     controller.write(getTestChar(r'\x1bH', '\x1bH'));
@@ -212,6 +212,24 @@ class SequencesTest {
 
   static void testOSC(TermareController controller) {
     // controller.write('\x1b\x5d0;termare \x07set title to termare\n');
-    controller.write('\x9d0;termare \x07set title to termare\n');
+    controller.write('\x9d0;termare\x07set title to termare\n');
+  }
+
+  static void tesCSI(TermareController controller) {
+    // controller.write('\x1b\x5d0;termare \x07set title to termare\n');
+    // controller.write('插入3个空白字符 ->\x1b[3@<-\n');
+    // controller.write('向上移动一行 \x1b[A123\n');
+    // controller.write('向下移动一行 \x1b[B123\n');
+    // controller.write('向右移动3个格子\x1b[3C123\n');
+    // controller.write('向左移动3个格子456\x1b[3D123\n');
+    // controller.write('向下移动一行光标置于行首 \x1b[E123\n');
+    // controller.write('向上移动一行光标置于行首 \x1b[F123\n');
+    controller.write('删除光标到行尾 Teaa\x08\x08\x1b[Kst\n');
+    controller.write('删除行首到光标 Teaa\x08\x08\x1b[1K\n');
+    controller.write('删除整行 Teaa\x1b[2Kst\n');
+    print('删除整行 \x1b[32mTeaa\x08\x08\x1b[1Kst\n');
+    controller.write('移动光标到[0,0] \x1b[0;0f\n');
+    controller.write('\x1b[J\n');
+    controller.write('\x1b[2J\n');
   }
 }

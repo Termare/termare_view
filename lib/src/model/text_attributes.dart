@@ -17,8 +17,8 @@ class TextAttributes {
     textAttributes = '0';
   }
   TextAttributes copyWith(String textAttributes) {
-    print(
-        '入参textAttributes -> $textAttributes 历史 textAttributes ->${this.textAttributes}');
+    // print(
+    //     '入参textAttributes -> $textAttributes 历史 textAttributes ->${this.textAttributes}');
     final TextAttributes tmpTextAttributes = TextAttributes.normal();
     if (textAttributes == '0' || textAttributes == '00') {
       return tmpTextAttributes;
@@ -40,7 +40,7 @@ class TextAttributes {
     // } else if (!this.textAttributes.split(';').contains(textAttributes)) {
     //   this.textAttributes += ';$textAttributes';
     // }
-    print('tmpTextAttributes -> $tmpTextAttributes');
+    // print('tmpTextAttributes -> $tmpTextAttributes');
     return tmpTextAttributes;
     // return TextAttributes(this.textAttributes);
   }
