@@ -111,7 +111,7 @@ class Csi {
       } else if (currentChar == csiSeqChars[4]) {
         // D
         controller.log('$blue CSI Cursor Down');
-        print('curSeq -> ${curSeq}');
+        print('curSeq -> $curSeq');
 
         int ps = int.tryParse(curSeq);
         ps ??= 1;
