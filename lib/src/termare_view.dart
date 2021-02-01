@@ -162,7 +162,7 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
         if (action == TextInputAction.done) {
           widget.keyboardInput('\n');
         }
-        widget?.onAction(action);
+        widget?.onAction?.call(action);
       },
       onKeyStroke: (RawKeyEvent key) {
         print('onKeyStroke');
