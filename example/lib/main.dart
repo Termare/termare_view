@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:termare_view/termare_view.dart';
 
 void main() {
+  for (int i = 0; i < 256; i++) {
+    print('\x1b[48;5;$i\m$i     \x1b[0m');
+  }
   runApp(
     MaterialApp(
       home: Example(),
