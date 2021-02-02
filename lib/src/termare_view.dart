@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:termare_view/src/model/text_attributes.dart';
 import 'package:termare_view/src/widget/input_listener.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
@@ -97,7 +98,6 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
               '当缓存的高度大于终端高度时 ${keyoardHeight ~/ widget.controller.theme.letterHeight}');
           // 当缓存的高度大于终端高度时
           widget.controller.startLine -= widget.controller.rowLength -
-              1 -
               (widget.controller.cache.length - widget.controller.startLine);
         }
       }

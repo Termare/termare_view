@@ -206,9 +206,8 @@ class TermareController with Observable {
   bool verbose = false;
   // 应该每次只接收一个字符
   void parseOutput(String data, {bool verbose = !kReleaseMode}) {
-    // log('$red parseOutput->$data');
+    // print('parseOutput ->$data<-');
     // log('$red utf8.encode(data)->${utf8.encode(data)}');
-    // log('$red data.codeUnits->${data.codeUnits}');
     for (int i = 0; i < data.length; i++) {
       if (i > data.length - 1) {
         break;
@@ -218,15 +217,6 @@ class TermareController with Observable {
       final List<int> utf8CodeUnits = utf8.encode(data[i]);
       // log('codeUnits->$codeUnits');
       // log('utf8CodeUnits->$utf8CodeUnits');
-      // if (utf8CodeUnits.length == 1) {
-      //   defaultStyle = defaultStyle.copyWith(
-      //     fontFamily: 'packages/termare_view/DroidSansMono',
-      //   );
-      // } else {
-      //   defaultStyle = defaultStyle.copyWith(
-      //     fontFamily: 'packages/termare_view/DroidSansMono',
-      //   );
-      // }
       if (utf8CodeUnits.length == 1) {
         // 说明单字节
         if (csiAnd3fStart) {

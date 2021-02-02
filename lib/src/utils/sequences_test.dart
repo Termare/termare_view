@@ -232,4 +232,10 @@ class SequencesTest {
     controller.write('\x1b[J\n');
     controller.write('\x1b[2J\n');
   }
+
+  static void test256Color(TermareController controller) {
+    for (int i = 0; i < 256; i++) {
+      controller.write('\x1b[48;5;$i\m$i     \x1b[0m');
+    }
+  }
 }
