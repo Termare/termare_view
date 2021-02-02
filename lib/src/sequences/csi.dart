@@ -144,6 +144,14 @@ class Csi {
         );
         controller.moveToLineFirstPosition();
       } else if (currentChar == csiSeqChars[7]) {
+        int ps = int.tryParse(curSeq);
+        ps ??= 1;
+        // 	Cursor Horizontal Absolute
+        controller.currentPointer = Position(
+          ps - 1,
+          controller.currentPointer.y,
+        );
+        print('Cursor Horizontal Absolute ps=$ps');
       } else if (currentChar == csiSeqChars[8]) {
         print('curSeq ->$curSeq<-');
         print(curSeq == 'H');

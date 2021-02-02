@@ -215,7 +215,7 @@ class SequencesTest {
     controller.write('\x9d0;termare\x07set title to termare\n');
   }
 
-  static void tesCSI(TermareController controller) {
+  static void testCSI(TermareController controller) {
     // controller.write('\x1b\x5d0;termare \x07set title to termare\n');
     // controller.write('插入3个空白字符 ->\x1b[3@<-\n');
     // controller.write('向上移动一行 \x1b[A123\n');
@@ -231,6 +231,7 @@ class SequencesTest {
     controller.write('移动光标到[0,0] \x1b[0;0f\n');
     controller.write('\x1b[J\n');
     controller.write('\x1b[2J\n');
+    controller.write('123\x1b[2Gx\n');
   }
 
   static void test256Color(TermareController controller) {

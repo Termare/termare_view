@@ -6,6 +6,7 @@ void main() {
   for (int i = 0; i < 256; i++) {
     print('\x1b[48;5;$i\m$i     \x1b[0m');
   }
+  print('\x1b[2J');
   runApp(
     MaterialApp(
       home: Example(),
@@ -49,7 +50,7 @@ class _ExampleState extends State<Example> {
     // SequencesTest.testC0(controller);
     // SequencesTest.testC1(controller);
     // SequencesTest.testDECSEL(controller);
-    SequencesTest.test256Color(controller);
+    SequencesTest.testCSI(controller);
     // SequencesTest.testChinese(controller);
   }
 
