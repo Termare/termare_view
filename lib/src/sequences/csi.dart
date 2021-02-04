@@ -176,14 +176,18 @@ class Csi {
         switch (ps) {
           case 0:
             // 从光标位置清除到可视窗口末尾
-            for (int c = controller.currentPointer.x;
-                c < controller.columnLength;
-                c++) {
+            for (int r = controller.currentPointer.y;
+                r < controller.startLine + controller.rowLength;
+                r++) {
               // 如果这个位置并没有字符
-              if (controller.cache[controller.currentPointer.y] == null) {
-                return true;
-              } else {
-                controller.cache[controller.currentPointer.y][c] = null;
+              for (int c = 0; c < controller.columnLength; c++) {
+                // print('$r $c');
+                // 如果这个位置并没有字符
+                if (controller.cache[r] == null) {
+                  continue;
+                } else {
+                  controller.cache[r][c] = null;
+                }
               }
             }
             break;

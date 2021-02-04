@@ -206,8 +206,8 @@ class TermareController with Observable {
   bool verbose = false;
   // 应该每次只接收一个字符
   void parseOutput(String data, {bool verbose = !kReleaseMode}) {
-    // print('parseOutput ->$data<-');
-    // log('$red utf8.encode(data)->${utf8.encode(data)}');
+    print('parseOutput ->$data<-');
+    log('$red utf8.encode(data)->${utf8.encode(data)}');
     for (int i = 0; i < data.length; i++) {
       if (i > data.length - 1) {
         break;
