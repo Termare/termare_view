@@ -24,18 +24,5 @@ class Osc {
       curSeq += currentChar;
     }
     return true;
-    // TODO 有三种，没写完
-
-    // log('line.substring($i)->${data.substring(i).split('\n').first}');
-    // final int charWordindex = data.substring(i).indexOf(
-    //       String.fromCharCode(7),
-    //     );
-    // if (charWordindex == -1) {
-    //   return true;
-    // }
-    // String header = '';
-    // header = data.substring(i, i + charWordindex);
-    // log('osc -> $header');
-    // i += header.length;
   }
 }

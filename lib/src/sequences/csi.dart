@@ -253,7 +253,6 @@ class Csi {
           default:
         }
         // 可能存在光标的位置在最后一行的开始，但是开始那一行并没有任何的字符，例如cache.length为10，光标在11行的第一个格子
-
       } else if (currentChar == csiSeqChars[12]) {
       } else if (currentChar == csiSeqChars[13]) {
       } else if (currentChar == csiSeqChars[14]) {
