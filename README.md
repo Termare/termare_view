@@ -47,6 +47,8 @@ controller.write('hello termare_view');
 
 ## 帮助开发？
 
+测试序列可以通过输入指定的序列对比xterm.js的显示
+
 ### Terminal resources
 
 - [XTerm control sequences](http://invisible-island.net/xterm/ctlseqs/ctlseqs.html)
