@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'theme/term_theme.dart';
+import '../theme/term_theme.dart';
 
 class TermSize {
   TermSize(this.row, this.column);

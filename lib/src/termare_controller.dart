@@ -9,7 +9,7 @@ import 'package:termare_view/src/sequences/osc.dart';
 import 'core/safe_list.dart';
 import 'model/letter_eneity.dart';
 import 'model/text_attributes.dart';
-import 'observable.dart';
+import 'core/observable.dart';
 import 'painter/termare_painter.dart';
 import 'sequences/c0.dart';
 import 'sequences/c1.dart';
@@ -196,7 +196,13 @@ class TermareController with Observable {
   bool csiAnd3fStart = false;
   bool escapeStart = false;
   bool dcsStart = false;
-  String curSeq = '';
+  // 是否按下 ctrl，可能监听到 ctrl 按键的时候改变这个值也可能在 app 端主动修改这个值
+  bool ctrlEnable = false;
+  void enbaleOrDisableCtrl() {
+    ctrlEnable = !ctrlEnable;
+    notifyListeners();
+  }
+
   void log(Object object) {
     if (!kReleaseMode) {
       print(object);

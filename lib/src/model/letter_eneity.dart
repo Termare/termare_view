@@ -18,4 +18,5 @@ class LetterEntity {
   final Position position;
   final bool doubleWidth;
   final TextAttributes textAttributes;
+  bool get isEmpty => content == '';
 }

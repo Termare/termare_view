@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -8,7 +9,7 @@ import 'package:termare_view/src/widget/input_listener.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
 import 'painter/termare_painter.dart';
-import 'term_size.dart';
+import 'model/term_size.dart';
 import 'theme/term_theme.dart';
 import 'utils/keyboard_handler.dart';
 import 'widget/scroll_view.dart';
@@ -123,7 +124,16 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
     TextEditingValue value,
   ) {
     if (value.text.length > initEditingState.text.length) {
-      widget.keyboardInput(value.text.substring(1, value.text.length - 1));
+      final String input = value.text.substring(1, value.text.length - 1);
+      final List<int> codeUnits = utf8.encode(input);
+
+      int firstChar = codeUnits.first;
+      if (widget.controller.ctrlEnable) {
+        firstChar -= 96;
+        widget.controller.enbaleOrDisableCtrl();
+      }
+      codeUnits.first = firstChar;
+      widget.keyboardInput(utf8.decode(codeUnits));
     } else if (value.text.length < initEditingState.text.length) {
       // 说明删除了字符
       widget.keyboardInput(String.fromCharCode(127));
@@ -170,6 +180,12 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
         // 26键盘之外的按键按下的时候
         final String input = keyboardHandler.getKeyEvent(key);
         if (input != null) {
+          if (widget.controller.ctrlEnable) {
+            print('enable');
+            final int charCode = utf8.encode(input).first;
+            widget.keyboardInput(utf8.decode([charCode - 96]));
+            widget.controller.ctrlEnable = false;
+          } else {}
           widget.keyboardInput(input);
         }
       },
