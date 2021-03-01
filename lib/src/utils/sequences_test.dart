@@ -258,8 +258,10 @@ class SequencesTest {
     // csiInput('?2${csiSeqChars[10]}');
     csiInput('1;1${csiSeqChars[25]}456');
     csiInput('10;1${csiSeqChars[25]}456');
-    csiInput('?25${csiSeqChars[27]}456');
-    csiInput('?25${csiSeqChars[28]}456');
+    // csiInput('?25${csiSeqChars[27]}456');
+    // csiInput('?25${csiSeqChars[28]}456');
+    write('\n\n123\b\b\b');
+    csiInput('${csiSeqChars[14]}');
   }
 
   static void test256Color(TermareController controller) {

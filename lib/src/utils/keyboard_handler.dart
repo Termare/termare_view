@@ -8,13 +8,13 @@ typedef KeyboardInput = void Function(String data);
 
 class KeyboardHandler {
   bool enableShift = false;
+  bool enableCtrl = false;
   static bool _isdesktop() {
     return Platform.isWindows || Platform.isMacOS || Platform.isLinux;
   }
 
   String getKeyEvent(RawKeyEvent message) {
     final RawKeyEvent event = message;
-    print('event->$event');
     // TODO
     // shift按下时enable，抬起时enable为false
 
@@ -27,8 +27,11 @@ class KeyboardHandler {
         case 0x100070028:
           return utf8.decode(<int>[10]);
           break;
+        case 0x1000700e7:
+          enableCtrl = true;
+          return null;
+          break;
         case 0x1000700e1:
-          print('shift 抬起');
           enableShift = true;
           return null;
           break;
@@ -54,6 +57,15 @@ class KeyboardHandler {
             ),
           );
         }
+      }
+      if (enableCtrl) {
+        print('当前ctrl已被按下');
+        if (_isdesktop()) {
+          return utf8.decode(<int>[event.logicalKey.keyId - 96]);
+        } else {
+          enableCtrl = false;
+          return utf8.decode([event.logicalKey.keyId - 96]);
+        }
       } else {
         if (event.logicalKey.keyId == 0x10200000004) {
           // 安卓的返回键
@@ -68,11 +80,7 @@ class KeyboardHandler {
           print('安卓的上键');
           return utf8.decode([110 - 96]);
         }
-        // print(event.logicalKey);
-        // print('event.logicalKey.keyId -> ${event.logicalKey.keyId}');
-
         return utf8.decode(<int>[event.logicalKey.keyId]);
-        // print(utf8.decode([event.logicalKey.keyId]));
       }
     }
 
@@ -81,6 +89,11 @@ class KeyboardHandler {
         case 0x1000700e1:
           print('shift 抬起');
           enableShift = false;
+          return null;
+          break;
+        case 0x1000700e7:
+          print('ctrl 抬起');
+          enableCtrl = false;
           return null;
           break;
       }

@@ -139,7 +139,7 @@ class TermareController with Observable {
 
   void moveToOffset(int x, int y) {
     /// 减一的原因在于左上角为1;1
-    currentPointer = Position(x - 1, y - 1 + startLine);
+    currentPointer = Position(max(x - 1, 0), max(y - 1 + startLine, 0));
   }
 
   void moveToPrePosition() {
@@ -317,6 +317,7 @@ class TermareController with Observable {
         }
       }
       writeChar(data[i]);
+      notifyListeners();
       // logUtil.logd('cache.length -> ${cache.length}', 31);
       // TODO
 

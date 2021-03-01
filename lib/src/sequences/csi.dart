@@ -64,6 +64,23 @@ class Csi {
         for (int i = 0; i < ps; i++) {
           controller.writeChar(' ');
         }
+        final int startColumn = controller.currentPointer.x;
+        final int endColumn = controller.columnLength;
+        for (int c = endColumn; c > startColumn; c--) {
+          String source =
+              controller.cache[controller.currentPointer.y][c - 1]?.content;
+          String target =
+              controller.cache[controller.currentPointer.y][c]?.content;
+          print('移动 $source 到 $target');
+          if (controller.cache[controller.currentPointer.y] == null) {
+            // print(true);
+            return true;
+          } else {
+            controller.cache[controller.currentPointer.y][c] =
+                controller.cache[controller.currentPointer.y][c - 1];
+          }
+        }
+        controller.moveToRelativeColumn(-ps);
       } else if (currentChar == csiSeqChars[1]) {
         // A CUU
         /// 向上移动光标
@@ -133,11 +150,11 @@ class Csi {
         if (curSeq.isEmpty) {
           curSeq = '1;1';
         }
-        print(curSeq);
-        final int r = int.parse(curSeq.split(';')[0]);
-        final int c = int.parse(curSeq.split(';')[1]);
-        print('r $r c $c');
-        controller.moveToOffset(c, r);
+        final int row = int.parse(curSeq.split(';')[0]);
+        final int column = int.parse(curSeq.split(';')[1]);
+        print('row $row column $column');
+        controller.moveToOffset(column, row);
+        print('${controller.currentPointer}');
       } else if (currentChar == csiSeqChars[9]) {
         /// I CHT	Cursor Horizontal Tabulation
         /// 光标向右移动 ps 个 tab 的位置
@@ -284,6 +301,35 @@ class Csi {
         /// P DCH	Delete Character
         /// 删除字符后，光标和右边距之间的其余字符将向左移动。角色属性随角色一起移动。终端在右边距添加空白字符。
         /// vscode与macos原生终端均未发现删除效果
+        int ps = int.tryParse(curSeq);
+        ps ??= 1;
+        String data = controller
+            .cache[controller.currentPointer.y][controller.currentPointer.x]
+            .content;
+        print('删除 ${controller.currentPointer} 字符 $data ');
+        for (int c = 0; c < ps; c++) {
+          controller.cache[controller.currentPointer.y]
+              [controller.currentPointer.x - c] = null;
+        }
+
+        // / 移动字符
+        // /
+        final int startColumn = controller.currentPointer.x;
+        final int endColumn = controller.columnLength;
+        for (int c = startColumn; c < endColumn; c++) {
+          String source =
+              controller.cache[controller.currentPointer.y][c + 1]?.content;
+          String target =
+              controller.cache[controller.currentPointer.y][c]?.content;
+          // print('移动 $source 到 $target');
+          if (controller.cache[controller.currentPointer.y] == null) {
+            // print(true);
+            return true;
+          } else {
+            controller.cache[controller.currentPointer.y][c] =
+                controller.cache[controller.currentPointer.y][c + 1];
+          }
+        }
       } else if (currentChar == csiSeqChars[15]) {
         /// S SU	Scroll Up
         /// Scroll Ps lines up

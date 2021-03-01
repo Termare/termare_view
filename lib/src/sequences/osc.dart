@@ -10,7 +10,6 @@ class Osc {
   static String curSeq = '';
   static bool handle(TermareController controller, List<int> utf8CodeUnits) {
     final String currentChar = utf8.decode(utf8CodeUnits);
-    print(utf8CodeUnits);
     if (eq(utf8CodeUnits, [0x07])) {
       print('Osc handle curSeq -> $curSeq');
       // 执行此次序列

@@ -76,20 +76,12 @@ class TermarePainter extends CustomPainter {
     final Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
     // 视图的真实高度
-    final int realColumnLen = math.min(
-      controller.cache.length,
-      controller.rowLength,
-    );
-    for (int y = 0; y < realColumnLen; y++) {
-      if (y + controller.startLine >= controller.cache.length) {
-        break;
-      }
-      final SafeList<LetterEntity> line =
-          controller.cache[y + controller.startLine];
+    for (int y = controller.startLine; y < controller.cache.length; y++) {
+      final SafeList<LetterEntity> line = controller.cache[y];
+      // print('第 $y 行');
       if (line == null) {
         continue;
       }
-      // PrintUtil.printD('line->$line', [31]);
       for (int x = 0; x < line.length; x++) {
         if (line[x] == null) {
           continue;
@@ -109,10 +101,11 @@ class TermarePainter extends CustomPainter {
           ),
         );
         final Offset offset = Offset(
-          letterEntity.position.x * controller.theme.letterWidth,
-          (letterEntity.position.y - controller.startLine) *
-              controller.theme.letterHeight,
+          x * controller.theme.letterWidth,
+          (y - controller.startLine) * controller.theme.letterHeight,
         );
+        // TODO 可能出bug，上面改了
+        // print('${letterEntity.content} $offset');
         if (letterEntity.textAttributes.background(controller) != null) {
           // 当字符背景颜色不为空的时候
           canvas.drawRect(
@@ -148,7 +141,7 @@ class TermarePainter extends CustomPainter {
     controller.dirty = false;
 
     paintCursor(canvas, controller.startLine);
-    if (controller.cache.length > realColumnLen + controller.startLine) {
+    if (controller.cache.length > controller.rowLength + controller.startLine) {
       // 上面这个if其实就是当终端视图下方还有显示内容的时候
       if (controller.autoScroll) {
         // 只能延时执行刷新
