@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -136,6 +137,11 @@ class TermareController with Observable {
     }
   }
 
+  void moveToOffset(int x, int y) {
+    /// 减一的原因在于左上角为1;1
+    currentPointer = Position(x - 1, y - 1 + startLine);
+  }
+
   void moveToPrePosition() {
     moveToPosition(-1);
   }
@@ -150,6 +156,35 @@ class TermareController with Observable {
 
   void moveToLineFirstPosition() {
     currentPointer = Position(0, currentPointer.y);
+  }
+
+  void moveToRelativeColumn(int ps) {
+    currentPointer = Position(
+      max(0, currentPointer.x + ps),
+      currentPointer.y,
+    );
+  }
+
+  void moveToAbsoluteColumn(int ps) {
+    // 在竖直方向移动光标
+    /// 因为 ps 为1的时候光标在第一行
+    currentPointer = Position(
+      ps - 1,
+      currentPointer.y,
+    );
+  }
+
+  void moveToAbsoluteRow(int ps) {
+    // 在竖直方向移动光标
+    /// 因为 ps 为1的时候光标在第一行
+    currentPointer.moveTo(currentPointer.x, ps - 1);
+  }
+
+  void moveToRelativeRow(int ps) {
+    currentPointer = Position(
+      currentPointer.x,
+      max(0, currentPointer.y + ps),
+    );
   }
 
   void writeChar(String char) {

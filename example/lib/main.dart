@@ -27,8 +27,8 @@ class Example extends StatefulWidget {
 
 class _ExampleState extends State<Example> {
   TermareController controller = TermareController(
-      // showBackgroundLine: true,
-      );
+    showBackgroundLine: true,
+  );
 
   @override
   void initState() {

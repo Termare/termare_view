@@ -1,3 +1,4 @@
+import 'package:termare_view/src/sequences/csi.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
 class SequencesTest {
@@ -216,22 +217,49 @@ class SequencesTest {
   }
 
   static void testCSI(TermareController controller) {
-    // controller.write('\x1b\x5d0;termare \x07set title to termare\n');
-    // controller.write('插入3个空白字符 ->\x1b[3@<-\n');
-    // controller.write('向上移动一行 \x1b[A123\n');
-    // controller.write('向下移动一行 \x1b[B123\n');
-    // controller.write('向右移动3个格子\x1b[3C123\n');
-    // controller.write('向左移动3个格子456\x1b[3D123\n');
-    // controller.write('向下移动一行光标置于行首 \x1b[E123\n');
-    // controller.write('向上移动一行光标置于行首 \x1b[F123\n');
-    controller.write('删除光标到行尾 Teaa\x08\x08\x1b[Kst\n');
-    controller.write('删除行首到光标 Teaa\x08\x08\x1b[1K\n');
-    controller.write('删除整行 Teaa\x1b[2Kst\n');
-    print('删除整行 \x1b[32mTeaa\x08\x08\x1b[1Kst\n');
-    controller.write('移动光标到[0,0] \x1b[0;0f\n');
-    controller.write('\x1b[J\n');
-    controller.write('\x1b[2J\n');
-    controller.write('123\x1b[2Gx\n');
+    void csiInput(String sequence) {
+      controller.write('\x1b[$sequence');
+    }
+
+    void write(String data) {
+      controller.write(data);
+    }
+
+    write('.');
+    csiInput('3${csiSeqChars[0]}');
+    write('.\n');
+    write('123');
+    csiInput('2${csiSeqChars[7]}');
+    write('456');
+
+    csiInput('1;1${csiSeqChars[8]}');
+    write('///\n\n\n');
+
+    csiInput('1${csiSeqChars[9]}');
+    write('12345\b');
+    csiInput('0${csiSeqChars[10]}');
+    write('12345\b');
+    csiInput('?1${csiSeqChars[10]}');
+    write('6');
+
+    write('123');
+    csiInput('3${csiSeqChars[12]}');
+
+    write('123');
+    csiInput('1${csiSeqChars[15]}678');
+    csiInput('1${csiSeqChars[16]}678');
+    write('\n\n\n1234\b\x1b[Z67899');
+    csiInput('1${csiSeqChars[19]}');
+    csiInput('1${csiSeqChars[20]}');
+    write('\n\n123');
+    csiInput('3${csiSeqChars[21]}456');
+    csiInput('2${csiSeqChars[23]}456');
+    csiInput('2${csiSeqChars[24]}456');
+    // csiInput('?2${csiSeqChars[10]}');
+    csiInput('1;1${csiSeqChars[25]}456');
+    csiInput('10;1${csiSeqChars[25]}456');
+    csiInput('?25${csiSeqChars[27]}456');
+    csiInput('?25${csiSeqChars[28]}456');
   }
 
   static void test256Color(TermareController controller) {
