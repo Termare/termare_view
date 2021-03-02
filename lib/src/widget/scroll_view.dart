@@ -46,15 +46,16 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
         if (details.delta.dy < 0) {
           // 往上滑动
           // 当内容满一个终端高度的时候
-          if (widget.controller.cache.length > widget.controller.rowLength) {
+          if (widget.controller.absoluteLength() >
+              widget.controller.rowLength) {
             curOffset += details.delta.dy;
             // 计算出偏移offset对应的行数
             int outLine = -curOffset ~/ widget.controller.theme.letterHeight;
             if (outLine + widget.controller.rowLength >
-                widget.controller.cache.length) {
+                widget.controller.absoluteLength()) {
               // 这个if内是限制向上滑动的时候，会停留在终端内容的最后一行
-              outLine =
-                  widget.controller.cache.length - widget.controller.rowLength;
+              outLine = widget.controller.absoluteLength() -
+                  widget.controller.rowLength;
               curOffset = -outLine * widget.controller.theme.letterHeight;
             }
             widget.controller.startLine = outLine;
@@ -106,13 +107,14 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
           if (pixelsPerSecondDy < 0) {
             // 视图向上滚动
             // 只有当有效视图大于终端高度的时候才滚动
-            if (widget.controller.cache.length > widget.controller.rowLength) {
+            if (widget.controller.absoluteLength() >
+                widget.controller.rowLength) {
               curOffset = shouldOffset;
               int outLine = -curOffset ~/ widget.controller.theme.letterHeight;
               if (outLine + widget.controller.rowLength >
-                  widget.controller.cache.length) {
+                  widget.controller.absoluteLength()) {
                 // 做多往上滑动到输入光标上一个格子
-                outLine = widget.controller.cache.length -
+                outLine = widget.controller.absoluteLength() -
                     widget.controller.rowLength;
                 curOffset = -outLine * widget.controller.theme.letterHeight;
                 animationController.stop();

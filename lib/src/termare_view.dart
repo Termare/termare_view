@@ -94,12 +94,13 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
       if (keyoardHeight == 0) {
         // 键盘放下
         // print('键盘放下');
-        if (widget.controller.cache.length > widget.controller.rowLength) {
+        if (widget.controller.absoluteLength() > widget.controller.rowLength) {
           print(
               '当缓存的高度大于终端高度时 ${keyoardHeight ~/ widget.controller.theme.letterHeight}');
           // 当缓存的高度大于终端高度时
           widget.controller.startLine -= widget.controller.rowLength -
-              (widget.controller.cache.length - widget.controller.startLine);
+              (widget.controller.absoluteLength() -
+                  widget.controller.startLine);
         }
       }
       widget.controller.autoScroll = true;

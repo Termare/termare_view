@@ -75,6 +75,24 @@ class TermareController with Observable {
     notifyListeners();
   }
 
+  int absoluteLength() {
+    final int endRow = cache.length;
+    final int endColumn = columnLength;
+    for (int row = endRow; row > 0; row--) {
+      for (int column = 0; column < endColumn; column++) {
+        if (cache[row] == null) {
+          continue;
+        }
+        final LetterEntity letterEntity = cache[row][column];
+        final bool isNotEmpty = letterEntity?.content?.isNotEmpty;
+        if (isNotEmpty != null && isNotEmpty) {
+          return row + 1;
+        }
+      }
+    }
+    return endRow;
+  }
+
   // 光标的位置；
   Position currentPointer = Position(0, 0);
   // 用来适配ESC 7/8 这个序列，保存当前的光标位置

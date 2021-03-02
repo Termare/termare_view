@@ -76,8 +76,13 @@ class TermarePainter extends CustomPainter {
     final Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
     // 视图的真实高度
-    for (int y = controller.startLine; y < controller.cache.length; y++) {
+    final int absColumn = controller.absoluteLength();
+    print('absColumn ->$absColumn');
+    for (int y = controller.startLine; y < absColumn; y++) {
       final SafeList<LetterEntity> line = controller.cache[y];
+      if (y > controller.startLine + controller.columnLength) {
+        break;
+      }
       // print('第 $y 行');
       if (line == null) {
         continue;
@@ -141,14 +146,13 @@ class TermarePainter extends CustomPainter {
     controller.dirty = false;
 
     paintCursor(canvas, controller.startLine);
-    if (controller.cache.length > controller.rowLength + controller.startLine) {
+    if (absColumn > controller.rowLength + controller.startLine) {
       // 上面这个if其实就是当终端视图下方还有显示内容的时候
       if (controller.autoScroll) {
         // 只能延时执行刷新
         Future.delayed(const Duration(milliseconds: 10), () {
-          controller.startLine += controller.cache.length -
-              controller.startLine -
-              controller.rowLength;
+          controller.startLine +=
+              absColumn - controller.startLine - controller.rowLength;
           controller.dirty = true;
           controller.notifyListeners();
         });
