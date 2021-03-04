@@ -116,7 +116,7 @@ class TermarePainter extends CustomPainter {
           canvas.drawRect(
             Rect.fromLTWH(
               // 下面是sao办法，解决neofetch显示的颜色方块中有缝隙
-              offset.dx - 1,
+              offset.dx,
               offset.dy,
               letterEntity.doubleWidth
                   ? controller.theme.letterWidth * 2 + 2
