@@ -147,8 +147,8 @@ class TermarePainter extends CustomPainter {
     paintCursor(canvas, controller.startLength);
     final int absLength = controller.absoluteLength();
     if (absLength > controller.rowLength + controller.startLength) {
-      print(
-          '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
+      // print(
+      //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
       // 上面这个if其实就是当终端视图下方还有显示内容的时候
       if (controller.autoScroll) {
         // 只能延时执行刷新

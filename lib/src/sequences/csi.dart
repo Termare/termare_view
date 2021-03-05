@@ -443,7 +443,7 @@ class Csi {
       } else if (currentChar == csiSeqChars[29]) {
         // m SGR	Select Graphic Rendition
         /// 设置颜色属性
-        log('$blue Select Graphic Rendition -> $curSeq');
+        // log('$blue Select Graphic Rendition -> $curSeq');
         if (curSeq.isEmpty) {
           controller.textAttributes = TextAttributes.normal();
         } else {

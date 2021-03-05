@@ -65,7 +65,9 @@ class _ExampleState extends State<Example> {
         // width: 100,
         // height: 100,
         child: TermareView(
-          keyboardInput: (value) {},
+          keyboardInput: (value) {
+            controller.write(value);
+          },
           controller: controller,
         ),
       ),

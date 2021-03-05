@@ -63,7 +63,8 @@ class TermareController with Observable {
 
   int rowLength;
   int columnLength;
-
+  int topMargin = 0;
+  int bottomMargin;
   TextAttributes textAttributes = TextAttributes('0');
   TextAttributes tmpTextAttributes;
   // void write(String data) => unixPthC.write(data);
@@ -105,6 +106,7 @@ class TermareController with Observable {
   int startLength = 0;
   void clear() {
     cache = SafeList();
+    startLength = 0;
     currentPointer = Position(0, 0);
     dirty = true;
   }
@@ -125,6 +127,7 @@ class TermareController with Observable {
     final int column = size.width ~/ theme.letterWidth;
     rowLength = row;
     columnLength = column;
+    bottomMargin ??= rowLength - 1;
     log('setPtyWindowSize $size row:$rowLength column:$columnLength');
     sizeChanged?.call(TermSize(rowLength, columnLength));
     dirty = true;
@@ -132,6 +135,7 @@ class TermareController with Observable {
   }
 
   void setFontSize(double fontSize) {
+    // TODO 有错，不用怀疑，就是有错
     theme.fontSize = fontSize;
     final Size size = window.physicalSize;
     final double screenWidth = size.width / window.devicePixelRatio;
@@ -226,10 +230,17 @@ class TermareController with Observable {
     // log('$red  painter width->${painter.width}');
     // log('$red  painter height->${painter.height}');
     // log('char->${char} ${cache.length}');
+    if (bottomMargin != rowLength) {
+      int doNotNeedScrollLine = rowLength - bottomMargin;
+      print('object ${currentPointer.y} $doNotNeedScrollLine');
 
+      // cache[currentPointer.y + 1] = cache[currentPointer.y];
+      // cache[currentPointer.y] = SafeList<LetterEntity>();
+    }
     if (cache[currentPointer.y] == null) {
       cache[currentPointer.y] = SafeList<LetterEntity>();
     }
+
     cache[currentPointer.y][currentPointer.x] = LetterEntity(
       content: char,
       letterWidth: painter.width,
