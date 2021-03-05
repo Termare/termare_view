@@ -174,7 +174,7 @@ class TextAttributes {
       // print('v---->$v  $v2');
       final Color color =
           Color.fromARGB(255, values[v3], values[v2], values[v]);
-      print('color->$color');
+      // print('color->$color');
       return color;
     } else if (tag > 231) {
       switch (tag) {

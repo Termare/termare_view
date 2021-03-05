@@ -176,7 +176,7 @@ class Csi {
         switch (ps) {
           case 0:
             // 从光标位置清除到可视窗口末尾
-            final int maxRow = controller.startLine + controller.rowLength;
+            final int maxRow = controller.startLength + controller.rowLength;
             final int startRow = controller.currentPointer.y;
             for (int r = startRow; r < maxRow; r++) {
               // 如果这个位置并没有字符
@@ -198,8 +198,8 @@ class Csi {
             break;
           case 1:
             // 从光标位置清除到可视窗口末尾
-            final int maxRow = controller.startLine + controller.rowLength;
-            final int startRow = controller.startLine;
+            final int maxRow = controller.startLength + controller.rowLength;
+            final int startRow = controller.startLength;
             for (int r = startRow; r < maxRow; r++) {
               int maxColumn;
               if (r == controller.currentPointer.y) {
@@ -220,8 +220,8 @@ class Csi {
           case 2:
             // print('清空可视窗口 ${controller.startLine} ${controller.rowLength}');
             // 从视图左上角清除到视图右下角
-            final int maxRow = controller.startLine + controller.rowLength;
-            final int startRow = controller.startLine;
+            final int maxRow = controller.startLength + controller.rowLength;
+            final int startRow = controller.startLength;
             for (int r = startRow; r < maxRow; r++) {
               for (int c = 0; c < controller.columnLength; c++) {
                 // 如果这个位置并没有字符

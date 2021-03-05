@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:termare_view/src/painter/model/position.dart';
 import 'package:termare_view/src/sequences/osc.dart';
+import 'package:termare_view/termare_view.dart';
 
 import 'core/safe_list.dart';
 import 'model/letter_eneity.dart';
@@ -45,6 +46,7 @@ class TermareController with Observable {
   final int cacheLine = 1000;
 
   void Function() onBell;
+  void Function(TermSize size) sizeChanged;
   KeyboardInput keyboardInput;
 
   /// 通过这个值来判断终端是否需要刷新
@@ -60,7 +62,6 @@ class TermareController with Observable {
   bool showBackgroundLine;
 
   int rowLength;
-  int paddingBottom = 0;
   int columnLength;
 
   TextAttributes textAttributes = TextAttributes('0');
@@ -77,6 +78,7 @@ class TermareController with Observable {
 
   int absoluteLength() {
     final int endRow = cache.length;
+    // print('cache.length -> ${cache.length}');
     final int endColumn = columnLength;
     for (int row = endRow; row > 0; row--) {
       for (int column = 0; column < endColumn; column++) {
@@ -86,11 +88,13 @@ class TermareController with Observable {
         final LetterEntity letterEntity = cache[row][column];
         final bool isNotEmpty = letterEntity?.content?.isNotEmpty;
         if (isNotEmpty != null && isNotEmpty) {
-          return row + 1;
+          // print(
+          //     'row + 1:${row + 1} currentPointer.y + 1 :${currentPointer.y + 1}');
+          return max(row + 1, currentPointer.y + 1);
         }
       }
     }
-    return endRow;
+    return currentPointer.y;
   }
 
   // 光标的位置；
@@ -98,7 +102,7 @@ class TermareController with Observable {
   // 用来适配ESC 7/8 这个序列，保存当前的光标位置
   Position tmpPointer = Position(0, 0);
   // 通过这个变量来滑动终端
-  int startLine = 0;
+  int startLength = 0;
   void clear() {
     cache = SafeList();
     currentPointer = Position(0, 0);
@@ -121,7 +125,8 @@ class TermareController with Observable {
     final int column = size.width ~/ theme.letterWidth;
     rowLength = row;
     columnLength = column;
-    log('setPtyWindowSize $size $rowLength $columnLength');
+    log('setPtyWindowSize $size row:$rowLength column:$columnLength');
+    sizeChanged?.call(TermSize(rowLength, columnLength));
     dirty = true;
     notifyListeners();
   }
@@ -157,7 +162,7 @@ class TermareController with Observable {
 
   void moveToOffset(int x, int y) {
     /// 减一的原因在于左上角为1;1
-    currentPointer = Position(max(x - 1, 0), max(y - 1 + startLine, 0));
+    currentPointer = Position(max(x - 1, 0), max(y - 1 + startLength, 0));
   }
 
   void moveToPrePosition() {
@@ -220,7 +225,7 @@ class TermareController with Observable {
     // log('$red currentPointer->$currentPointer');
     // log('$red  painter width->${painter.width}');
     // log('$red  painter height->${painter.height}');
-    // log('data[i]->${data[i]}');
+    // log('char->${char} ${cache.length}');
 
     if (cache[currentPointer.y] == null) {
       cache[currentPointer.y] = SafeList<LetterEntity>();

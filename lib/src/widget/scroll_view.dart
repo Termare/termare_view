@@ -24,8 +24,8 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onPanDown: (details) {
-        curOffset =
-            -widget.controller.startLine * widget.controller.theme.letterHeight;
+        curOffset = -widget.controller.startLength *
+            widget.controller.theme.letterHeight;
       },
       onPanUpdate: (details) {
         // 手在滑动的时候禁止自动滚动
@@ -41,7 +41,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
           }
           final int outLine = -curOffset.toInt() ~/
               widget.controller.theme.letterHeight.toInt();
-          widget.controller.startLine = outLine;
+          widget.controller.startLength = outLine;
         }
         if (details.delta.dy < 0) {
           // 往上滑动
@@ -58,7 +58,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
                   widget.controller.rowLength;
               curOffset = -outLine * widget.controller.theme.letterHeight;
             }
-            widget.controller.startLine = outLine;
+            widget.controller.startLength = outLine;
           }
         }
         widget.controller.notifyListeners();
@@ -102,7 +102,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
             }
             final int outLine =
                 -curOffset ~/ widget.controller.theme.letterHeight;
-            widget.controller.startLine = outLine;
+            widget.controller.startLength = outLine;
           }
           if (pixelsPerSecondDy < 0) {
             // 视图向上滚动
@@ -119,7 +119,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
                 curOffset = -outLine * widget.controller.theme.letterHeight;
                 animationController.stop();
               }
-              widget.controller.startLine = outLine;
+              widget.controller.startLength = outLine;
             }
           }
 

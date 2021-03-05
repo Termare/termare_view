@@ -22,7 +22,6 @@ class TermareView extends StatefulWidget {
     this.onTextInput,
     this.onKeyStroke,
     this.onAction,
-    this.bottomBar,
     this.onBell,
   }) : super(key: key);
   final TermareController controller;
@@ -32,8 +31,6 @@ class TermareView extends StatefulWidget {
   final ActionHandler onAction;
   // 触发响铃会回调这个函数
   final void Function() onBell;
-  // 底部栏，可以任意扩展
-  final Widget bottomBar;
   static TermSize getTermSize(Size size) {
     final double screenWidth = size.width / window.devicePixelRatio;
     final double screenHeight = size.height / window.devicePixelRatio;
@@ -48,7 +45,7 @@ class TermareView extends StatefulWidget {
   _TermareViewState createState() => _TermareViewState();
 }
 
-class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
+class _TermareViewState extends State<TermareView> {
   final FocusNode _focusNode = FocusNode();
   KeyboardHandler keyboardHandler;
   Size painterSize = const Size(0, 0);
@@ -58,62 +55,12 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     widget.controller.onBell = widget.onBell;
-    WidgetsBinding.instance.addObserver(this);
     keyboardHandler = KeyboardHandler();
-    widget.controller.addListener(updateTerm);
-    resizeWindow();
-  }
-
-  void updateTerm() {
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  @override
-  void didChangeMetrics() {
-    super.didChangeMetrics();
-    resizeWindow();
-  }
-
-  void resizeWindow() {
-    print('resizeWindow');
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final Size size = window.physicalSize;
-      final double screenWidth = size.width / window.devicePixelRatio;
-      double screenHeight = size.height / window.devicePixelRatio;
-      if (widget.bottomBar != null) {
-        /// TODO
-        screenHeight -= 32;
-      }
-      screenHeight -= MediaQuery.of(context).padding.top;
-      keyoardHeight = MediaQuery.of(context).viewInsets.bottom;
-      widget.controller.setPtyWindowSize(
-        painterSize = Size(screenWidth, screenHeight - keyoardHeight),
-      );
-      if (keyoardHeight == 0) {
-        // 键盘放下
-        // print('键盘放下');
-        if (widget.controller.absoluteLength() > widget.controller.rowLength) {
-          print(
-              '当缓存的高度大于终端高度时 ${keyoardHeight ~/ widget.controller.theme.letterHeight}');
-          // 当缓存的高度大于终端高度时
-          widget.controller.startLine -= widget.controller.rowLength -
-              (widget.controller.absoluteLength() -
-                  widget.controller.startLine);
-        }
-      }
-      widget.controller.autoScroll = true;
-      widget.controller.dirty = true;
-      setState(() {});
-    });
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _focusNode.dispose();
-    widget.controller.removeListener(updateTerm);
     super.dispose();
   }
 
@@ -158,14 +105,11 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
         if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
           return null;
         }
-        //
-        print('onTextInput -> $value');
         return onTextEdit(
           value,
         );
       },
       onAction: (TextInputAction action) {
-        print('onAction  ->  $action');
         if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
           return null;
         }
@@ -176,13 +120,10 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
         widget?.onAction?.call(action);
       },
       onKeyStroke: (RawKeyEvent key) {
-        print('onKeyStroke');
-        print(key);
         // 26键盘之外的按键按下的时候
         final String input = keyboardHandler.getKeyEvent(key);
         if (input != null) {
           if (widget.controller.ctrlEnable) {
-            print('enable');
             final int charCode = utf8.encode(input).first;
             widget.keyboardInput(utf8.decode([charCode - 96]));
             widget.controller.ctrlEnable = false;
@@ -195,49 +136,97 @@ class _TermareViewState extends State<TermareView> with WidgetsBindingObserver {
           return GestureDetector(
             behavior: HitTestBehavior.translucent,
             onDoubleTap: () async {
-              // final String text = (await Clipboard.getData('text/plain')).text;
-              // widget.keyboardInput?.call(text);
+              // widget.onDoubleTap?.call();
             },
             onTap: () {
               if (widget.keyboardInput != null) {
                 InputListener.of(context).requestKeyboard();
               }
-              print('按下');
             },
             child: ScrollViewTerm(
               controller: widget.controller,
-              child: Stack(
-                children: [
-                  Material(
-                    color: widget.controller.theme.backgroundColor,
-                    child: SafeArea(
-                      child: CustomPaint(
-                        size: painterSize,
-                        painter: TermarePainter(
-                          controller: widget.controller,
-                          color: const Color(0xff811016),
-                        ),
-                      ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return TerminalView(
+                    painterSize: Size(
+                      constraints.maxWidth,
+                      constraints.maxHeight,
                     ),
-                  ),
-                  if (widget.bottomBar != null)
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: keyoardHeight,
-                      ),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: SizedBox(
-                          height: 32,
-                          child: widget.bottomBar,
-                        ),
-                      ),
-                    ),
-                ],
+                    controller: widget.controller,
+                  );
+                },
               ),
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class TerminalView extends StatefulWidget {
+  const TerminalView({
+    Key key,
+    @required this.painterSize,
+    @required this.controller,
+  }) : super(key: key);
+
+  final Size painterSize;
+  final TermareController controller;
+  @override
+  _TerminalViewState createState() => _TerminalViewState();
+}
+
+class _TerminalViewState extends State<TerminalView>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    resizeWindow();
+    widget.controller.addListener(updateTerm);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  void updateTerm() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    resizeWindow();
+  }
+
+  void resizeWindow() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // double keyoardHeight = MediaQuery.of(context).viewInsets.bottom;
+      // print('keyoardHeight -> $keyoardHeight');
+      // print('$this resizeWindow');
+      widget.controller.setPtyWindowSize(widget.painterSize);
+      // print(widget.painterSize);
+
+      widget.controller.autoScroll = true;
+      widget.controller.dirty = true;
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    widget.controller.removeListener(updateTerm);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // print('$this build');
+    return CustomPaint(
+      size: widget.painterSize,
+      painter: TermarePainter(
+        controller: widget.controller,
       ),
     );
   }

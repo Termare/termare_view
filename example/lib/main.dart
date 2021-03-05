@@ -45,21 +45,29 @@ class _ExampleState extends State<Example> {
 
   Future<void> startTest() async {
     await Future<void>.delayed(const Duration(milliseconds: 100));
-    // SequencesTest.testColorText(controller);
     // SequencesTest.testC1(controller);
     // SequencesTest.testC0(controller);
     // SequencesTest.testC1(controller);
     // SequencesTest.testDECSEL(controller);
+
     SequencesTest.testCSI(controller);
+    SequencesTest.testColorText(controller);
+    SequencesTest.testColorText(controller);
     // SequencesTest.testChinese(controller);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      body: TermareView(
-        controller: controller,
+      body: SizedBox(
+        // width: 100,
+        // height: 100,
+        child: TermareView(
+          keyboardInput: (value) {},
+          controller: controller,
+        ),
       ),
     );
   }

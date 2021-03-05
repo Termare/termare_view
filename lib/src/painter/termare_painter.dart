@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
@@ -12,7 +13,6 @@ TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 4096);
 class TermarePainter extends CustomPainter {
   TermarePainter({
     this.controller,
-    this.color = Colors.white,
   }) {
     termWidth = controller.columnLength * controller.theme.letterWidth;
     termHeight = controller.rowLength * controller.theme.letterHeight;
@@ -30,7 +30,6 @@ class TermarePainter extends CustomPainter {
     Colors.brown,
     Colors.cyan,
   ];
-  final Color color;
   double padding;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
   final Stopwatch stopwatch = Stopwatch();
@@ -64,26 +63,26 @@ class TermarePainter extends CustomPainter {
     }
   }
 
-  // void drawBackground(Canvas canvas) {
-  //   canvas.drawRect(
-  //     Rect.fromLTWH(0, 0, termWidth, termHeight),
-  //     Paint()..color = Colors.black,
-  //   );
-  // }
+  void drawBackground(Canvas canvas, Size size) {
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      Paint()..color = Colors.black,
+    );
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
     final Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
+    drawBackground(canvas, size);
     // 视图的真实高度
-    final int absColumn = controller.absoluteLength();
-    print('absColumn ->$absColumn');
-    for (int y = controller.startLine; y < absColumn; y++) {
-      final SafeList<LetterEntity> line = controller.cache[y];
-      if (y > controller.startLine + controller.columnLength) {
-        break;
-      }
-      // print('第 $y 行');
+    final int startRow = controller.startLength;
+    final int endRow = startRow + controller.rowLength;
+    // print('startRow ->$startRow');
+    for (int row = startRow; row < endRow; row++) {
+      final SafeList<LetterEntity> line = controller.cache[row];
+
+      // print('第 ${row - startRow} 行');
       if (line == null) {
         continue;
       }
@@ -107,7 +106,7 @@ class TermarePainter extends CustomPainter {
         );
         final Offset offset = Offset(
           x * controller.theme.letterWidth,
-          (y - controller.startLine) * controller.theme.letterHeight,
+          (row - controller.startLength) * controller.theme.letterHeight,
         );
         // TODO 可能出bug，上面改了
         // print('${letterEntity.content} $offset');
@@ -145,14 +144,17 @@ class TermarePainter extends CustomPainter {
     }
     controller.dirty = false;
 
-    paintCursor(canvas, controller.startLine);
-    if (absColumn > controller.rowLength + controller.startLine) {
+    paintCursor(canvas, controller.startLength);
+    final int absLength = controller.absoluteLength();
+    if (absLength > controller.rowLength + controller.startLength) {
+      print(
+          '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
       // 上面这个if其实就是当终端视图下方还有显示内容的时候
       if (controller.autoScroll) {
         // 只能延时执行刷新
         Future.delayed(const Duration(milliseconds: 10), () {
-          controller.startLine +=
-              absColumn - controller.startLine - controller.rowLength;
+          controller.startLength +=
+              absLength - controller.startLength - controller.rowLength;
           controller.dirty = true;
           controller.notifyListeners();
         });
@@ -161,7 +163,21 @@ class TermarePainter extends CustomPainter {
         //       (controller.cache.length - realColumnLen - controller.startLine),
         // );
       }
-    } else {}
+    } else {
+      // if (controller.autoScroll) {
+      //   // 只能延时执行刷新
+      //   Future.delayed(const Duration(milliseconds: 10), () {
+      //     controller.startLength =
+      //         absLength - controller.startLength - controller.rowLength;
+      //     controller.dirty = true;
+      //     controller.notifyListeners();
+      //   });
+      //   // lastLetterPositionCall(
+      //   //   -controller.theme.letterHeight *
+      //   //       (controller.cache.length - realColumnLen - controller.startLine),
+      //   // );
+      // }
+    }
   }
 
   void paintText(Canvas canva) {}
