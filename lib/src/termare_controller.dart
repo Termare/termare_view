@@ -4,13 +4,14 @@ import 'dart:ui';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:termare_view/src/core/buffer.dart';
 import 'package:termare_view/src/painter/model/position.dart';
 import 'package:termare_view/src/sequences/osc.dart';
 import 'package:termare_view/termare_view.dart';
 
 import 'core/safe_list.dart';
-import 'model/letter_eneity.dart';
-import 'model/text_attributes.dart';
+import 'core/letter_eneity.dart';
+import 'core/text_attributes.dart';
 import 'core/observable.dart';
 import 'painter/termare_painter.dart';
 import 'sequences/c0.dart';
@@ -32,18 +33,18 @@ String defaultColor = '\x1b[0m';
 class TermareController with Observable {
   TermareController({
     this.theme,
-    this.rowLength = 57,
-    this.columnLength = 41,
+    this.row = 25,
+    this.column = 80,
     this.showBackgroundLine = false,
     this.fontFamily = 'packages/termare_view/DroidSansMono',
   }) {
     theme ??= TermareStyles.termux;
     final Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
+    buffer = Buffer(this);
   }
   final String fontFamily;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
-  final int cacheLine = 1000;
 
   void Function() onBell;
   void Function(TermSize size) sizeChanged;
@@ -54,15 +55,16 @@ class TermareController with Observable {
   bool dirty = false;
   // String out = '';
   TermareStyle theme;
-  SafeList<SafeList<LetterEntity>> cache = SafeList();
+  // SafeList<SafeList<LetterEntity>> cache = SafeList();
+  Buffer buffer;
   bool showCursor = true;
   // 当从 pty 读出内容的时候就会自动滑动
   bool autoScroll = true;
   // 显示背景网格
   bool showBackgroundLine;
 
-  int rowLength;
-  int columnLength;
+  int row;
+  int column;
   int topMargin = 0;
   int bottomMargin;
   TextAttributes textAttributes = TextAttributes('0');
@@ -77,59 +79,36 @@ class TermareController with Observable {
     notifyListeners();
   }
 
-  int absoluteLength() {
-    final int endRow = cache.length;
-    // print('cache.length -> ${cache.length}');
-    final int endColumn = columnLength;
-    for (int row = endRow; row > 0; row--) {
-      for (int column = 0; column < endColumn; column++) {
-        if (cache[row] == null) {
-          continue;
-        }
-        final LetterEntity letterEntity = cache[row][column];
-        final bool isNotEmpty = letterEntity?.content?.isNotEmpty;
-        if (isNotEmpty != null && isNotEmpty) {
-          // print(
-          //     'row + 1:${row + 1} currentPointer.y + 1 :${currentPointer.y + 1}');
-          return max(row + 1, currentPointer.y + 1);
-        }
-      }
-    }
-    return currentPointer.y;
-  }
-
   // 光标的位置；
   Position currentPointer = Position(0, 0);
   // 用来适配ESC 7/8 这个序列，保存当前的光标位置
   Position tmpPointer = Position(0, 0);
   // 通过这个变量来滑动终端
-  int startLength = 0;
   void clear() {
-    cache = SafeList();
-    startLength = 0;
+    buffer.clear();
     currentPointer = Position(0, 0);
     dirty = true;
   }
 
   void moveToPosition(int x) {
     // 玄学勿碰
-    final int n = currentPointer.y * columnLength + currentPointer.x;
+    final int n = currentPointer.y * column + currentPointer.x;
     int target = n + x;
     if (target < 0) {
       target = 0;
     }
-    currentPointer = Position(target % columnLength, target ~/ columnLength);
+    currentPointer = Position(target % column, target ~/ column);
   }
 
   void setPtyWindowSize(Size size) {
-    final int row = size.height ~/ theme.letterHeight;
+    final int row = size.height ~/ theme.characterHeight;
     // 列数
-    final int column = size.width ~/ theme.letterWidth;
-    rowLength = row;
-    columnLength = column;
-    bottomMargin ??= rowLength - 1;
-    log('setPtyWindowSize $size row:$rowLength column:$columnLength');
-    sizeChanged?.call(TermSize(rowLength, columnLength));
+    final int column = size.width ~/ theme.characterWidth;
+    this.row = row;
+    this.column = column;
+    bottomMargin ??= row - 1;
+    log('setPtyWindowSize $size row:$row column:$column');
+    sizeChanged?.call(TermSize(row, column));
     dirty = true;
     notifyListeners();
   }
@@ -147,16 +126,16 @@ class TermareController with Observable {
   }
 
   Position getToPosition(int x) {
-    if (currentPointer.x + x >= columnLength) {
+    if (currentPointer.x + x >= column) {
       // 说明在行首
       return Position(
-        currentPointer.x + x - columnLength,
+        currentPointer.x + x - column,
         currentPointer.y + 1,
       );
     } else if (currentPointer.x + x <= 0) {
       // 说明在行首
       return Position(
-        columnLength - 1,
+        column - 1,
         currentPointer.y - 1,
       );
     } else {
@@ -166,7 +145,7 @@ class TermareController with Observable {
 
   void moveToOffset(int x, int y) {
     /// 减一的原因在于左上角为1;1
-    currentPointer = Position(max(x - 1, 0), max(y - 1 + startLength, 0));
+    currentPointer = Position(max(x - 1, 0), max(y - 1, 0));
   }
 
   void moveToPrePosition() {
@@ -230,24 +209,24 @@ class TermareController with Observable {
     // log('$red  painter width->${painter.width}');
     // log('$red  painter height->${painter.height}');
     // log('char->${char} ${cache.length}');
-    if (bottomMargin != rowLength) {
-      int doNotNeedScrollLine = rowLength - bottomMargin;
-      print('object ${currentPointer.y} $doNotNeedScrollLine');
+    if (bottomMargin != row) {
+      // int doNotNeedScrollLine = row - bottomMargin;
+      // print('object ${currentPointer.y} $doNotNeedScrollLine');
 
       // cache[currentPointer.y + 1] = cache[currentPointer.y];
       // cache[currentPointer.y] = SafeList<LetterEntity>();
     }
-    if (cache[currentPointer.y] == null) {
-      cache[currentPointer.y] = SafeList<LetterEntity>();
-    }
-
-    cache[currentPointer.y][currentPointer.x] = LetterEntity(
-      content: char,
-      letterWidth: painter.width,
-      letterHeight: painter.height,
-      position: currentPointer,
-      doubleWidth: painter.width == painter.height,
-      textAttributes: textAttributes,
+    buffer.write(
+      currentPointer.y,
+      currentPointer.x,
+      Character(
+        content: char,
+        letterWidth: painter.width,
+        letterHeight: painter.height,
+        position: currentPointer,
+        doubleWidth: painter.width == painter.height,
+        textAttributes: textAttributes,
+      ),
     );
     if (painter.width == painter.height) {
       // 只有双字节字符宽高相等
@@ -261,8 +240,6 @@ class TermareController with Observable {
   // 不能放在 parseOutput 内部，可能存在一次流的末尾为终端序列的情况
   bool csiStart = false;
   bool oscStart = false;
-  // 3f 是字符 ?
-  bool csiAnd3fStart = false;
   bool escapeStart = false;
   bool dcsStart = false;
   // 是否按下 ctrl，可能监听到 ctrl 按键的时候改变这个值也可能在 app 端主动修改这个值
@@ -278,15 +255,12 @@ class TermareController with Observable {
     }
   }
 
-  bool verbose = false;
+  bool verbose = true;
   // 应该每次只接收一个字符
   void parseOutput(String data, {bool verbose = !kReleaseMode}) {
-    print('parseOutput ->$data<-');
-    log('$red utf8.encode(data)->${utf8.encode(data)}');
+    // print('parseOutput ->$data<-');
+    // log('$red utf8.encode(data)->${utf8.encode(data)}');
     for (int i = 0; i < data.length; i++) {
-      if (i > data.length - 1) {
-        break;
-      }
       // final List<int> codeUnits = data[i].codeUnits;
       // dart 的 codeUnits 是 utf32
       final List<int> utf8CodeUnits = utf8.encode(data[i]);
@@ -294,35 +268,6 @@ class TermareController with Observable {
       // log('utf8CodeUnits->$utf8CodeUnits');
       if (utf8CodeUnits.length == 1) {
         // 说明单字节
-        if (csiAnd3fStart) {
-          csiAnd3fStart = false;
-          // 去拿那个字母的index
-          final int charWordindex = data.substring(i).indexOf(RegExp('[a-z]'));
-          log('line.substring($i)->${data.substring(i).split('\n').first}');
-          String header = '';
-          header = data.substring(i, i + charWordindex);
-          final String sequenceChar = data.substring(i)[charWordindex];
-          if (sequenceChar == 'l') {
-            header.split(';').forEach((element) {
-              log('ESC[?l序列 $element');
-              if (element == '25') {
-                showCursor = false;
-              }
-            });
-          }
-          if (sequenceChar == 'h') {
-            header.split(';').forEach((element) {
-              log('ESC[?h序列 $element');
-              if (element == '25') {
-                showCursor = true;
-              }
-            });
-          }
-          log('header->$header');
-
-          i += header.length;
-          continue;
-        }
         if (oscStart) {
           final bool osc = Osc.handle(this, utf8CodeUnits);
           if (osc) {
@@ -362,5 +307,16 @@ class TermareController with Observable {
       // log('$red getOrPerformLayout $i');
       // TODO
     }
+    // buffer.write(
+    //   currentPointer.y,
+    //   currentPointer.x,
+    //   Character(
+    //     content: ' ',
+    //     letterWidth: theme.characterWidth,
+    //     letterHeight: theme.characterHeight,
+    //     position: currentPointer,
+    //     textAttributes: textAttributes,
+    //   ),
+    // );
   }
 }

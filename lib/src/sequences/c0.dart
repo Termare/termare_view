@@ -29,7 +29,7 @@ class C0 {
       controller.moveToPrePosition();
       return true;
     } else if (eq(utf8CodeUnits, [0x09])) {
-      controller.moveToPosition(2);
+      controller.moveToPosition(4);
       if (verbose) {
         log('$red<- C0 Horizontal Tabulation ->');
       }

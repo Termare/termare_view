@@ -3,8 +3,8 @@ import 'package:termare_view/src/painter/model/position.dart';
 
 import 'text_attributes.dart';
 
-class LetterEntity {
-  LetterEntity({
+class Character {
+  Character({
     this.textAttributes,
     this.doubleWidth = false,
     @required this.content,
@@ -19,4 +19,8 @@ class LetterEntity {
   final bool doubleWidth;
   final TextAttributes textAttributes;
   bool get isEmpty => content == '';
+  @override
+  String toString() {
+    return '$content';
+  }
 }

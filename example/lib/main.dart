@@ -50,9 +50,10 @@ class _ExampleState extends State<Example> {
     // SequencesTest.testC1(controller);
     // SequencesTest.testDECSEL(controller);
 
-    SequencesTest.testCSI(controller);
+    // SequencesTest.testCSI(controller);
     SequencesTest.testColorText(controller);
-    SequencesTest.testColorText(controller);
+    // SequencesTest.test256Color(controller);
+
     // SequencesTest.testChinese(controller);
   }
 

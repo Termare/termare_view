@@ -3,7 +3,7 @@ import 'package:termare_view/src/termare_controller.dart';
 
 class SequencesTest {
   static Future<void> testChinese(TermareController controller) async {
-    controller.write('${'啊' * 17}\x08\x08 WWww\n');
+    controller.write('${'啊' * 3000}\x08\x08 WWww\n');
   }
 
   static Future<void> testColorText(TermareController controller) async {
@@ -79,13 +79,13 @@ class SequencesTest {
       getTestChar(r'Horizontal\x09Tabulation', 'Horizontal\x09Tabulation'),
     );
     controller.write(
-      getTestChar(r'Line Feed\x0a', 'Line Feed\x0a'),
+      getTestChar(r'Line Feed\x0a*', 'Line Feed\x0a*'),
     );
     controller.write(
-      getTestChar(r'Line Feed\x0b', 'Line Feed\x0b'),
+      getTestChar(r'Line Feed\x0b*', 'Line Feed\x0b*'),
     );
     controller.write(
-      getTestChar(r'Line Feed\x0c', 'Line Feed\x0c'),
+      getTestChar(r'Line Feed\x0c*', 'Line Feed\x0c*'),
     );
     controller.write(
       getTestChar(
@@ -113,10 +113,10 @@ class SequencesTest {
     print(_spiltLine('C1 TEST START'));
     controller.write(_spiltLine('C1 TEST START'));
     controller.write(
-      getTestChar(r'Index\x84', 'Index\x84'),
+      getTestChar(r'Index\x84*', 'Index\x84*'),
     );
     controller.write(
-      getTestChar(r'Next Line\x85', 'Next Line\x85'),
+      getTestChar(r'Next Line\x85*', 'Next Line\x85*'),
     );
     controller.write(
       getTestChar(
@@ -217,6 +217,7 @@ class SequencesTest {
   }
 
   static void testCSI(TermareController controller) {
+    // csiInput('2${csiSeqChars[11]}');
     void csiInput(String sequence) {
       controller.write('\x1b[$sequence');
     }
@@ -225,43 +226,51 @@ class SequencesTest {
       controller.write(data);
     }
 
-    write('.');
+    csiInput('2${csiSeqChars[11]}');
+    write('123\b\b');
     csiInput('3${csiSeqChars[0]}');
     write('.\n');
     write('123');
+    csiInput('${csiSeqChars[1]}');
+    csiInput('2${csiSeqChars[2]}');
+    csiInput('2${csiSeqChars[3]}');
+    csiInput('2${csiSeqChars[4]}');
+    csiInput('2${csiSeqChars[5]}');
+    csiInput('2${csiSeqChars[6]}');
     csiInput('2${csiSeqChars[7]}');
     write('456');
 
     csiInput('1;1${csiSeqChars[8]}');
-    write('///\n\n\n');
+    write('\n\n\n');
 
     csiInput('1${csiSeqChars[9]}');
-    write('12345\b');
-    csiInput('0${csiSeqChars[10]}');
-    write('12345\b');
-    csiInput('?1${csiSeqChars[10]}');
-    write('6');
+    write('12345\b\b\b');
+    // csiInput('1;1${csiSeqChars[8]}');
+    // csiInput('?1${csiSeqChars[10]}');
+    // csiInput('?2${csiSeqChars[10]}');
 
-    write('123');
+    // csiInput('${csiSeqChars[11]}');
+    // csiInput('1${csiSeqChars[11]}');
+    // csiInput('2${csiSeqChars[11]}');
     csiInput('3${csiSeqChars[12]}');
 
-    write('123');
-    csiInput('1${csiSeqChars[15]}678');
-    csiInput('1${csiSeqChars[16]}678');
-    write('\n\n\n1234\b\x1b[Z67899');
-    csiInput('1${csiSeqChars[19]}');
-    csiInput('1${csiSeqChars[20]}');
-    write('\n\n123');
-    csiInput('3${csiSeqChars[21]}456');
-    csiInput('2${csiSeqChars[23]}456');
-    csiInput('2${csiSeqChars[24]}456');
-    // csiInput('?2${csiSeqChars[10]}');
-    csiInput('1;1${csiSeqChars[25]}456');
-    csiInput('10;1${csiSeqChars[25]}456');
-    // csiInput('?25${csiSeqChars[27]}456');
-    // csiInput('?25${csiSeqChars[28]}456');
-    write('\n\n123\b\b\b');
-    csiInput('${csiSeqChars[14]}');
+    write('12345678\b\b\b');
+    csiInput('2${csiSeqChars[14]}');
+    // csiInput('1${csiSeqChars[16]}678');
+    // write('\n\n\n1234\b\x1b[Z67899');
+    // csiInput('1${csiSeqChars[19]}');
+    // csiInput('1${csiSeqChars[20]}');
+    // write('\n\n123');
+    // csiInput('3${csiSeqChars[21]}456');
+    // csiInput('2${csiSeqChars[23]}456');
+    // csiInput('2${csiSeqChars[24]}456');
+    // // csiInput('?2${csiSeqChars[10]}');
+    // csiInput('1;1${csiSeqChars[25]}456');
+    // csiInput('10;1${csiSeqChars[25]}456');
+    // // csiInput('?25${csiSeqChars[27]}456');
+    // // csiInput('?25${csiSeqChars[28]}456');
+    // write('\n\n123\b\b\b');
+    // csiInput('${csiSeqChars[14]}');
   }
 
   static void test256Color(TermareController controller) {

@@ -4,8 +4,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:termare_view/src/config/cache.dart';
+import 'package:termare_view/src/core/buffer.dart';
 import 'package:termare_view/src/core/safe_list.dart';
-import 'package:termare_view/src/model/letter_eneity.dart';
+import 'package:termare_view/src/core/letter_eneity.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
 TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 4096);
@@ -14,8 +15,8 @@ class TermarePainter extends CustomPainter {
   TermarePainter({
     this.controller,
   }) {
-    termWidth = controller.columnLength * controller.theme.letterWidth;
-    termHeight = controller.rowLength * controller.theme.letterHeight;
+    termWidth = controller.column * controller.theme.characterWidth;
+    termHeight = controller.row * controller.theme.characterHeight;
   }
   final TermareController controller;
   double termWidth;
@@ -37,27 +38,26 @@ class TermarePainter extends CustomPainter {
     final Paint paint = Paint();
     paint.strokeWidth = 1;
     paint.color = Colors.grey.withOpacity(0.4);
-    for (int j = 0; j <= controller.rowLength; j++) {
-      // print(j);
+    for (int j = 0; j <= controller.row; j++) {
       canvas.drawLine(
         Offset(
           0,
-          j * controller.theme.letterHeight,
+          j * controller.theme.characterHeight,
         ),
         Offset(
           termWidth,
-          j * controller.theme.letterHeight,
+          j * controller.theme.characterHeight,
         ),
         paint,
       );
     }
-    for (int k = 0; k <= controller.columnLength; k++) {
+    for (int k = 0; k <= controller.column; k++) {
       canvas.drawLine(
         Offset(
-          k * controller.theme.letterWidth,
+          k * controller.theme.characterWidth,
           0,
         ),
-        Offset(k * controller.theme.letterWidth, termHeight),
+        Offset(k * controller.theme.characterWidth, termHeight),
         paint,
       );
     }
@@ -75,29 +75,21 @@ class TermarePainter extends CustomPainter {
     final Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
     drawBackground(canvas, size);
+    final Buffer buffer = controller.buffer;
     // 视图的真实高度
-    final int startRow = controller.startLength;
-    final int endRow = startRow + controller.rowLength;
-    // print('startRow ->$startRow');
-    for (int row = startRow; row < endRow; row++) {
-      final SafeList<LetterEntity> line = controller.cache[row];
-
-      // print('第 ${row - startRow} 行');
-      if (line == null) {
-        continue;
-      }
-      for (int x = 0; x < line.length; x++) {
-        if (line[x] == null) {
+    for (int row = 0; row < controller.row; row++) {
+      for (int column = 0; column < controller.column; column++) {
+        final Character character = buffer.getCharacter(row, column);
+        if (character == null) {
           continue;
         }
-        final LetterEntity letterEntity = line[x];
         final TextPainter painter = painterCache.getOrPerformLayout(
           TextSpan(
-            text: letterEntity.content,
+            text: character.content,
             style: TextStyle(
               fontSize: controller.theme.fontSize,
               backgroundColor: Colors.transparent,
-              color: letterEntity.textAttributes.foreground(controller),
+              color: character.textAttributes.foreground(controller),
               fontWeight: FontWeight.w600,
               fontFamily: controller.fontFamily,
               // fontStyle: FontStyle
@@ -105,36 +97,37 @@ class TermarePainter extends CustomPainter {
           ),
         );
         final Offset offset = Offset(
-          x * controller.theme.letterWidth,
-          (row - controller.startLength) * controller.theme.letterHeight,
+          column * controller.theme.characterWidth,
+          row * controller.theme.characterHeight,
         );
         // TODO 可能出bug，上面改了
         // print('${letterEntity.content} $offset');
-        if (letterEntity.textAttributes.background(controller) != null) {
+        if (character.textAttributes.background(controller) != null) {
           // 当字符背景颜色不为空的时候
           canvas.drawRect(
             Rect.fromLTWH(
               // 下面是sao办法，解决neofetch显示的颜色方块中有缝隙
               offset.dx,
               offset.dy,
-              letterEntity.doubleWidth
-                  ? controller.theme.letterWidth * 2 + 2
-                  : controller.theme.letterWidth + 2,
-              controller.theme.letterHeight,
+              character.doubleWidth
+                  ? controller.theme.characterWidth * 2 + 2
+                  : controller.theme.characterWidth + 2,
+              controller.theme.characterHeight,
             ),
-            Paint()..color = letterEntity.textAttributes.background(controller),
+            Paint()..color = character.textAttributes.background(controller),
           );
         }
 
         painter
           ..layout(
-            maxWidth: controller.theme.letterWidth * 2,
-            minWidth: controller.theme.letterWidth,
+            maxWidth: controller.theme.characterWidth * 2,
+            minWidth: controller.theme.characterWidth,
           )
           ..paint(
             canvas,
             offset +
-                Offset(0, (controller.theme.letterHeight - painter.height) / 2),
+                Offset(
+                    0, (controller.theme.characterHeight - painter.height) / 2),
           );
       }
     }
@@ -144,17 +137,19 @@ class TermarePainter extends CustomPainter {
     }
     controller.dirty = false;
 
-    paintCursor(canvas, controller.startLength);
-    final int absLength = controller.absoluteLength();
-    if (absLength > controller.rowLength + controller.startLength) {
+    paintCursor(canvas, buffer);
+    print('controller.currentPointer.y -> ${controller.currentPointer.y}');
+    print('buffer.limit -> ${buffer.limit}');
+    if (controller.currentPointer.y + 1 > buffer.limit) {
       // print(
       //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
       // 上面这个if其实就是当终端视图下方还有显示内容的时候
       if (controller.autoScroll) {
+        print('滚动 pointer ${controller.currentPointer}');
         // 只能延时执行刷新
+        // print(controller.currentPointer.y + 1 - buffer.limit);
         Future.delayed(const Duration(milliseconds: 10), () {
-          controller.startLength +=
-              absLength - controller.startLength - controller.rowLength;
+          buffer.scroll(controller.currentPointer.y + 1 - buffer.limit);
           controller.dirty = true;
           controller.notifyListeners();
         });
@@ -182,15 +177,15 @@ class TermarePainter extends CustomPainter {
 
   void paintText(Canvas canva) {}
 
-  void paintCursor(Canvas canvas, int outLine) {
+  void paintCursor(Canvas canvas, Buffer buffer) {
     if (controller.showCursor) {
       canvas.drawRect(
         Rect.fromLTWH(
-          controller.currentPointer.dx * controller.theme.letterWidth,
-          controller.currentPointer.dy * controller.theme.letterHeight -
-              outLine * controller.theme.letterHeight,
-          controller.theme.letterWidth,
-          controller.theme.letterHeight,
+          controller.currentPointer.dx * controller.theme.characterWidth,
+          (controller.currentPointer.dy - buffer.position) *
+              controller.theme.characterHeight,
+          controller.theme.characterWidth,
+          controller.theme.characterHeight,
         ),
         Paint()..color = controller.theme.cursorColor.withOpacity(0.4),
       );

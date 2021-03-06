@@ -7,5 +7,5 @@ void main() {
   // for (int i = 0; i < 256; i++) {
   //   stdout.write('\x1b[48;5;$i\m$i     \x1b[0m');
   // }
-  print('1234\x1b[4q');
+  print('1234\x1b[3@4q');
 }

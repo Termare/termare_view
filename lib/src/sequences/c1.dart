@@ -20,7 +20,7 @@ class C1 {
       }
       return true;
     } else if (eq(utf8CodeUnits, [0xc2, 0x88])) {
-      // moveToPosition(4);
+      controller.moveToPosition(4);
       if (controller.verbose) {
         controller.log('$pink<- C1 Horizontal Tabulation Set ->');
       }

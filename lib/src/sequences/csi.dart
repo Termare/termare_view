@@ -3,7 +3,9 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:termare_view/src/model/text_attributes.dart';
+import 'package:termare_view/src/core/buffer.dart';
+import 'package:termare_view/src/core/letter_eneity.dart';
+import 'package:termare_view/src/core/text_attributes.dart';
 import 'package:termare_view/src/painter/model/position.dart';
 import 'package:termare_view/termare_view.dart';
 
@@ -52,33 +54,38 @@ List<String> csiSeqChars = [
 class Csi {
   static String curSeq = '';
   static bool handle(TermareController controller, List<int> utf8CodeUnits) {
+    Buffer buffer = controller.buffer;
     final String currentChar = utf8.decode(utf8CodeUnits);
     if (csiSeqChars.contains(currentChar)) {
-      print('curSeq -> ${curSeq}$currentChar');
+      print('curSeq -> $curSeq$currentChar');
       // 执行此次序列
       // 执行完清空
       if (currentChar == csiSeqChars[0]) {
-        /// ICH
+        /// @ ICH Insert Characters
         /// 向当前所在的位置添加一个空白字符
+        /// ICH序列插入Ps空白字符。光标停留在空白字符的开头。光标和右边距之间的文本向右移动。超过右边距的字符将丢失。
+        /// 还有点问题，下次记得找一下实际用到的序列
+        //TODO
         final int ps = int.tryParse(curSeq);
         for (int i = 0; i < ps; i++) {
-          controller.writeChar(' ');
-        }
-        final int startColumn = controller.currentPointer.x;
-        final int endColumn = controller.columnLength;
-        for (int c = endColumn; c > startColumn; c--) {
-          String source =
-              controller.cache[controller.currentPointer.y][c - 1]?.content;
-          String target =
-              controller.cache[controller.currentPointer.y][c]?.content;
-          print('移动 $source 到 $target');
-          if (controller.cache[controller.currentPointer.y] == null) {
-            // print(true);
-            return true;
-          } else {
-            controller.cache[controller.currentPointer.y][c] =
-                controller.cache[controller.currentPointer.y][c - 1];
+          final int startColumn = controller.currentPointer.x;
+          // print('startColumn $startColumn');
+          final int endColumn = controller.column;
+          for (int c = endColumn; c > startColumn; c--) {
+            String source = buffer
+                .getCharacter(controller.currentPointer.y, c - 1)
+                ?.content;
+            String target =
+                buffer.getCharacter(controller.currentPointer.y, c)?.content;
+            // print('移动 ${c - 1}的$source 到 $c的$target');
+            // print('移动 $source 到 $target');
+            buffer.write(
+              controller.currentPointer.y,
+              c,
+              buffer.getCharacter(controller.currentPointer.y, c - 1),
+            );
           }
+          controller.writeChar(' ');
         }
         controller.moveToRelativeColumn(-ps);
       } else if (currentChar == csiSeqChars[1]) {
@@ -176,60 +183,47 @@ class Csi {
         switch (ps) {
           case 0:
             // 从光标位置清除到可视窗口末尾
-            final int maxRow = controller.startLength + controller.rowLength;
+            final int maxRow = controller.row;
             final int startRow = controller.currentPointer.y;
-            for (int r = startRow; r < maxRow; r++) {
+            for (int row = startRow; row < maxRow; row++) {
               // 如果这个位置并没有字符
               int column;
-              if (r == controller.currentPointer.y) {
+              if (row == controller.currentPointer.y) {
                 column = controller.currentPointer.x;
               } else {
                 column = 0;
               }
-              for (; column < controller.columnLength; column++) {
-                // 如果这个位置并没有字符
-                if (controller.cache[r] == null) {
-                  continue;
-                } else {
-                  controller.cache[r][column] = null;
-                }
+              for (; column < controller.column; column++) {
+                buffer.write(row, column, null);
               }
             }
             break;
           case 1:
-            // 从光标位置清除到可视窗口末尾
-            final int maxRow = controller.startLength + controller.rowLength;
-            final int startRow = controller.startLength;
-            for (int r = startRow; r < maxRow; r++) {
+            // 从可视窗口开始清除到光标位置
+            final int maxRow = controller.currentPointer.y + 1;
+            final int startRow = 0;
+            for (int row = startRow; row < maxRow; row++) {
               int maxColumn;
-              if (r == controller.currentPointer.y) {
+              if (row == controller.currentPointer.y) {
                 maxColumn = controller.currentPointer.x;
               } else {
-                maxColumn = controller.columnLength;
+                maxColumn = controller.column;
               }
               for (int column = 0; column < maxColumn; column++) {
-                // 如果这个位置并没有字符
-                if (controller.cache[r] == null) {
-                  continue;
-                } else {
-                  controller.cache[r][column] = null;
-                }
+                buffer.write(row, column, null);
               }
             }
             break;
           case 2:
             // print('清空可视窗口 ${controller.startLine} ${controller.rowLength}');
             // 从视图左上角清除到视图右下角
-            final int maxRow = controller.startLength + controller.rowLength;
-            final int startRow = controller.startLength;
-            for (int r = startRow; r < maxRow; r++) {
-              for (int c = 0; c < controller.columnLength; c++) {
+            final int maxRow = controller.row;
+            final int startRow = 0;
+            for (int row = startRow; row < maxRow; row++) {
+              // print('删除 $row 行');
+              for (int column = 0; column < controller.column; column++) {
                 // 如果这个位置并没有字符
-                if (controller.cache[r] == null) {
-                  continue;
-                } else {
-                  controller.cache[r][c] = null;
-                }
+                buffer.write(row, column, null);
               }
             }
             break;
@@ -252,31 +246,22 @@ class Csi {
           case 0:
             // 从光标位置清除到行末尾
             final int startColumn = controller.currentPointer.x;
-            final int endColumn = controller.columnLength;
-            for (int c = startColumn; c < endColumn; c++) {
-              // 如果这个一行都没有字符
-              if (controller.cache[controller.currentPointer.y] == null) {
-                return true;
-              } else {
-                controller.cache[controller.currentPointer.y][c] = null;
-              }
+            final int endColumn = controller.column;
+            for (int column = startColumn; column < endColumn; column++) {
+              buffer.write(controller.currentPointer.y, column, null);
             }
             break;
           case 1:
             // 从行首清除到光标的位置
             const int startColumn = 0;
             final int endColumn = controller.currentPointer.x;
-            for (int c = startColumn; c < endColumn; c++) {
-              if (controller.cache[controller.currentPointer.y] == null) {
-                return true;
-              } else {
-                controller.cache[controller.currentPointer.y][c] = null;
-              }
+            for (int column = startColumn; column < endColumn; column++) {
+              buffer.write(controller.currentPointer.y, column, null);
             }
             break;
           case 2:
             // 清除整行
-            earseOneLine(controller);
+            earseOneLine(controller, buffer);
             break;
           default:
         }
@@ -288,10 +273,10 @@ class Csi {
         int ps = int.tryParse(curSeq);
         ps ??= 1;
         controller.moveToRelativeRow(1);
-        // for (int i = 0; i < ps; i++) {
-        controller.moveToRelativeRow(1);
-        earseOneLine(controller);
-        // }
+        for (int i = 0; i < ps; i++) {
+          controller.moveToRelativeRow(1);
+          earseOneLine(controller, buffer);
+        }
         controller.moveToLineFirstPosition();
         // TODO 没有完全验证
       } else if (currentChar == csiSeqChars[13]) {
@@ -303,31 +288,27 @@ class Csi {
         /// vscode与macos原生终端均未发现删除效果
         int ps = int.tryParse(curSeq);
         ps ??= 1;
-        String data = controller
-            .cache[controller.currentPointer.y][controller.currentPointer.x]
-            .content;
-        print('删除 ${controller.currentPointer} 字符 $data ');
-        for (int c = 0; c < ps; c++) {
-          controller.cache[controller.currentPointer.y]
-              [controller.currentPointer.x - c] = null;
-        }
+        print('ps:$ps');
 
-        // / 移动字符
-        // /
-        final int startColumn = controller.currentPointer.x;
-        final int endColumn = controller.columnLength;
-        for (int c = startColumn; c < endColumn; c++) {
-          String source =
-              controller.cache[controller.currentPointer.y][c + 1]?.content;
-          String target =
-              controller.cache[controller.currentPointer.y][c]?.content;
-          // print('移动 $source 到 $target');
-          if (controller.cache[controller.currentPointer.y] == null) {
-            // print(true);
-            return true;
-          } else {
-            controller.cache[controller.currentPointer.y][c] =
-                controller.cache[controller.currentPointer.y][c + 1];
+        for (int column = 0; column < ps; column++) {
+          Character character = buffer.getCharacter(
+            controller.currentPointer.y,
+            controller.currentPointer.x,
+          );
+          // print('删除 ${controller.currentPointer} 字符 ${character?.content} ');
+          buffer.write(
+            controller.currentPointer.y,
+            controller.currentPointer.x,
+            null,
+          );
+          final int startColumn = controller.currentPointer.x;
+          final int endColumn = controller.column;
+          for (int column = startColumn; column < endColumn; column++) {
+            final Character character = buffer.getCharacter(
+              controller.currentPointer.y,
+              column + 1,
+            );
+            buffer.write(controller.currentPointer.y, column, character);
           }
         }
       } else if (currentChar == csiSeqChars[15]) {
@@ -347,13 +328,9 @@ class Csi {
         ps ??= 1;
         final int startColumn = controller.currentPointer.x;
         final int endColumn = startColumn + ps;
-        for (int c = startColumn; c < endColumn; c++) {
+        for (int column = startColumn; column < endColumn; column++) {
           // 如果这个一行都没有字符
-          if (controller.cache[controller.currentPointer.y] == null) {
-            return true;
-          } else {
-            controller.cache[controller.currentPointer.y][c] = null;
-          }
+          buffer.write(controller.currentPointer.y, column, null);
         }
       } else if (currentChar == csiSeqChars[18]) {
         /// Z CBT	Cursor Backward Tabulation
@@ -379,7 +356,7 @@ class Csi {
         final Position position = controller.currentPointer;
         final int row = position.y;
         final int column = max(position.x - ps, 0);
-        final String data = controller.cache[row][column].content;
+        final String data = buffer.getCharacter(row, column).content;
         // print('data ->${data * 3}');
         controller.write(data * ps);
       } else if (currentChar == csiSeqChars[22]) {
@@ -473,8 +450,7 @@ class Csi {
         controller.textAttributes = controller.tmpTextAttributes;
       } else if (currentChar == csiSeqChars[36]) {
         ///
-      } else if (currentChar == csiSeqChars[37]) {
-      } else if (currentChar == csiSeqChars[38]) {}
+      } else if (currentChar == csiSeqChars[37]) {}
       curSeq = '';
       controller.csiStart = false;
     } else {
@@ -482,15 +458,11 @@ class Csi {
     }
   }
 
-  static void earseOneLine(TermareController controller) {
+  static void earseOneLine(TermareController controller, Buffer buffer) {
     const int startColumn = 0;
-    final int endColumn = controller.columnLength;
-    for (int c = startColumn; c < endColumn; c++) {
-      if (controller.cache[controller.currentPointer.y] == null) {
-        break;
-      } else {
-        controller.cache[controller.currentPointer.y][c] = null;
-      }
+    final int endColumn = controller.row;
+    for (int column = startColumn; column < endColumn; column++) {
+      buffer.write(controller.currentPointer.y, column, null);
     }
   }
 

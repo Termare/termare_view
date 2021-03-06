@@ -126,8 +126,8 @@ class TermareStyle {
   // 前景色37 背景色47 白色
   final Color white;
   final Color lightWhite;
-  double get letterWidth => letterWidthMap[fontSize.toInt()];
-  double get letterHeight => letterWidth * 2;
+  double get characterWidth => letterWidthMap[fontSize.toInt()];
+  double get characterHeight => characterWidth * 2;
   double fontSize;
   @override
   String toString() {

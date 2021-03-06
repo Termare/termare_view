@@ -10,9 +10,9 @@ class TermSize {
     final double screenWidth = size.width / window.devicePixelRatio;
     final double screenHeight = size.height / window.devicePixelRatio;
     // 行数
-    final int row = screenHeight ~/ TermareStyles.termux.letterHeight;
+    final int row = screenHeight ~/ TermareStyles.termux.characterHeight;
     // 列数
-    final int column = screenWidth ~/ TermareStyles.termux.letterWidth;
+    final int column = screenWidth ~/ TermareStyles.termux.characterWidth;
     return TermSize(row, column);
   }
 }

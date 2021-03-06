@@ -4,12 +4,12 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:termare_view/src/model/text_attributes.dart';
+import 'package:termare_view/src/core/text_attributes.dart';
 import 'package:termare_view/src/widget/input_listener.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
 import 'painter/termare_painter.dart';
-import 'model/term_size.dart';
+import 'core/term_size.dart';
 import 'theme/term_theme.dart';
 import 'utils/keyboard_handler.dart';
 import 'widget/scroll_view.dart';
@@ -35,9 +35,9 @@ class TermareView extends StatefulWidget {
     final double screenWidth = size.width / window.devicePixelRatio;
     final double screenHeight = size.height / window.devicePixelRatio;
     // 行数
-    final int row = screenHeight ~/ TermareStyles.termux.letterHeight;
+    final int row = screenHeight ~/ TermareStyles.termux.characterHeight;
     // 列数
-    final int column = screenWidth ~/ TermareStyles.termux.letterWidth;
+    final int column = screenWidth ~/ TermareStyles.termux.characterWidth;
     return TermSize(row, column);
   }
 
