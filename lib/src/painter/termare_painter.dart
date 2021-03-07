@@ -138,8 +138,8 @@ class TermarePainter extends CustomPainter {
     controller.dirty = false;
 
     paintCursor(canvas, buffer);
-    // print('controller.currentPointer.y -> ${controller.currentPointer.y}');
-    // print('buffer.limit -> ${buffer.limit}');
+    print('controller.currentPointer.y -> ${controller.currentPointer.y}');
+    print('buffer.limit -> ${buffer.limit}');
     if (controller.currentPointer.y + 1 > buffer.limit) {
       // print(
       //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');

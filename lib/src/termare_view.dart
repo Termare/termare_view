@@ -120,7 +120,7 @@ class _TermareViewState extends State<TermareView> {
         widget?.onAction?.call(action);
       },
       onKeyStroke: (RawKeyEvent key) {
-        print(key);
+        // print(key);
         // 26键盘之外的按键按下的时候
         final String input = keyboardHandler.getKeyEvent(key);
         if (input != null) {
@@ -205,7 +205,7 @@ class _TerminalViewState extends State<TerminalView>
       // double keyoardHeight = MediaQuery.of(context).viewInsets.bottom;
       // print('keyoardHeight -> $keyoardHeight');
       // print('$this resizeWindow');
-      widget.controller.setPtyWindowSize(widget.painterSize);
+      widget.controller.setWindowSize(widget.painterSize);
       // print(widget.painterSize);
 
       widget.controller.autoScroll = true;

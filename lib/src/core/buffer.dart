@@ -1,20 +1,26 @@
 import 'dart:math';
-
-import 'package:termare_view/src/core/safe_list.dart';
 import 'package:termare_view/src/core/letter_eneity.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
 class Buffer {
-  Buffer(this.controller);
+  Buffer(this.controller) {
+    viewRows = controller.row;
+  }
   final TermareController controller;
   List<List<Character>> cache = [];
   int _position = 0;
   int get position => _position;
-  int get limit => _position + controller.row;
+  int viewRows;
+  // 这是默认的limit，在 	CSI Ps ; Ps r 这个序列后，可滑动的视口会变化
+  int get limit => _position + viewRows;
   int maxLine = 1000;
   int get length => cache.length;
   void clear() {
     cache.clear();
+  }
+
+  void setViewPoint(int rows) {
+    viewRows = rows;
   }
 
   int absoluteLength() {
@@ -94,7 +100,6 @@ class Buffer {
   List<Character> getCharacterLines(
     int row,
   ) {
-    // print('row ->$row');
     if (row + _position > length - 1) {
       cache.length = row + _position + 1;
       cache[row + _position] = [];
@@ -106,11 +111,11 @@ class Buffer {
   }
 
   void scroll(int line) {
-    print(absoluteLength());
+    // print(absoluteLength());
     _position += line;
     // _position = max(0, _position);
-    if (absoluteLength() > controller.row) {
-      _position = min(absoluteLength() - controller.row, _position);
+    if (absoluteLength() > viewRows) {
+      _position = min(absoluteLength() - viewRows, _position);
       _position = max(0, _position);
     } else {
       _position = 0;

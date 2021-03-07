@@ -218,6 +218,7 @@ class SequencesTest {
 
   static void testCSI(TermareController controller) {
     // csiInput('2${csiSeqChars[11]}');
+    final List<String> csiSeqChars = List.from(csiSeqHandlerMap.keys);
     void csiInput(String sequence) {
       controller.write('\x1b[$sequence');
     }

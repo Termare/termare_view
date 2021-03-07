@@ -52,6 +52,11 @@ class _ExampleState extends State<Example> {
 
     // SequencesTest.testCSI(controller);
     SequencesTest.testColorText(controller);
+    for (int i = 0; i < 100; i++) {
+      controller.write('$i\n');
+    }
+    controller.write('\x1b[2A');
+    controller.write('\x1b[3C');
     // SequencesTest.test256Color(controller);
 
     // SequencesTest.testChinese(controller);
