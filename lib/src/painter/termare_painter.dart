@@ -75,7 +75,7 @@ class TermarePainter extends CustomPainter {
     final Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
     drawBackground(canvas, size);
-    final Buffer buffer = controller.buffer;
+    final Buffer buffer = controller.currentBuffer;
     // 视图的真实高度
     for (int row = 0; row < controller.row; row++) {
       for (int column = 0; column < controller.column; column++) {
@@ -138,14 +138,14 @@ class TermarePainter extends CustomPainter {
     controller.dirty = false;
 
     paintCursor(canvas, buffer);
-    print('controller.currentPointer.y -> ${controller.currentPointer.y}');
-    print('buffer.limit -> ${buffer.limit}');
+    // print('controller.currentPointer.y -> ${controller.currentPointer.y}');
+    // print('buffer.limit -> ${buffer.limit}');
     if (controller.currentPointer.y + 1 > buffer.limit) {
       // print(
       //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
       // 上面这个if其实就是当终端视图下方还有显示内容的时候
       if (controller.autoScroll) {
-        print('滚动 pointer ${controller.currentPointer}');
+        // print('滚动 pointer ${controller.currentPointer}');
         // 只能延时执行刷新
         // print(controller.currentPointer.y + 1 - buffer.limit);
         Future.delayed(const Duration(milliseconds: 10), () {

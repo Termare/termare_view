@@ -42,13 +42,16 @@ class Buffer {
     //     'write row:$row length:$length column:$column $entity position:$position');
 
     if (row > length - 1) {
+      // 防止在row上越界
       cache.length = row + 1;
       cache[row] = [];
     }
     if (cache[row] == null) {
+      // 有可能存在[null,null]，这个index能取到值，但是为null
       cache[row] = [];
     }
     if (column > cache[row].length - 1) {
+      // 防止在 column 上越界
       cache[row].length = column + 1;
     }
     cache[row][column] = entity;

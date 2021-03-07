@@ -38,7 +38,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
         final int scrollLine = -curOffset.toInt() ~/
             widget.controller.theme.characterHeight.toInt();
         print('scrollLine -> $scrollLine');
-        widget.controller.buffer.scroll(scrollLine);
+        widget.controller.currentBuffer.scroll(scrollLine);
         if (scrollLine != 0) {
           curOffset = 0;
         }
@@ -80,7 +80,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
           final int scrollLine = -shouldOffset.toInt() ~/
               widget.controller.theme.characterHeight.toInt();
           print('scrollLine -> $scrollLine');
-          widget.controller.buffer.scroll(scrollLine);
+          widget.controller.currentBuffer.scroll(scrollLine);
           if (scrollLine != 0) {
             curOffset = animationController.value;
           }

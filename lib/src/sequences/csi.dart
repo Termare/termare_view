@@ -54,7 +54,7 @@ List<String> csiSeqChars = [
 class Csi {
   static String curSeq = '';
   static bool handle(TermareController controller, List<int> utf8CodeUnits) {
-    Buffer buffer = controller.buffer;
+    Buffer buffer = controller.currentBuffer;
     final String currentChar = utf8.decode(utf8CodeUnits);
     if (csiSeqChars.contains(currentChar)) {
       print('curSeq -> $curSeq$currentChar');
@@ -389,11 +389,14 @@ class Csi {
         /// 设置终端模式
         /// 未实现
         if (curSeq.startsWith('?')) {
-          print('object');
           curSeq = curSeq.replaceAll('?', '');
           switch (curSeq) {
             case '25':
               controller.showCursor = true;
+              break;
+            case '1049':
+              controller.switchBufferToAlternate();
+              controller.saveCursor();
               break;
             default:
           }
@@ -412,6 +415,10 @@ class Csi {
 
               /// 隐藏光标
               ///
+              break;
+            case '1049':
+              controller.switchBufferToMain();
+              controller.restoreCursor();
               break;
             default:
           }

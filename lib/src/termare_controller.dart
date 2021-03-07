@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:termare_view/src/core/buffer.dart';
+import 'package:termare_view/src/core/test.dart';
 import 'package:termare_view/src/painter/model/position.dart';
 import 'package:termare_view/src/sequences/osc.dart';
 import 'package:termare_view/termare_view.dart';
@@ -41,7 +42,9 @@ class TermareController with Observable {
     theme ??= TermareStyles.termux;
     final Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
-    buffer = Buffer(this);
+    mainBuffer = Buffer(this);
+    alternateBuffer = Buffer(this);
+    currentBuffer = mainBuffer;
   }
   final String fontFamily;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
@@ -56,7 +59,10 @@ class TermareController with Observable {
   // String out = '';
   TermareStyle theme;
   // SafeList<SafeList<LetterEntity>> cache = SafeList();
-  Buffer buffer;
+  Buffer currentBuffer;
+  // 这个buffer在 CSI ? 1049 h 会用到
+  Buffer alternateBuffer;
+  Buffer mainBuffer;
   bool showCursor = true;
   // 当从 pty 读出内容的时候就会自动滑动
   bool autoScroll = true;
@@ -85,9 +91,29 @@ class TermareController with Observable {
   Position tmpPointer = Position(0, 0);
   // 通过这个变量来滑动终端
   void clear() {
-    buffer.clear();
+    currentBuffer.clear();
     currentPointer = Position(0, 0);
     dirty = true;
+  }
+
+  void switchBufferToAlternate() {
+    currentBuffer = alternateBuffer;
+    dirty = true;
+    notifyListeners();
+  }
+
+  void switchBufferToMain() {
+    currentBuffer = mainBuffer;
+    dirty = true;
+    notifyListeners();
+  }
+
+  void saveCursor() {
+    tmpPointer = currentPointer;
+  }
+
+  void restoreCursor() {
+    currentPointer = tmpPointer;
   }
 
   void moveToPosition(int x) {
@@ -146,7 +172,8 @@ class TermareController with Observable {
   void moveToOffset(int x, int y) {
     /// 减一的原因在于左上角为1;1
     /// TODO 需要位移光标
-    currentPointer = Position(max(x - 1, 0), max(y - 1 + buffer.position, 0));
+    currentPointer =
+        Position(max(x - 1, 0), max(y - 1 + currentBuffer.position, 0));
   }
 
   void moveToPrePosition() {
@@ -217,7 +244,7 @@ class TermareController with Observable {
       // cache[currentPointer.y + 1] = cache[currentPointer.y];
       // cache[currentPointer.y] = SafeList<LetterEntity>();
     }
-    buffer.write(
+    currentBuffer.write(
       currentPointer.y,
       currentPointer.x,
       Character(
