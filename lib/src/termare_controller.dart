@@ -145,7 +145,8 @@ class TermareController with Observable {
 
   void moveToOffset(int x, int y) {
     /// 减一的原因在于左上角为1;1
-    currentPointer = Position(max(x - 1, 0), max(y - 1, 0));
+    /// TODO 需要位移光标
+    currentPointer = Position(max(x - 1, 0), max(y - 1 + buffer.position, 0));
   }
 
   void moveToPrePosition() {
