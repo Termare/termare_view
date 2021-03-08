@@ -14,24 +14,24 @@ class C0 {
     final bool verbose = controller.verbose;
     if (eq(utf8CodeUnits, [0])) {
       if (controller.verbose) {
-        log('$red<- C0 NULL ->');
+        // log('$red<- C0 NULL ->');
       }
       return true;
     } else if (eq(utf8CodeUnits, [0x07])) {
       controller.onBell?.call();
-      log('$red<- C0 Bell ->');
+      // log('$red<- C0 Bell ->');
       return true;
     } else if (eq(utf8CodeUnits, [0x08])) {
       // 光标左移动
       if (verbose) {
-        log('$red<- C0 Backspace ->');
+        // log('$red<- C0 Backspace ->');
       }
       controller.moveToPrePosition();
       return true;
     } else if (eq(utf8CodeUnits, [0x09])) {
       controller.moveToPosition(4);
       if (verbose) {
-        log('$red<- C0 Horizontal Tabulation ->');
+        // log('$red<- C0 Horizontal Tabulation ->');
       }
       return true;
     } else if (eq(utf8CodeUnits, [0x0a]) ||
@@ -48,24 +48,24 @@ class C0 {
       // ascii 13
       controller.moveToLineFirstPosition();
       if (verbose) {
-        log('$red<- C0 Carriage Return ->');
+        // log('$red<- C0 Carriage Return ->');
       }
       return true;
     } else if (eq(utf8CodeUnits, [0x0e])) {
       // TODO
       if (verbose) {
-        log('$red<- C0 Shift Out ->');
+        // log('$red<- C0 Shift Out ->');
       }
       return true;
     } else if (eq(utf8CodeUnits, [0x0f])) {
       // TODO
       if (verbose) {
-        log('$red<- C0 Shift In ->');
+        // log('$red<- C0 Shift In ->');
       }
       return true;
     } else if (eq(utf8CodeUnits, [0x1b])) {
       if (verbose) {
-        log('$red<- C0 Escape ->');
+        // log('$red<- C0 Escape ->');
       }
       controller.escapeStart = true;
       return true;

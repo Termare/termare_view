@@ -170,9 +170,13 @@ class TermareController with Observable {
 
   void moveToOffset(int x, int y) {
     /// 减一的原因在于左上角为1;1
-    /// TODO 需要位移光标
-    currentPointer =
-        Position(max(x - 1, 0), max(y - 1 + currentBuffer.position, 0));
+    currentPointer = Position(
+      max(x - 1, 0),
+      max(
+        y - 1 + currentBuffer.position,
+        0,
+      ),
+    );
   }
 
   void moveToPrePosition() {
@@ -244,7 +248,6 @@ class TermareController with Observable {
         content: char,
         letterWidth: painter.width,
         letterHeight: painter.height,
-        position: currentPointer,
         doubleWidth: painter.width == painter.height,
         textAttributes: textAttributes,
       ),
@@ -254,8 +257,45 @@ class TermareController with Observable {
       // 这儿应该有更好的方法
       moveToNextPosition();
     }
-
     moveToNextPosition();
+  }
+
+  void execAutoScroll() {
+    // print('controller.currentPointer.y -> ${currentPointer.y}');
+    // print('buffer.limit -> ${currentBuffer.limit}');
+    if (currentPointer.y + 1 > currentBuffer.limit) {
+      // print(
+      //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
+      // 上面这个if其实就是当终端视图下方还有显示内容的时候
+      if (autoScroll) {
+        print('滚动 pointer ${currentPointer}');
+        // 只能延时执行刷新
+        // print(controller.currentPointer.y + 1 - buffer.limit);
+        Future.delayed(const Duration(milliseconds: 10), () {
+          currentBuffer.scroll(currentPointer.y + 1 - currentBuffer.limit);
+          dirty = true;
+          notifyListeners();
+        });
+        // lastLetterPositionCall(
+        //   -controller.theme.letterHeight *
+        //       (controller.cache.length - realColumnLen - controller.startLine),
+        // );
+      }
+    } else {
+      // if (controller.autoScroll) {
+      //   // 只能延时执行刷新
+      //   Future.delayed(const Duration(milliseconds: 10), () {
+      //     controller.startLength =
+      //         absLength - controller.startLength - controller.rowLength;
+      //     controller.dirty = true;
+      //     controller.notifyListeners();
+      //   });
+      //   // lastLetterPositionCall(
+      //   //   -controller.theme.letterHeight *
+      //   //       (controller.cache.length - realColumnLen - controller.startLine),
+      //   // );
+      // }
+    }
   }
 
   // 不能放在 parseOutput 内部，可能存在一次流的末尾为终端序列的情况
@@ -279,8 +319,14 @@ class TermareController with Observable {
   bool verbose = true;
   // 应该每次只接收一个字符
   void parseOutput(String data, {bool verbose = !kReleaseMode}) {
-    // print('parseOutput ->$data<-');
-    // log('$red utf8.encode(data)->${utf8.encode(data)}');
+    print('-' * 10);
+    data.split(RegExp('\n|\x0d')).forEach((element) {
+      if (element.isNotEmpty) {
+        print('>>>$element');
+      }
+      // print('->${utf8.encode(element)}<-');
+    });
+    print('-' * 10);
     for (int i = 0; i < data.length; i++) {
       // final List<int> codeUnits = data[i].codeUnits;
       // dart 的 codeUnits 是 utf32
@@ -292,6 +338,7 @@ class TermareController with Observable {
         if (oscStart) {
           final bool osc = Osc.handle(this, utf8CodeUnits);
           if (osc) {
+            execAutoScroll();
             continue;
           }
         }
@@ -301,43 +348,25 @@ class TermareController with Observable {
         }
         if (escapeStart) {
           Esc.handle(this, utf8CodeUnits);
+          execAutoScroll();
           continue;
         }
         final bool c0 = C0.handle(this, utf8CodeUnits);
         if (c0) {
+          execAutoScroll();
           continue;
         }
       } else {
         // 双字节 0x84 在 utf8中一个字节是保存不下来的，按照utf8的编码规则，8位的第一位为1那么一定是两个字节
         // ，其中第一位需要拿来当符号位，但是dart是utf32，可以通过一个字节来解析
-        // TODO C1
         final bool c1 = C1.handle(this, utf8CodeUnits);
         if (c1) {
+          execAutoScroll();
           continue;
         }
       }
       writeChar(data[i]);
-      notifyListeners();
-      // logUtil.logd('cache.length -> ${cache.length}', 31);
-      // TODO
-
-      // log(' data[i]->${data[i]}');
-      // logUtil.logd('posistion -> $currentPointer', 31);
-      // logUtil.logd('cache -> $cache', 31);
-
-      // log('$red getOrPerformLayout $i');
-      // TODO
+      execAutoScroll();
     }
-    // buffer.write(
-    //   currentPointer.y,
-    //   currentPointer.x,
-    //   Character(
-    //     content: ' ',
-    //     letterWidth: theme.characterWidth,
-    //     letterHeight: theme.characterHeight,
-    //     position: currentPointer,
-    //     textAttributes: textAttributes,
-    //   ),
-    // );
   }
 }

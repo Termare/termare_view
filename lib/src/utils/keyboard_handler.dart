@@ -7,8 +7,6 @@ import 'package:termare_view/src/combining_characters.dart';
 typedef KeyboardInput = void Function(String data);
 
 class KeyboardHandler {
-  bool enableShift = false;
-  bool enableCtrl = false;
   static bool _isdesktop() {
     return Platform.isWindows || Platform.isMacOS || Platform.isLinux;
   }
@@ -28,59 +26,30 @@ class KeyboardHandler {
           return utf8.decode(<int>[10]);
           break;
         case 0x1000700e7:
-          enableCtrl = true;
+          // enableCtrl = true;
           return null;
           break;
         case 0x1000700e1:
-          enableShift = true;
+          // enableShift = true;
           return null;
           break;
-        case 0x100070050:
-          // 左
-          return utf8.decode(<int>[2]);
+        case 0x100070052:
+          // 上 A 112 - 96 80 - 64 ctrl p
+          return utf8.decode([27, 91, 65]);
+        // return utf8.decode([16]);
+        case 0x100070051:
+          // 下 B 110 - 96 78 -64 ctrl n
+          return utf8.decode([27, 91, 66]);
+          return utf8.decode([14]);
         case 0x10007004f:
-          // 右
-          return utf8.decode(<int>[6]);
+          // 右 C
+          return utf8.decode([27, 91, 67]);
+          return utf8.decode([6]);
+        case 0x100070050:
+          // 左 D
+          return utf8.decode([27, 91, 68]);
+          return utf8.decode([2]);
         default:
-      }
-      if (enableShift) {
-        print('当前shift已被按下');
-        // 这儿在安卓与pc上不一样，安卓上是虚拟键盘，pc上是物理键盘
-        if (_isdesktop()) {
-          return utf8.decode(<int>[event.logicalKey.keyId]);
-        } else {
-          // 玄学，勿动
-          enableShift = false;
-          return ShiftCombining.getCombiningChar(
-            utf8.decode(
-              [event.logicalKey.keyId],
-            ),
-          );
-        }
-      }
-      if (enableCtrl) {
-        print('当前ctrl已被按下');
-        if (_isdesktop()) {
-          return utf8.decode(<int>[event.logicalKey.keyId - 96]);
-        } else {
-          enableCtrl = false;
-          return utf8.decode([event.logicalKey.keyId - 96]);
-        }
-      } else {
-        if (event.logicalKey.keyId == 0x10200000004) {
-          // 安卓的返回键
-          print('安卓的返回键');
-          return null;
-        }
-        if (event.logicalKey.keyId == 0x100070052) {
-          print('安卓的上键');
-          return utf8.decode([112 - 96]);
-        }
-        if (event.logicalKey.keyId == 0x100070051) {
-          print('安卓的上键');
-          return utf8.decode([110 - 96]);
-        }
-        return utf8.decode(<int>[event.logicalKey.keyId]);
       }
     }
 
@@ -88,12 +57,12 @@ class KeyboardHandler {
       switch (event.logicalKey.keyId) {
         case 0x1000700e1:
           print('shift 抬起');
-          enableShift = false;
+          // enableShift = false;
           return null;
           break;
         case 0x1000700e7:
           print('ctrl 抬起');
-          enableCtrl = false;
+          // enableCtrl = false;
           return null;
           break;
       }

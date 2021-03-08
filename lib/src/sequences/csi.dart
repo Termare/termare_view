@@ -172,6 +172,7 @@ void cursorPosition(TermareController controller, String sequence) {
   final int column = int.parse(sequence.split(';')[1]);
   print('row $row column $column');
   controller.moveToOffset(column, row);
+  controller.currentBuffer.isCsiR = true;
   print('${controller.currentPointer}');
 }
 
@@ -534,6 +535,12 @@ void setCursorStyle(TermareController controller, String sequence) {
 void setTopandBottomMargin(TermareController controller, String sequence) {
   /// CSI Ps ; Ps r
   /// DECSTBM	Set Top and Bottom Margin
+  if (sequence.isEmpty) {
+    sequence = '0;${controller.row}';
+  }
+  final int row = int.parse(sequence.split(';')[1]);
+
+  controller.currentBuffer.setViewPoint(row);
 }
 
 void saveCursor(TermareController controller, String sequence) {

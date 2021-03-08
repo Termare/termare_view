@@ -10,12 +10,10 @@ class Character {
     @required this.content,
     @required this.letterWidth,
     @required this.letterHeight,
-    @required this.position,
   });
   final String content;
   final double letterWidth;
   final double letterHeight;
-  final Position position;
   final bool doubleWidth;
   final TextAttributes textAttributes;
   bool get isEmpty => content == '';

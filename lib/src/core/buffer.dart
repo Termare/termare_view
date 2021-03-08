@@ -14,13 +14,41 @@ class Buffer {
   // 这是默认的limit，在 	CSI Ps ; Ps r 这个序列后，可滑动的视口会变化
   int get limit => _position + viewRows;
   int maxLine = 1000;
+  bool isCsiR = false;
   int get length => cache.length;
+
+  ///
+  Map<int, List<Character>> fixedLine = {};
   void clear() {
     cache.clear();
   }
 
   void setViewPoint(int rows) {
+    print('setViewPoint -> $rows');
     viewRows = rows;
+    if (rows != controller.row) {
+      print('开始缓存');
+      for (int i = rows; i < controller.row; i++) {
+        // print('缓存第${i + 1}行');
+        fixedLine[i] = [];
+        fixedLine[i].length = controller.row;
+        // String line = '';
+        // for (int column = 0; column < controller.column; column++) {
+        //   final Character character = getCharacter(i, column);
+        //   if (character == null) {
+        //     line += ' ';
+        //     continue;
+        //   }
+        //   line += character.content;
+        // }
+        // print('这行->$line');
+      }
+      // for (int i = rows; i < controller.row; i++) {
+      //   cache.removeAt(rows);
+      // }
+    } else {
+      fixedLine.clear();
+    }
   }
 
   int absoluteLength() {
@@ -60,7 +88,24 @@ class Buffer {
       // 防止在 column 上越界
       cache[row].length = column + 1;
     }
-    cache[row][column] = entity;
+    if (fixedLine.containsKey(row - position)) {
+      fixedLine[row - position][column] = entity;
+      isCsiR = false;
+      for (int i = row - position; i < controller.row; i++) {
+        String line = '';
+        for (int column = 0; column < controller.column; column++) {
+          final Character character = getCharacter(i, column);
+          if (character == null) {
+            line += ' ';
+            continue;
+          }
+          line += character.content;
+        }
+        print('写入固定行 行内内容->$line');
+      }
+    } else {
+      cache[row][column] = entity;
+    }
     // printBuffer();
   }
 
@@ -100,6 +145,9 @@ class Buffer {
   List<Character> getCharacterLines(
     int row,
   ) {
+    if (fixedLine.isNotEmpty && fixedLine.containsKey(row)) {
+      return fixedLine[row];
+    }
     if (row + _position > length - 1) {
       cache.length = row + _position + 1;
       cache[row + _position] = [];
@@ -115,6 +163,15 @@ class Buffer {
     _position += line;
     // _position = max(0, _position);
     if (absoluteLength() > viewRows) {
+      if (viewRows != controller.row) {
+        // print('!!!!!');
+        // final tmp = cache[limit - 2];
+        // print('tmp[0].content ->${tmp[0].content}${tmp[1].content}');
+        // // final tmp2 = cache[limit - 1];
+        // // print('tmp[0].content ->${tmp2[0].content}${tmp2[1].content}');
+        // cache[limit - 2] = cache[limit - 1];
+        // cache[limit - 1] = tmp;
+      }
       _position = min(absoluteLength() - viewRows, _position);
       _position = max(0, _position);
     } else {

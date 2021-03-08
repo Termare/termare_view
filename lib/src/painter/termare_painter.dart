@@ -22,8 +22,6 @@ class TermarePainter extends CustomPainter {
   double termWidth;
   double termHeight;
   int curPaintIndex = 0;
-  // // 这个 bool 值用得很烂，用来内层循环跳出外层循环
-  // bool isOutLine = false;
   List<Color> colors = [
     Colors.yellow,
     Colors.green,
@@ -66,7 +64,7 @@ class TermarePainter extends CustomPainter {
   void drawBackground(Canvas canvas, Size size) {
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
-      Paint()..color = Colors.black,
+      Paint()..color = controller.theme.backgroundColor,
     );
   }
 
@@ -100,8 +98,6 @@ class TermarePainter extends CustomPainter {
           column * controller.theme.characterWidth,
           row * controller.theme.characterHeight,
         );
-        // TODO 可能出bug，上面改了
-        // print('${letterEntity.content} $offset');
         if (character.textAttributes.background(controller) != null) {
           // 当字符背景颜色不为空的时候
           canvas.drawRect(
@@ -138,41 +134,6 @@ class TermarePainter extends CustomPainter {
     controller.dirty = false;
 
     paintCursor(canvas, buffer);
-    print('controller.currentPointer.y -> ${controller.currentPointer.y}');
-    print('buffer.limit -> ${buffer.limit}');
-    if (controller.currentPointer.y + 1 > buffer.limit) {
-      // print(
-      //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
-      // 上面这个if其实就是当终端视图下方还有显示内容的时候
-      if (controller.autoScroll) {
-        // print('滚动 pointer ${controller.currentPointer}');
-        // 只能延时执行刷新
-        // print(controller.currentPointer.y + 1 - buffer.limit);
-        Future.delayed(const Duration(milliseconds: 10), () {
-          buffer.scroll(controller.currentPointer.y + 1 - buffer.limit);
-          controller.dirty = true;
-          controller.notifyListeners();
-        });
-        // lastLetterPositionCall(
-        //   -controller.theme.letterHeight *
-        //       (controller.cache.length - realColumnLen - controller.startLine),
-        // );
-      }
-    } else {
-      // if (controller.autoScroll) {
-      //   // 只能延时执行刷新
-      //   Future.delayed(const Duration(milliseconds: 10), () {
-      //     controller.startLength =
-      //         absLength - controller.startLength - controller.rowLength;
-      //     controller.dirty = true;
-      //     controller.notifyListeners();
-      //   });
-      //   // lastLetterPositionCall(
-      //   //   -controller.theme.letterHeight *
-      //   //       (controller.cache.length - realColumnLen - controller.startLine),
-      //   // );
-      // }
-    }
   }
 
   void paintText(Canvas canva) {}

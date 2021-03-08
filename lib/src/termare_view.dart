@@ -87,6 +87,7 @@ class _TermareViewState extends State<TermareView> {
       widget.keyboardInput(String.fromCharCode(127));
     } else {
       // 当字符长度相等，就存在光标移动问题
+      print('光标移动问题 ${value.selection.baseOffset}');
       if (value.selection.baseOffset < 1) {
         widget.keyboardInput(String.fromCharCode(2));
       } else if (value.selection.baseOffset > 1) {
@@ -105,6 +106,7 @@ class _TermareViewState extends State<TermareView> {
         if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
           return null;
         }
+        print(value);
         return onTextEdit(
           value,
         );
@@ -115,21 +117,24 @@ class _TermareViewState extends State<TermareView> {
         }
         // 当软件盘回车按下的时候
         if (action == TextInputAction.done) {
-          widget.keyboardInput('\n');
+          widget.keyboardInput(utf8.decode([13]));
         }
         widget?.onAction?.call(action);
       },
       onKeyStroke: (RawKeyEvent key) {
-        // print(key);
+        print(key);
         // 26键盘之外的按键按下的时候
         final String input = keyboardHandler.getKeyEvent(key);
         if (input != null) {
+          print('utf8.encode(input) -> ${utf8.encode(input)}');
+          print('不为空');
           if (widget.controller.ctrlEnable) {
             final int charCode = utf8.encode(input).first;
             widget.keyboardInput(utf8.decode([charCode - 96]));
             widget.controller.ctrlEnable = false;
-          } else {}
-          widget.keyboardInput(input);
+          } else {
+            widget.keyboardInput(input);
+          }
         }
       },
       child: Builder(
