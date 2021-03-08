@@ -20,7 +20,7 @@ import 'sequences/c1.dart';
 import 'sequences/csi.dart';
 import 'sequences/esc.dart';
 import 'theme/term_theme.dart';
-import 'utils/keyboard_handler.dart';
+import 'input/keyboard_handler.dart';
 
 /// Flutter Controller 的思想
 /// 一个TermView对应一个 Controller

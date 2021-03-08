@@ -11,7 +11,7 @@ import 'package:termare_view/src/termare_controller.dart';
 import 'painter/termare_painter.dart';
 import 'core/term_size.dart';
 import 'theme/term_theme.dart';
-import 'utils/keyboard_handler.dart';
+import 'input/keyboard_handler.dart';
 import 'widget/scroll_view.dart';
 
 class TermareView extends StatefulWidget {
