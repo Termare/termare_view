@@ -75,7 +75,10 @@ class KeyHandler {
   // }
 
   static String getCodeFromTermcap(
-      String termcap, bool cursorKeysApplication, bool keypadApplication) {
+    String termcap,
+    bool cursorKeysApplication,
+    bool keypadApplication,
+  ) {
     int keyCodeAndMod = TERMCAP_TO_KEYCODE[termcap];
     if (keyCodeAndMod == null) return null;
     int keyCode = keyCodeAndMod;
@@ -100,40 +103,43 @@ class KeyHandler {
   }
 
   static String getCode(
-      int keyCode, int keyMode, bool cursorApp, bool keypadApplication) {
+    int keyCode,
+    int keyMode,
+    bool cursorApp,
+    bool keypadApplication,
+  ) {
     bool numLockOn = (keyMode & KEYMOD_NUM_LOCK) != 0;
     keyMode &= ~KEYMOD_NUM_LOCK;
     switch (keyCode) {
       case KEYCODE_DPAD_CENTER:
-        return "\015";
-
+        return '\015';
       case KEYCODE_DPAD_UP:
         return (keyMode == 0)
-            ? (cursorApp ? "\033OA" : "\033[A")
-            : transformForModifiers("\033[1", keyMode, 'A');
+            ? (cursorApp ? '\x1bOA' : '\x1b[A')
+            : transformForModifiers('\x1b[1', keyMode, 'A');
       case KEYCODE_DPAD_DOWN:
         return (keyMode == 0)
-            ? (cursorApp ? "\033OB" : "\033[B")
-            : transformForModifiers("\033[1", keyMode, 'B');
+            ? (cursorApp ? '\x1bOB' : '\x1b[B')
+            : transformForModifiers('\x1b[1', keyMode, 'B');
       case KEYCODE_DPAD_RIGHT:
         return (keyMode == 0)
-            ? (cursorApp ? "\033OC" : "\033[C")
-            : transformForModifiers("\033[1", keyMode, 'C');
+            ? (cursorApp ? '\x1bOC' : '\x1b[C')
+            : transformForModifiers('\x1b[1', keyMode, 'C');
       case KEYCODE_DPAD_LEFT:
         return (keyMode == 0)
-            ? (cursorApp ? "\033OD" : "\033[D")
-            : transformForModifiers("\033[1", keyMode, 'D');
+            ? (cursorApp ? '\x1bOD' : '\x1b[D')
+            : transformForModifiers('\x1b[1', keyMode, 'D');
 
       case KEYCODE_MOVE_HOME:
         // Note that KEYCODE_HOME is handled by the system and never delivered to applications.
         // On a Logitech k810 keyboard KEYCODE_MOVE_HOME is sent by FN+LeftArrow.
         return (keyMode == 0)
-            ? (cursorApp ? "\033OH" : "\033[H")
-            : transformForModifiers("\033[1", keyMode, 'H');
+            ? (cursorApp ? "\x1bOH" : "\x1b[H")
+            : transformForModifiers("\x1b[1", keyMode, 'H');
       case KEYCODE_MOVE_END:
         return (keyMode == 0)
-            ? (cursorApp ? "\033OF" : "\033[F")
-            : transformForModifiers("\033[1", keyMode, 'F');
+            ? (cursorApp ? "\x1bOF" : "\x1b[F")
+            : transformForModifiers("\x1b[1", keyMode, 'F');
 
       // An xterm can send function keys F1 to F4 in two modes: vt100 compatible or
       // not. Because Vim may not know what the xterm is sending, both types of keys
@@ -147,63 +153,66 @@ class KeyHandler {
       // <End> t_@7 <Esc>[4~ <xEnd> <Esc>OF *<xEnd>-xterm*
       case KEYCODE_F1:
         return (keyMode == 0)
-            ? "\033OP"
-            : transformForModifiers("\033[1", keyMode, 'P');
+            ? "\x1bOP"
+            : transformForModifiers("\x1b[1", keyMode, 'P');
       case KEYCODE_F2:
         return (keyMode == 0)
-            ? "\033OQ"
-            : transformForModifiers("\033[1", keyMode, 'Q');
+            ? "\x1bOQ"
+            : transformForModifiers("\x1b[1", keyMode, 'Q');
       case KEYCODE_F3:
         return (keyMode == 0)
-            ? "\033OR"
-            : transformForModifiers("\033[1", keyMode, 'R');
+            ? "\x1bOR"
+            : transformForModifiers("\x1b[1", keyMode, 'R');
       case KEYCODE_F4:
         return (keyMode == 0)
-            ? "\033OS"
-            : transformForModifiers("\033[1", keyMode, 'S');
+            ? "\x1bOS"
+            : transformForModifiers("\x1b[1", keyMode, 'S');
       case KEYCODE_F5:
-        return transformForModifiers("\033[15", keyMode, '~');
+        return transformForModifiers("\x1b[15", keyMode, '~');
       case KEYCODE_F6:
-        return transformForModifiers("\033[17", keyMode, '~');
+        return transformForModifiers("\x1b[17", keyMode, '~');
       case KEYCODE_F7:
-        return transformForModifiers("\033[18", keyMode, '~');
+        return transformForModifiers("\x1b[18", keyMode, '~');
       case KEYCODE_F8:
-        return transformForModifiers("\033[19", keyMode, '~');
+        return transformForModifiers("\x1b[19", keyMode, '~');
       case KEYCODE_F9:
-        return transformForModifiers("\033[20", keyMode, '~');
+        return transformForModifiers("\x1b[20", keyMode, '~');
       case KEYCODE_F10:
-        return transformForModifiers("\033[21", keyMode, '~');
+        return transformForModifiers("\x1b[21", keyMode, '~');
       case KEYCODE_F11:
-        return transformForModifiers("\033[23", keyMode, '~');
+        return transformForModifiers("\x1b[23", keyMode, '~');
       case KEYCODE_F12:
-        return transformForModifiers("\033[24", keyMode, '~');
+        return transformForModifiers("\x1b[24", keyMode, '~');
 
       case KEYCODE_SYSRQ:
-        return "\033[32~"; // Sys Request / Print
-      // Is this Scroll lock? case Cancel: return "\033[33~";
+        return "\x1b[32~"; // Sys Request / Print
+      // Is this Scroll lock? case Cancel: return "\x1b[33~";
       case KEYCODE_BREAK:
-        return "\033[34~"; // Pause/Break
+        return "\x1b[34~"; // Pause/Break
 
       case KEYCODE_ESCAPE:
       case KEYCODE_BACK:
-        return "\033";
+        return "\x1b";
 
       case KEYCODE_INSERT:
-        return transformForModifiers("\033[2", keyMode, '~');
+        return transformForModifiers("\x1b[2", keyMode, '~');
       case KEYCODE_FORWARD_DEL:
-        return transformForModifiers("\033[3", keyMode, '~');
+        return transformForModifiers("\x1b[3", keyMode, '~');
 
       case KEYCODE_PAGE_UP:
-        return "\033[5~";
+        return "\x1b[5~";
       case KEYCODE_PAGE_DOWN:
-        return "\033[6~";
+        return "\x1b[6~";
       case KEYCODE_DEL:
-        String prefix = ((keyMode & KEYMOD_ALT) == 0) ? "" : "\033";
+        print('object');
+        String prefix = ((keyMode & KEYMOD_ALT) == 0) ? "" : "\x1b";
         // Just do what xterm and gnome-terminal does:
+        print(((keyMode & KEYMOD_CTRL) == 0));
+        print("\u007F".codeUnits);
         return prefix + (((keyMode & KEYMOD_CTRL) == 0) ? "\u007F" : "\u0008");
       case KEYCODE_NUM_LOCK:
         if (keypadApplication) {
-          return "\033OP";
+          return "\x1bOP";
         } else {
           return null;
         }
@@ -211,152 +220,152 @@ class KeyHandler {
       case KEYCODE_SPACE:
         // If ctrl is not down, return null so that it goes through normal input processing (which may e.g. cause a
         // combining accent to be written):
-        return ((keyMode & KEYMOD_CTRL) == 0) ? null : "\0";
+        return ((keyMode & KEYMOD_CTRL) == 0) ? null : '\0';
       case KEYCODE_TAB:
         // This is back-tab when shifted:
-        return (keyMode & KEYMOD_SHIFT) == 0 ? "\011" : "\033[Z";
+        return (keyMode & KEYMOD_SHIFT) == 0 ? '\011' : '\x1b[Z';
       case KEYCODE_ENTER:
-        return ((keyMode & KEYMOD_ALT) == 0) ? "\r" : "\033\r";
+        return ((keyMode & KEYMOD_ALT) == 0) ? '\r' : '\x1b\r';
 
       case KEYCODE_NUMPAD_ENTER:
         return keypadApplication
-            ? transformForModifiers("\033O", keyMode, 'M')
-            : "\n";
+            ? transformForModifiers('\x1bO', keyMode, 'M')
+            : '\n';
       case KEYCODE_NUMPAD_MULTIPLY:
         return keypadApplication
-            ? transformForModifiers("\033O", keyMode, 'j')
+            ? transformForModifiers("\x1bO", keyMode, 'j')
             : "*";
       case KEYCODE_NUMPAD_ADD:
         return keypadApplication
-            ? transformForModifiers("\033O", keyMode, 'k')
+            ? transformForModifiers("\x1bO", keyMode, 'k')
             : "+";
       case KEYCODE_NUMPAD_COMMA:
         return ",";
       case KEYCODE_NUMPAD_DOT:
         if (numLockOn) {
-          return keypadApplication ? "\033On" : ".";
+          return keypadApplication ? "\x1bOn" : ".";
         } else {
           // DELETE
-          return transformForModifiers("\033[3", keyMode, '~');
+          return transformForModifiers("\x1b[3", keyMode, '~');
         }
         break;
       case KEYCODE_NUMPAD_SUBTRACT:
         return keypadApplication
-            ? transformForModifiers("\033O", keyMode, 'm')
+            ? transformForModifiers("\x1bO", keyMode, 'm')
             : "-";
       case KEYCODE_NUMPAD_DIVIDE:
         return keypadApplication
-            ? transformForModifiers("\033O", keyMode, 'o')
+            ? transformForModifiers("\x1bO", keyMode, 'o')
             : "/";
       case KEYCODE_NUMPAD_0:
         if (numLockOn) {
           return keypadApplication
-              ? transformForModifiers("\033O", keyMode, 'p')
+              ? transformForModifiers("\x1bO", keyMode, 'p')
               : "0";
         } else {
           // INSERT
-          return transformForModifiers("\033[2", keyMode, '~');
+          return transformForModifiers("\x1b[2", keyMode, '~');
         }
         break;
       case KEYCODE_NUMPAD_1:
         if (numLockOn) {
           return keypadApplication
-              ? transformForModifiers("\033O", keyMode, 'q')
+              ? transformForModifiers("\x1bO", keyMode, 'q')
               : "1";
         } else {
           // END
           return (keyMode == 0)
-              ? (cursorApp ? "\033OF" : "\033[F")
-              : transformForModifiers("\033[1", keyMode, 'F');
+              ? (cursorApp ? "\x1bOF" : "\x1b[F")
+              : transformForModifiers("\x1b[1", keyMode, 'F');
         }
         break;
       case KEYCODE_NUMPAD_2:
         if (numLockOn) {
           return keypadApplication
-              ? transformForModifiers("\033O", keyMode, 'r')
+              ? transformForModifiers("\x1bO", keyMode, 'r')
               : "2";
         } else {
           // DOWN
           return (keyMode == 0)
-              ? (cursorApp ? "\033OB" : "\033[B")
-              : transformForModifiers("\033[1", keyMode, 'B');
+              ? (cursorApp ? "\x1bOB" : "\x1b[B")
+              : transformForModifiers("\x1b[1", keyMode, 'B');
         }
         break;
       case KEYCODE_NUMPAD_3:
         if (numLockOn) {
           return keypadApplication
-              ? transformForModifiers("\033O", keyMode, 's')
+              ? transformForModifiers("\x1bO", keyMode, 's')
               : "3";
         } else {
           // PGDN
-          return "\033[6~";
+          return "\x1b[6~";
         }
         break;
       case KEYCODE_NUMPAD_4:
         if (numLockOn) {
           return keypadApplication
-              ? transformForModifiers("\033O", keyMode, 't')
+              ? transformForModifiers("\x1bO", keyMode, 't')
               : "4";
         } else {
           // LEFT
           return (keyMode == 0)
-              ? (cursorApp ? "\033OD" : "\033[D")
-              : transformForModifiers("\033[1", keyMode, 'D');
+              ? (cursorApp ? "\x1bOD" : "\x1b[D")
+              : transformForModifiers("\x1b[1", keyMode, 'D');
         }
         break;
       case KEYCODE_NUMPAD_5:
         return keypadApplication
-            ? transformForModifiers("\033O", keyMode, 'u')
+            ? transformForModifiers("\x1bO", keyMode, 'u')
             : "5";
       case KEYCODE_NUMPAD_6:
         if (numLockOn) {
           return keypadApplication
-              ? transformForModifiers("\033O", keyMode, 'v')
+              ? transformForModifiers("\x1bO", keyMode, 'v')
               : "6";
         } else {
           // RIGHT
           return (keyMode == 0)
-              ? (cursorApp ? "\033OC" : "\033[C")
-              : transformForModifiers("\033[1", keyMode, 'C');
+              ? (cursorApp ? "\x1bOC" : "\x1b[C")
+              : transformForModifiers("\x1b[1", keyMode, 'C');
         }
         break;
       case KEYCODE_NUMPAD_7:
         if (numLockOn) {
           return keypadApplication
-              ? transformForModifiers("\033O", keyMode, 'w')
+              ? transformForModifiers("\x1bO", keyMode, 'w')
               : "7";
         } else {
           // HOME
           return (keyMode == 0)
-              ? (cursorApp ? "\033OH" : "\033[H")
-              : transformForModifiers("\033[1", keyMode, 'H');
+              ? (cursorApp ? "\x1bOH" : "\x1b[H")
+              : transformForModifiers("\x1b[1", keyMode, 'H');
         }
         break;
       case KEYCODE_NUMPAD_8:
         if (numLockOn) {
           return keypadApplication
-              ? transformForModifiers("\033O", keyMode, 'x')
+              ? transformForModifiers("\x1bO", keyMode, 'x')
               : "8";
         } else {
           // UP
           return (keyMode == 0)
-              ? (cursorApp ? "\033OA" : "\033[A")
-              : transformForModifiers("\033[1", keyMode, 'A');
+              ? (cursorApp ? "\x1bOA" : "\x1b[A")
+              : transformForModifiers("\x1b[1", keyMode, 'A');
         }
         break;
       case KEYCODE_NUMPAD_9:
         if (numLockOn) {
           return keypadApplication
-              ? transformForModifiers("\033O", keyMode, 'y')
+              ? transformForModifiers("\x1bO", keyMode, 'y')
               : "9";
         } else {
           // PGUP
-          return "\033[5~";
+          return "\x1b[5~";
         }
         break;
       case KEYCODE_NUMPAD_EQUALS:
         return keypadApplication
-            ? transformForModifiers("\033O", keyMode, 'X')
+            ? transformForModifiers("\x1bO", keyMode, 'X')
             : "=";
       default:
         return null;

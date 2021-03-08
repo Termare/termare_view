@@ -13,13 +13,10 @@ class KeyboardHandler {
 
   String getKeyEvent(RawKeyEvent message) {
     final RawKeyEvent event = message;
-    // TODO
     // shift按下时enable，抬起时enable为false
-
     if (event is RawKeyDownEvent) {
       switch (event.logicalKey.keyId) {
         case 0x10007002a:
-          // print('删除');
           return utf8.decode(<int>[127]);
           break;
         case 0x100070028:

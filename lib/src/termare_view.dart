@@ -8,6 +8,7 @@ import 'package:termare_view/src/core/text_attributes.dart';
 import 'package:termare_view/src/widget/input_listener.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
+import 'input/key_handler.dart';
 import 'painter/termare_painter.dart';
 import 'core/term_size.dart';
 import 'theme/term_theme.dart';
@@ -124,16 +125,23 @@ class _TermareViewState extends State<TermareView> {
       onKeyStroke: (RawKeyEvent key) {
         print(key);
         // 26键盘之外的按键按下的时候
-        final String input = keyboardHandler.getKeyEvent(key);
-        if (input != null) {
-          print('utf8.encode(input) -> ${utf8.encode(input)}');
-          print('不为空');
-          if (widget.controller.ctrlEnable) {
-            final int charCode = utf8.encode(input).first;
-            widget.keyboardInput(utf8.decode([charCode - 96]));
-            widget.controller.ctrlEnable = false;
-          } else {
-            widget.keyboardInput(input);
+        final int keyId = key.logicalKey.keyId;
+        if (key is RawKeyDownEvent) {
+          final String input = KeyHandler.getCode(
+            keyId,
+            0,
+            true,
+            false,
+          );
+          if (input != null) {
+            print('input -> $input');
+            if (widget.controller.ctrlEnable) {
+              final int charCode = utf8.encode(input).first;
+              widget.keyboardInput(utf8.decode([charCode - 96]));
+              widget.controller.ctrlEnable = false;
+            } else {
+              widget.keyboardInput(input);
+            }
           }
         }
       },
