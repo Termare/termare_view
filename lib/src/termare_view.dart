@@ -118,6 +118,7 @@ class _TermareViewState extends State<TermareView> {
         }
         // 当软件盘回车按下的时候
         if (action == TextInputAction.done) {
+          print('enter');
           widget.keyboardInput('\r');
         }
         widget?.onAction?.call(action);
@@ -134,7 +135,7 @@ class _TermareViewState extends State<TermareView> {
             false,
           );
           if (input != null) {
-            print('input -> $input');
+            print('input -> ${input.codeUnits}');
             if (widget.controller.ctrlEnable) {
               final int charCode = utf8.encode(input).first;
               widget.keyboardInput(utf8.decode([charCode - 96]));
