@@ -108,7 +108,7 @@ class KeyHandler {
     bool cursorApp,
     bool keypadApplication,
   ) {
-    bool numLockOn = (keyMode & KEYMOD_NUM_LOCK) != 0;
+    final bool numLockOn = (keyMode & KEYMOD_NUM_LOCK) != 0;
     keyMode &= ~KEYMOD_NUM_LOCK;
     switch (keyCode) {
       case KEYCODE_DPAD_CENTER:
@@ -225,6 +225,7 @@ class KeyHandler {
         // This is back-tab when shifted:
         return (keyMode & KEYMOD_SHIFT) == 0 ? '\011' : '\x1b[Z';
       case KEYCODE_ENTER:
+        print('enter');
         return ((keyMode & KEYMOD_ALT) == 0) ? '\r' : '\x1b\r';
 
       case KEYCODE_NUMPAD_ENTER:
