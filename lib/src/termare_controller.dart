@@ -134,7 +134,7 @@ class TermareController with Observable {
     this.column = column;
     log('setPtyWindowSize $size row:$row column:$column');
     currentBuffer.setViewPoint(row);
-    sizeChanged?.call(TermSize(row, column));
+    sizeChanged?.call(TermSize(row, column - 1));
     dirty = true;
     notifyListeners();
   }
@@ -299,6 +299,28 @@ class TermareController with Observable {
       //   // );
       // }
     }
+    if (currentBuffer.absoluteLength() < currentBuffer.limit) {
+      /// 这个触发会在键盘放下的时候，最后一行不在可视窗口底部的时候
+      // print(
+      //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
+      // 上面这个if其实就是当终端视图下方还有显示内容的时候
+      if (autoScroll) {
+        // print('滚动 pointer ${currentPointer}');
+        // 只能延时执行刷新
+        // print(controller.currentPointer.y + 1 - buffer.limit);
+        Future.delayed(const Duration(milliseconds: 10), () {
+          currentBuffer.scroll(
+            currentBuffer.absoluteLength() - currentBuffer.limit,
+          );
+          dirty = true;
+          notifyListeners();
+        });
+        // lastLetterPositionCall(
+        //   -controller.theme.letterHeight *
+        //       (controller.cache.length - realColumnLen - controller.startLine),
+        // );
+      }
+    }
   }
 
   // 不能放在 parseOutput 内部，可能存在一次流的末尾为终端序列的情况
@@ -322,14 +344,14 @@ class TermareController with Observable {
   bool verbose = true;
   // 应该每次只接收一个字符
   void processByte(String data, {bool verbose = !kReleaseMode}) {
-    // print('-' * 10);
-    // data.split(RegExp('\n|\x0d')).forEach((element) {
-    //   if (element.isNotEmpty) {
-    //     print('>>>$element');
-    //   }
-    //   // print('->${utf8.encode(element)}<-');
-    // });
-    // print('-' * 10);
+    print('-' * 10);
+    data.split(RegExp('\x0d')).forEach((element) {
+      if (element.isNotEmpty) {
+        print('>>>$element');
+      }
+      print('->${utf8.encode(element)}<-');
+    });
+    print('-' * 10);
     for (int i = 0; i < data.length; i++) {
       // final List<int> codeUnits = data[i].codeUnits;
       // dart 的 codeUnits 是 utf32
@@ -347,7 +369,7 @@ class TermareController with Observable {
         }
         if (csiStart) {
           Csi.handle(this, utf8CodeUnits);
-          execAutoScroll();
+          // execAutoScroll();
           continue;
         }
         if (escapeStart) {
