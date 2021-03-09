@@ -200,9 +200,10 @@ void selectiveEraseInDisplay(TermareController controller, String sequence) {
   switch (ps) {
     case 0:
       // 从光标位置清除到可视窗口末尾
-      final int maxRow = controller.row;
+      final int maxRow = buffer.length;
       final int startRow = controller.currentPointer.y;
       for (int row = startRow; row < maxRow; row++) {
+        // print('清除$row行');
         // 如果这个位置并没有字符
         int column;
         if (row == controller.currentPointer.y) {
@@ -217,8 +218,8 @@ void selectiveEraseInDisplay(TermareController controller, String sequence) {
       break;
     case 1:
       // 从可视窗口开始清除到光标位置
+      final int startRow = buffer.position;
       final int maxRow = controller.currentPointer.y + 1;
-      final int startRow = 0;
       for (int row = startRow; row < maxRow; row++) {
         int maxColumn;
         if (row == controller.currentPointer.y) {
@@ -234,8 +235,8 @@ void selectiveEraseInDisplay(TermareController controller, String sequence) {
     case 2:
       // print('清空可视窗口 ${controller.startLine} ${controller.rowLength}');
       // 从视图左上角清除到视图右下角
-      final int maxRow = controller.row;
-      final int startRow = 0;
+      final int startRow = buffer.position;
+      final int maxRow = controller.currentPointer.y + 1;
       for (int row = startRow; row < maxRow; row++) {
         // print('删除 $row 行');
         for (int column = 0; column < controller.column; column++) {

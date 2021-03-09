@@ -7,6 +7,7 @@ import 'package:termare_view/src/config/cache.dart';
 import 'package:termare_view/src/core/buffer.dart';
 import 'package:termare_view/src/core/safe_list.dart';
 import 'package:termare_view/src/core/character.dart';
+import 'package:termare_view/src/core/text_attributes.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
 TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 4096);
@@ -76,13 +77,16 @@ class TermarePainter extends CustomPainter {
         if (character == null) {
           continue;
         }
+        final TextAttributes textAttributes = character.textAttributes;
+        final Color foreground = textAttributes.foreground(controller);
+        final Color background = textAttributes.background(controller);
         final TextPainter painter = painterCache.getOrPerformLayout(
           TextSpan(
             text: character.content,
             style: TextStyle(
               fontSize: controller.theme.fontSize,
               backgroundColor: Colors.transparent,
-              color: character.textAttributes.foreground(controller),
+              color: foreground,
               fontWeight: FontWeight.w600,
               fontFamily: controller.fontFamily,
               // fontStyle: FontStyle
@@ -93,13 +97,13 @@ class TermarePainter extends CustomPainter {
           column * controller.theme.characterWidth,
           row * controller.theme.characterHeight,
         );
-        if (character.textAttributes.background(controller) != null) {
+        if (background != controller.theme.backgroundColor) {
           // 当字符背景颜色不为空的时候
           final double backWidth = character.wcwidth == 2
               ? controller.theme.characterWidth * 2 + 2
               : controller.theme.characterWidth + 2;
           final Paint backPaint = Paint();
-          backPaint.color = character.textAttributes.background(controller);
+          backPaint.color = background;
           canvas.drawRect(
             Rect.fromLTWH(
               // 下面是sao办法，解决neofetch显示的颜色方块中有缝隙
@@ -137,7 +141,8 @@ class TermarePainter extends CustomPainter {
   void paintText(Canvas canva) {}
 
   void paintCursor(Canvas canvas, Buffer buffer) {
-    if (controller.showCursor) {
+    if (controller.showCursor &&
+        controller.currentPointer.dy - buffer.position < controller.row) {
       canvas.drawRect(
         Rect.fromLTWH(
           controller.currentPointer.dx * controller.theme.characterWidth,
