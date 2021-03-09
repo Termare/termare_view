@@ -42,6 +42,12 @@ class TextAttributes {
       } else if (textAttribute == '48') {
         // print('开启背景色扩展');
         tmpTextAttributes._backgroundExtended = true;
+      } else if (textAttribute == '7') {
+        // flips = true;
+        final String swap = tmpTextAttributes._background;
+        tmpTextAttributes._background =
+            _foreground.replaceAll(RegExp('^3'), '4');
+        tmpTextAttributes._foreground = swap.replaceAll(RegExp('^4'), '3');
       }
     }
     // print(
@@ -61,9 +67,10 @@ class TextAttributes {
     return 'background : $_background foreground : $_foreground foregroundExtended:$_foregroundExtended _backgroundExtended:$_backgroundExtended';
   }
 
+  bool flips = false;
   String textAttributes;
-  String _foreground;
-  String _background;
+  String _foreground = '37';
+  String _background = '40';
   bool _foregroundExtended = false;
   bool _backgroundExtended = false;
   final List<String> backgroundList = [
@@ -83,6 +90,7 @@ class TextAttributes {
     '45',
     '46',
     '47',
+    '49',
   ];
   final List<String> foregroundList = [
     '30',
@@ -93,6 +101,7 @@ class TextAttributes {
     '35',
     '36',
     '37',
+    '39',
     '90',
     '91',
     '92',
@@ -269,6 +278,9 @@ class TextAttributes {
       case '97':
         return controller.theme.lightWhite;
         break;
+      case '39':
+        return controller.theme.defaultColor;
+        break;
       default:
         return controller.theme.defaultColor;
     }
@@ -347,6 +359,11 @@ class TextAttributes {
         break;
       case '47':
         return controller.theme.white;
+
+        return controller.theme.lightWhite;
+        break;
+      case '49':
+        return controller.theme.black;
 
         return controller.theme.lightWhite;
         break;
