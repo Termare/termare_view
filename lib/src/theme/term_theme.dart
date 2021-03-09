@@ -29,6 +29,29 @@ const Map<int, double> letterWidthMap = {
   23: 14.0,
   24: 15.0,
 };
+const Map<int, double> letterHeightMap = {
+  4: 6.0,
+  5: 8.0,
+  6: 8.0,
+  7: 10.0,
+  8: 10.0,
+  9: 12.0,
+  10: 12.0,
+  11: 14.0,
+  12: 16.0,
+  13: 16.0,
+  14: 18.0,
+  15: 18.0,
+  16: 20.0,
+  17: 22.0,
+  18: 22.0,
+  19: 24.0,
+  20: 26.0,
+  21: 26.0,
+  22: 28.0,
+  23: 28.0,
+  24: 30.0,
+};
 
 class TermareStyle {
   TermareStyle({
@@ -127,7 +150,7 @@ class TermareStyle {
   final Color white;
   final Color lightWhite;
   double get characterWidth => letterWidthMap[fontSize.toInt()];
-  double get characterHeight => characterWidth * 2;
+  double get characterHeight => letterHeightMap[fontSize.toInt()];
   double fontSize;
   @override
   String toString() {

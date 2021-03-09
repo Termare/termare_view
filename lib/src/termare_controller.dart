@@ -230,6 +230,7 @@ class TermareController with Observable {
     // log('$red  painter width->${painter.width}');
     // log('$red  painter height->${painter.height}');
     // log('char->${char} ${cache.length}');
+
     final int characterWidth = CharacterWidth.width(char.codeUnits.first);
     final Character character = Character(
       content: char,
@@ -241,7 +242,19 @@ class TermareController with Observable {
       currentPointer.x,
       character,
     );
-
+    painterCache.getOrPerformLayout(
+      TextSpan(
+        text: character.content,
+        style: TextStyle(
+          fontSize: theme.fontSize,
+          backgroundColor: Colors.transparent,
+          color: character.textAttributes.foreground(this),
+          fontWeight: FontWeight.w600,
+          fontFamily: fontFamily,
+          // fontStyle: FontStyle
+        ),
+      ),
+    );
     if (characterWidth == 2) {
       // 只有双字节字符宽高相等
       // 这儿应该有更好的方法

@@ -118,7 +118,7 @@ class _TermareViewState extends State<TermareView> {
         }
         // 当软件盘回车按下的时候
         if (action == TextInputAction.done) {
-          widget.keyboardInput('\n');
+          widget.keyboardInput('\r');
         }
         widget?.onAction?.call(action);
       },
