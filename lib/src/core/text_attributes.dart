@@ -67,7 +67,6 @@ class TextAttributes {
     return 'background : $_background foreground : $_foreground foregroundExtended:$_foregroundExtended _backgroundExtended:$_backgroundExtended';
   }
 
-  bool flips = false;
   String textAttributes;
   String _foreground = '37';
   String _background = '40';
