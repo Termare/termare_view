@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:termare_view/src/core/buffer.dart';
-import 'package:termare_view/src/core/letter_eneity.dart';
+import 'package:termare_view/src/core/character.dart';
 import 'package:termare_view/src/core/text_attributes.dart';
 import 'package:termare_view/src/painter/model/position.dart';
 import 'package:termare_view/termare_view.dart';

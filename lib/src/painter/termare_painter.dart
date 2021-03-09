@@ -6,7 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:termare_view/src/config/cache.dart';
 import 'package:termare_view/src/core/buffer.dart';
 import 'package:termare_view/src/core/safe_list.dart';
-import 'package:termare_view/src/core/letter_eneity.dart';
+import 'package:termare_view/src/core/character.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
 TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 4096);
@@ -100,17 +100,20 @@ class TermarePainter extends CustomPainter {
         );
         if (character.textAttributes.background(controller) != null) {
           // 当字符背景颜色不为空的时候
+          final double backWidth = character.wcwidth == 2
+              ? controller.theme.characterWidth * 2 + 2
+              : controller.theme.characterWidth + 2;
+          final Paint backPaint = Paint();
+          backPaint.color = character.textAttributes.background(controller);
           canvas.drawRect(
             Rect.fromLTWH(
               // 下面是sao办法，解决neofetch显示的颜色方块中有缝隙
               offset.dx,
               offset.dy,
-              character.doubleWidth
-                  ? controller.theme.characterWidth * 2 + 2
-                  : controller.theme.characterWidth + 2,
+              backWidth,
               controller.theme.characterHeight,
             ),
-            Paint()..color = character.textAttributes.background(controller),
+            backPaint,
           );
         }
 

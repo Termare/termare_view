@@ -11,7 +11,7 @@ import 'package:termare_view/src/sequences/osc.dart';
 import 'package:termare_view/termare_view.dart';
 
 import 'core/safe_list.dart';
-import 'core/letter_eneity.dart';
+import 'core/character.dart';
 import 'core/text_attributes.dart';
 import 'core/observable.dart';
 import 'painter/termare_painter.dart';
@@ -21,6 +21,7 @@ import 'sequences/csi.dart';
 import 'sequences/esc.dart';
 import 'theme/term_theme.dart';
 import 'input/keyboard_handler.dart';
+import 'utils/character_width.dart';
 
 /// Flutter Controller 的思想
 /// 一个TermView对应一个 Controller
@@ -225,34 +226,23 @@ class TermareController with Observable {
   }
 
   void writeChar(String char) {
-    final TextPainter painter = painterCache.getOrPerformLayout(
-      TextSpan(
-        text: char,
-        style: TextStyle(
-          // 误删，有用的，用来判断双宽度字符还是单宽度字符
-          fontSize: theme.fontSize,
-          fontFamily: fontFamily,
-          height: 1,
-        ),
-      ),
-    );
     // log('$red currentPointer->$currentPointer');
     // log('$red  painter width->${painter.width}');
     // log('$red  painter height->${painter.height}');
     // log('char->${char} ${cache.length}');
-
+    final int characterWidth = CharacterWidth.width(char.codeUnits.first);
+    final Character character = Character(
+      content: char,
+      wcwidth: characterWidth,
+      textAttributes: textAttributes,
+    );
     currentBuffer.write(
       currentPointer.y,
       currentPointer.x,
-      Character(
-        content: char,
-        letterWidth: painter.width,
-        letterHeight: painter.height,
-        doubleWidth: painter.width == painter.height,
-        textAttributes: textAttributes,
-      ),
+      character,
     );
-    if (painter.width == painter.height) {
+
+    if (characterWidth == 2) {
       // 只有双字节字符宽高相等
       // 这儿应该有更好的方法
       moveToNextPosition();

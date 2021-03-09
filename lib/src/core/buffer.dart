@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:termare_view/src/core/letter_eneity.dart';
+import 'package:termare_view/src/core/character.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
 class Buffer {

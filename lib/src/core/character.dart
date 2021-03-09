@@ -6,15 +6,12 @@ import 'text_attributes.dart';
 class Character {
   Character({
     this.textAttributes,
-    this.doubleWidth = false,
+    this.wcwidth = 1,
     @required this.content,
-    @required this.letterWidth,
-    @required this.letterHeight,
   });
   final String content;
-  final double letterWidth;
-  final double letterHeight;
-  final bool doubleWidth;
+  // 这个不是dx或者px的字体宽度，是字符应该在终端中占有的宽度
+  final int wcwidth;
   final TextAttributes textAttributes;
   bool get isEmpty => content == '';
   @override
