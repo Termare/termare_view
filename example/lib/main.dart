@@ -52,14 +52,14 @@ class _ExampleState extends State<Example> {
 
     // SequencesTest.testCSI(controller);
     SequencesTest.testColorText(controller);
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 1001; i++) {
       controller.write('$i\n');
     }
-    controller.write('\x1b[0;36r');
-    controller.write('\x1b[2A');
-    controller.write('\x1b[3C');
+    // controller.write('\x1b[0;36r');
+    // controller.write('\x1b[2A');
+    // controller.write('\x1b[3C');
     Future.delayed(const Duration(milliseconds: 600), () {
-      controller.write('\x1b[37;0f');
+      // controller.write('\x1b[37;0f');
     });
     // controller.write('\x1b[37;0f');
     // SequencesTest.test256Color(controller);
@@ -72,7 +72,7 @@ class _ExampleState extends State<Example> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      body: SizedBox(
+      body: SafeArea(
         // width: 100,
         // height: 100,
         child: TermareView(

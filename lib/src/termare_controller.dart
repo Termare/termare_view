@@ -52,7 +52,7 @@ class TermareController with Observable {
 
   void Function() onBell;
   void Function(TermSize size) sizeChanged;
-  KeyboardInput keyboardInput;
+  KeyboardInput input;
 
   /// 通过这个值来判断终端是否需要刷新
   /// 每次从 pty 中读出数据的时候会将当前终端页标记为脏，在下一帧页终端就会进执行刷新
@@ -81,7 +81,7 @@ class TermareController with Observable {
   void write(String data) {
     dirty = true;
 
-    parseOutput(data);
+    processByte(data);
     notifyListeners();
   }
 
@@ -258,7 +258,7 @@ class TermareController with Observable {
       //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
       // 上面这个if其实就是当终端视图下方还有显示内容的时候
       if (autoScroll) {
-        print('滚动 pointer ${currentPointer}');
+        // print('滚动 pointer ${currentPointer}');
         // 只能延时执行刷新
         // print(controller.currentPointer.y + 1 - buffer.limit);
         Future.delayed(const Duration(milliseconds: 10), () {
@@ -308,15 +308,15 @@ class TermareController with Observable {
 
   bool verbose = true;
   // 应该每次只接收一个字符
-  void parseOutput(String data, {bool verbose = !kReleaseMode}) {
-    print('-' * 10);
-    data.split(RegExp('\n|\x0d')).forEach((element) {
-      if (element.isNotEmpty) {
-        print('>>>$element');
-      }
-      // print('->${utf8.encode(element)}<-');
-    });
-    print('-' * 10);
+  void processByte(String data, {bool verbose = !kReleaseMode}) {
+    // print('-' * 10);
+    // data.split(RegExp('\n|\x0d')).forEach((element) {
+    //   if (element.isNotEmpty) {
+    //     print('>>>$element');
+    //   }
+    //   // print('->${utf8.encode(element)}<-');
+    // });
+    // print('-' * 10);
     for (int i = 0; i < data.length; i++) {
       // final List<int> codeUnits = data[i].codeUnits;
       // dart 的 codeUnits 是 utf32
@@ -334,6 +334,7 @@ class TermareController with Observable {
         }
         if (csiStart) {
           Csi.handle(this, utf8CodeUnits);
+          execAutoScroll();
           continue;
         }
         if (escapeStart) {

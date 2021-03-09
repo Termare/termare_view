@@ -18,17 +18,12 @@ class TermarePainter extends CustomPainter {
     termWidth = controller.column * controller.theme.characterWidth;
     termHeight = controller.row * controller.theme.characterHeight;
   }
+
+  /// 终端控制器
   final TermareController controller;
   double termWidth;
   double termHeight;
-  int curPaintIndex = 0;
-  List<Color> colors = [
-    Colors.yellow,
-    Colors.green,
-    Colors.blue,
-    Colors.brown,
-    Colors.cyan,
-  ];
+
   double padding;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
   final Stopwatch stopwatch = Stopwatch();

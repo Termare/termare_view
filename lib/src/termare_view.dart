@@ -118,7 +118,7 @@ class _TermareViewState extends State<TermareView> {
         }
         // 当软件盘回车按下的时候
         if (action == TextInputAction.done) {
-          widget.keyboardInput(utf8.decode([13]));
+          widget.keyboardInput('\n');
         }
         widget?.onAction?.call(action);
       },
@@ -223,7 +223,7 @@ class _TerminalViewState extends State<TerminalView>
 
       widget.controller.autoScroll = true;
       widget.controller.dirty = true;
-      setState(() {});
+      widget.controller.notifyListeners();
     });
   }
 

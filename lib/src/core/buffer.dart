@@ -24,10 +24,10 @@ class Buffer {
   }
 
   void setViewPoint(int rows) {
-    print('setViewPoint -> $rows');
+    // print('setViewPoint -> $rows');
     viewRows = rows;
     if (rows != controller.row) {
-      print('开始缓存');
+      // print('开始缓存');
       for (int i = rows; i < controller.row; i++) {
         // print('缓存第${i + 1}行');
         fixedLine[i] = [];
@@ -72,9 +72,16 @@ class Buffer {
   }
 
   void write(int row, int column, Character entity) {
+    if (row >= maxLine) {
+      // TODO 有问题，不用怀疑
+      // print('ro - max ${row - maxLine}');
+      cache = List.from(cache.getRange(1, maxLine));
+      row = maxLine - 1;
+      controller.moveToRelativeRow(-1);
+      _position -= 1;
+    }
     // print(
     //     'write row:$row length:$length column:$column $entity position:$position');
-
     if (row > length - 1) {
       // 防止在row上越界
       cache.length = row + 1;
