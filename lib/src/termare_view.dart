@@ -104,10 +104,13 @@ class _TermareViewState extends State<TermareView> {
     return InputListener(
       focusNode: _focusNode,
       onTextInput: (TextEditingValue value) {
+        print(value);
         if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+          // return onTextEdit(
+          //   value,
+          // );
           return null;
         }
-        print(value);
         return onTextEdit(
           value,
         );

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'keys.dart';
 
 class KeyHandler {
@@ -108,6 +110,9 @@ class KeyHandler {
     bool cursorApp,
     bool keypadApplication,
   ) {
+    if (keyCode <= 127 && keyCode >= 1) {
+      return utf8.decode([keyCode]);
+    }
     final bool numLockOn = (keyMode & KEYMOD_NUM_LOCK) != 0;
     keyMode &= ~KEYMOD_NUM_LOCK;
     switch (keyCode) {
