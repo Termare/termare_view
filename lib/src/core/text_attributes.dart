@@ -68,8 +68,8 @@ class TextAttributes {
   }
 
   String textAttributes;
-  String _foreground = '37';
-  String _background = '40';
+  String _foreground = '39';
+  String _background = '49';
   bool _foregroundExtended = false;
   bool _backgroundExtended = false;
   final List<String> backgroundList = [
@@ -293,7 +293,6 @@ class TextAttributes {
       return getExtendedColor(int.tryParse(_background), controller);
       // return
     }
-    // TODO 垃圾代码
     switch (_background) {
       case '8':
         return controller.theme.lightBlack;
@@ -362,7 +361,7 @@ class TextAttributes {
         return controller.theme.lightWhite;
         break;
       case '49':
-        return controller.theme.black;
+        return controller.theme.backgroundColor;
 
         return controller.theme.lightWhite;
         break;

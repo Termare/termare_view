@@ -39,6 +39,7 @@ class TermareController with Observable {
     this.column = 80,
     this.showBackgroundLine = false,
     this.fontFamily = 'packages/termare_view/DroidSansMono',
+    this.terminalTitle,
   }) {
     theme ??= TermareStyles.termux;
     final Stopwatch stopwatch = Stopwatch();
@@ -69,10 +70,10 @@ class TermareController with Observable {
   bool autoScroll = true;
   // 显示背景网格
   bool showBackgroundLine;
-
+  // 终端的标题，正在遇到 osc 序列的时候会改变
+  String terminalTitle = '';
   int row;
   int column;
-  int topMargin = 0;
   TextAttributes textAttributes = TextAttributes('0');
   TextAttributes tmpTextAttributes;
   // void write(String data) => unixPthC.write(data);
@@ -136,6 +137,7 @@ class TermareController with Observable {
     currentBuffer.setViewPoint(row);
     sizeChanged?.call(TermSize(row, column - 1));
     dirty = true;
+    execAutoScroll();
     notifyListeners();
   }
 

@@ -87,28 +87,39 @@ class TermarePainter extends CustomPainter {
               fontSize: controller.theme.fontSize,
               backgroundColor: Colors.transparent,
               color: foreground,
-              fontWeight: FontWeight.w600,
+              height: 1.0,
+              textBaseline: TextBaseline.alphabetic,
+              fontWeight: FontWeight.bold,
               fontFamily: controller.fontFamily,
               // fontStyle: FontStyle
             ),
           ),
         );
-        final Offset offset = Offset(
+        // print('painter->${painter.height}');
+        // print('painter->${painter.size}');
+        final bool isDoubleWidth = character.wcwidth == 2;
+        final double doubleWidthXOffset = isDoubleWidth ? 0 : 0;
+        final double doubleWidthYOffset = isDoubleWidth
+            ? 3
+            : (controller.theme.characterHeight - painter.height);
+        final Offset backOffset = Offset(
           column * controller.theme.characterWidth,
           row * controller.theme.characterHeight,
         );
+        final Offset fontOffset =
+            backOffset + Offset(doubleWidthXOffset, doubleWidthYOffset);
         if (background != controller.theme.backgroundColor) {
           // 当字符背景颜色不为空的时候
-          final double backWidth = character.wcwidth == 2
-              ? controller.theme.characterWidth * 2 + 2
-              : controller.theme.characterWidth + 2;
+          final double backWidth = isDoubleWidth
+              ? controller.theme.characterWidth * 2 + 0.6
+              : controller.theme.characterWidth + 0.6;
           final Paint backPaint = Paint();
           backPaint.color = background;
           canvas.drawRect(
             Rect.fromLTWH(
               // 下面是sao办法，解决neofetch显示的颜色方块中有缝隙
-              offset.dx,
-              offset.dy,
+              backOffset.dx,
+              backOffset.dy,
               backWidth,
               controller.theme.characterHeight,
             ),
@@ -118,14 +129,12 @@ class TermarePainter extends CustomPainter {
 
         painter
           ..layout(
-            maxWidth: controller.theme.characterWidth * 2,
+            maxWidth: controller.theme.characterHeight,
             minWidth: controller.theme.characterWidth,
           )
           ..paint(
             canvas,
-            offset +
-                Offset(
-                    0, (controller.theme.characterHeight - painter.height) / 2),
+            fontOffset,
           );
       }
     }
