@@ -161,6 +161,7 @@ class TermareStyle {
 class TermareStyles {
   TermareStyles._();
   static TermareStyle termux = TermareStyle(
+    defaultColor: Colors.white,
     cursorColor: Colors.grey,
     backgroundColor: Colors.black,
     black: const Color(0xff000000),

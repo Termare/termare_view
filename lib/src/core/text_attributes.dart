@@ -44,6 +44,7 @@ class TextAttributes {
         tmpTextAttributes._backgroundExtended = true;
       } else if (textAttribute == '7') {
         // flips = true;
+        print('交换颜色');
         final String swap = tmpTextAttributes._background;
         tmpTextAttributes._background =
             _foreground.replaceAll(RegExp('^3'), '4');
@@ -57,7 +58,7 @@ class TextAttributes {
     // } else if (!this.textAttributes.split(';').contains(textAttributes)) {
     //   this.textAttributes += ';$textAttributes';
     // }
-    // print('tmpTextAttributes -> $tmpTextAttributes');
+    print('tmpTextAttributes -> $tmpTextAttributes');
     return tmpTextAttributes;
     // return TextAttributes(this.textAttributes);
   }
@@ -68,8 +69,8 @@ class TextAttributes {
   }
 
   String textAttributes;
-  String _foreground = '39';
-  String _background = '49';
+  String _foreground = '37';
+  String _background = '30';
   bool _foregroundExtended = false;
   bool _backgroundExtended = false;
   final List<String> backgroundList = [
