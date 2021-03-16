@@ -58,7 +58,7 @@ class TextAttributes {
     // } else if (!this.textAttributes.split(';').contains(textAttributes)) {
     //   this.textAttributes += ';$textAttributes';
     // }
-    print('tmpTextAttributes -> $tmpTextAttributes');
+    // print('tmpTextAttributes -> $tmpTextAttributes');
     return tmpTextAttributes;
     // return TextAttributes(this.textAttributes);
   }
@@ -69,8 +69,8 @@ class TextAttributes {
   }
 
   String textAttributes;
-  String _foreground = '37';
-  String _background = '30';
+  String _foreground = '39';
+  String _background = '49';
   bool _foregroundExtended = false;
   bool _backgroundExtended = false;
   final List<String> backgroundList = [
@@ -319,52 +319,32 @@ class TextAttributes {
       case '15':
         return controller.theme.lightWhite;
         break;
-    }
-    switch (_background) {
       case '40':
         return controller.theme.black;
-
-        return controller.theme.lightBlack;
         break;
       case '41':
         return controller.theme.red;
-
-        return controller.theme.lightRed;
         break;
       case '42':
         return controller.theme.green;
-
-        return controller.theme.lightGreen;
         break;
       case '43':
         return controller.theme.yellow;
-
-        return controller.theme.lightYellow;
         break;
       case '44':
         return controller.theme.blue;
-
-        return controller.theme.lightBlue;
         break;
       case '45':
         return controller.theme.purplishRed;
-
-        return controller.theme.lightPurplishRed;
         break;
       case '46':
         return controller.theme.cyan;
-
-        return controller.theme.lightCyan;
         break;
       case '47':
         return controller.theme.white;
-
-        return controller.theme.lightWhite;
         break;
       case '49':
         return controller.theme.backgroundColor;
-
-        return controller.theme.lightWhite;
         break;
       default:
         return controller.theme.black;
