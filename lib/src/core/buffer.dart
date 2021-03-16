@@ -23,6 +23,20 @@ class Buffer {
     cache.clear();
   }
 
+  @override
+  bool operator ==(dynamic other) {
+    // 判断是否是非
+    if (other is! Buffer) {
+      return false;
+    }
+    if (other is Buffer) {
+      return other.hashCode == hashCode;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => cache.hashCode;
   void setViewPoint(int rows) {
     // print('setViewPoint -> $rows');
     viewRows = rows;
