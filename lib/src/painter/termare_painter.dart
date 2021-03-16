@@ -87,27 +87,25 @@ class TermarePainter extends CustomPainter {
               fontSize: controller.theme.fontSize,
               backgroundColor: Colors.transparent,
               color: foreground,
-              height: 1.0,
-              textBaseline: TextBaseline.alphabetic,
               fontWeight: FontWeight.bold,
               fontFamily: controller.fontFamily,
               // fontStyle: FontStyle
             ),
           ),
         );
+        // print(
+        //   'character.content -> ${character.content} painter.height -> ${painter.height}  painter.width -> ${painter.width}',
+        // );
         // print('painter->${painter.height}');
         // print('painter->${painter.size}');
         final bool isDoubleWidth = character.wcwidth == 2;
-        final double doubleWidthXOffset = isDoubleWidth ? 0 : 0;
-        final double doubleWidthYOffset = isDoubleWidth
-            ? 3
-            : (controller.theme.characterHeight - painter.height);
+        // final double doubleWidthXOffset = isDoubleWidth ? 0 : 0;
+        // final double doubleWidthYOffset = isDoubleWidth ? 0 : 0;
         final Offset backOffset = Offset(
           column * controller.theme.characterWidth,
           row * controller.theme.characterHeight,
         );
-        final Offset fontOffset =
-            backOffset + Offset(doubleWidthXOffset, doubleWidthYOffset);
+        final Offset fontOffset = backOffset;
         if (background != controller.theme.backgroundColor) {
           // 当字符背景颜色不为空的时候
           final double backWidth = isDoubleWidth
