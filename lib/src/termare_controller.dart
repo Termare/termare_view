@@ -14,13 +14,13 @@ import 'core/safe_list.dart';
 import 'core/character.dart';
 import 'core/text_attributes.dart';
 import 'core/observable.dart';
+import 'input/key_handler.dart';
 import 'painter/termare_painter.dart';
 import 'sequences/c0.dart';
 import 'sequences/c1.dart';
 import 'sequences/csi.dart';
 import 'sequences/esc.dart';
 import 'theme/term_theme.dart';
-import 'input/keyboard_handler.dart';
 import 'utils/character_width.dart';
 
 /// Flutter Controller 的思想
@@ -48,6 +48,20 @@ class TermareController with Observable {
     alternateBuffer = Buffer(this);
     currentBuffer = mainBuffer;
   }
+  @override
+  bool operator ==(dynamic other) {
+    // 判断是否是非
+    if (other is! TermareController) {
+      return false;
+    }
+    if (other is TermareController) {
+      return other.hashCode == hashCode;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => mainBuffer.hashCode;
   final String fontFamily;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
 
@@ -117,16 +131,6 @@ class TermareController with Observable {
     currentPointer = tmpPointer;
   }
 
-  void moveToPosition(int x) {
-    // 玄学勿碰
-    final int n = currentPointer.y * column + currentPointer.x;
-    int target = n + x;
-    if (target < 0) {
-      target = 0;
-    }
-    currentPointer = Position(target % column, target ~/ column);
-  }
-
   void setWindowSize(Size size) {
     final int row = size.height ~/ theme.characterHeight;
     // 列数
@@ -169,6 +173,16 @@ class TermareController with Observable {
     } else {
       return Position(currentPointer.x + x, currentPointer.y);
     }
+  }
+
+  void moveToPosition(int x) {
+    // 玄学勿碰
+    final int n = currentPointer.y * column + currentPointer.x;
+    int target = n + x;
+    if (target < 0) {
+      target = 0;
+    }
+    currentPointer = Position(target % column, target ~/ column);
   }
 
   void moveToOffset(int x, int y) {
@@ -244,25 +258,24 @@ class TermareController with Observable {
       currentPointer.x,
       character,
     );
-    painterCache.getOrPerformLayout(
-      TextSpan(
-        text: character.content,
-        style: TextStyle(
-          fontSize: theme.fontSize,
-          backgroundColor: Colors.transparent,
-          color: character.textAttributes.foreground(this),
-          fontWeight: FontWeight.w600,
-          fontFamily: fontFamily,
-          // fontStyle: FontStyle
-        ),
-      ),
-    );
-    if (characterWidth == 2) {
-      // 只有双字节字符宽高相等
-      // 这儿应该有更好的方法
-      moveToNextPosition();
-    }
-    moveToNextPosition();
+    // TextPainter painter = painterCache.getOrPerformLayout(
+    //   TextSpan(
+    //     text: character.content,
+    //     style: TextStyle(
+    //       height: 1.0,
+    //       fontSize: theme.fontSize,
+    //       backgroundColor: Colors.transparent,
+    //       color: character.textAttributes.foreground(this),
+    //       fontWeight: FontWeight.w600,
+    //       fontFamily: fontFamily,
+    //       // fontStyle: FontStyle
+    //     ),
+    //   ),
+    // );
+    // print(
+    //   'character.content -> ${character.content} painter.height -> ${painter.height}  painter.width -> ${painter.width}',
+    // );
+    moveToPosition(characterWidth);
   }
 
   void execAutoScroll() {
