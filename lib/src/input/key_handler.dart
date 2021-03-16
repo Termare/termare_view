@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'keys.dart';
 
+typedef KeyboardInput = void Function(String data);
+
 class KeyHandler {
   static const int KEYMOD_ALT = 0x80000000;
   static const int KEYMOD_CTRL = 0x40000000;
