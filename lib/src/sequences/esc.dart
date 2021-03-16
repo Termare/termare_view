@@ -36,10 +36,7 @@ class Esc {
     } else if (currentChar == 'H') {
       controller.log('$green < ESC Horizontal Tabulation Set >');
     } else if (currentChar == 'M') {
-      controller.currentPointer = Position(
-        controller.currentPointer.x,
-        controller.currentPointer.y - 1,
-      );
+      controller.moveToRelativeRow(-1);
       controller.log('$green < ESC Reverse Index >');
     } else if (currentChar == 'P') {
       controller.dcsStart = true;

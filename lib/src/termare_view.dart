@@ -12,7 +12,6 @@ import 'input/key_handler.dart';
 import 'painter/termare_painter.dart';
 import 'core/term_size.dart';
 import 'theme/term_theme.dart';
-import 'input/keyboard_handler.dart';
 import 'widget/scroll_view.dart';
 
 class TermareView extends StatefulWidget {
@@ -23,15 +22,12 @@ class TermareView extends StatefulWidget {
     this.onTextInput,
     this.onKeyStroke,
     this.onAction,
-    this.onBell,
   }) : super(key: key);
   final TermareController controller;
   final KeyboardInput keyboardInput;
   final InputHandler onTextInput;
   final KeyStrokeHandler onKeyStroke;
   final ActionHandler onAction;
-  // 触发响铃会回调这个函数
-  final void Function() onBell;
   static TermSize getTermSize(Size size) {
     final double screenWidth = size.width / window.devicePixelRatio;
     final double screenHeight = size.height / window.devicePixelRatio;
@@ -48,15 +44,14 @@ class TermareView extends StatefulWidget {
 
 class _TermareViewState extends State<TermareView> {
   final FocusNode _focusNode = FocusNode();
-  KeyboardHandler keyboardHandler;
   Size painterSize = const Size(0, 0);
   // 记录键盘高度
   double keyoardHeight = 0;
+  TermareController controller;
   @override
   void initState() {
     super.initState();
-    widget.controller.onBell = widget.onBell;
-    keyboardHandler = KeyboardHandler();
+    controller = widget.controller ?? TermareController();
   }
 
   @override
@@ -162,7 +157,7 @@ class _TermareViewState extends State<TermareView> {
               }
             },
             child: ScrollViewTerm(
-              controller: widget.controller,
+              controller: controller,
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return TerminalView(
@@ -170,7 +165,7 @@ class _TermareViewState extends State<TermareView> {
                       constraints.maxWidth,
                       constraints.maxHeight,
                     ),
-                    controller: widget.controller,
+                    controller: controller,
                   );
                 },
               ),
