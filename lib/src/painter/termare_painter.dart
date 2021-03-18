@@ -9,15 +9,50 @@ import 'package:termare_view/src/core/safe_list.dart';
 import 'package:termare_view/src/core/character.dart';
 import 'package:termare_view/src/core/text_attributes.dart';
 import 'package:termare_view/src/termare_controller.dart';
+import 'package:termare_view/src/utils/custom_log.dart';
 
-TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 4096);
+TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 8192);
 
 class TermarePainter extends CustomPainter {
   TermarePainter({
     this.controller,
   }) {
+    offsetCache.length = controller.row;
+    // print('TermarePainter构造');
     termWidth = controller.column * controller.theme.characterWidth;
     termHeight = controller.row * controller.theme.characterHeight;
+
+    for (int row = 0; row < controller.row; row++) {
+      for (int column = 0; column < controller.column; column++) {
+        if (offsetCache[row] == null) {
+          offsetCache[row] = [];
+          offsetCache[row].length = controller.column;
+        }
+        offsetCache[row][column] = Offset(
+          column * controller.theme.characterWidth,
+          row * controller.theme.characterHeight,
+        );
+        // Log.e('第$row行 第$column列的 offset 为 ${offsetCache[row][column]}');
+      }
+    }
+    // Log.d('0 0 offset 为 ${offsetCache[0][0]}');
+    // cacheOffset();
+  }
+  List<List<Offset>> offsetCache = [];
+  Future<void> cacheOffset() async {
+    for (int row = 0; row < controller.row; row++) {
+      for (int column = 0; column < controller.column; column++) {
+        if (offsetCache[row] == null) {
+          offsetCache[row] = [];
+          offsetCache[row].length = controller.column;
+        }
+        offsetCache[row][column] = Offset(
+          column * controller.theme.characterWidth,
+          row * controller.theme.characterHeight,
+        );
+        // Log.e('第$row行 第$column列的 offset 为 ${offsetCache[row][column]}');
+      }
+    }
   }
 
   /// 终端控制器
@@ -27,7 +62,6 @@ class TermarePainter extends CustomPainter {
 
   double padding;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
-  final Stopwatch stopwatch = Stopwatch();
   void drawLine(Canvas canvas) {
     final Paint paint = Paint();
     paint.strokeWidth = 1;
@@ -64,13 +98,24 @@ class TermarePainter extends CustomPainter {
     );
   }
 
+  void log(Object object) {
+    if (stopwatch.elapsed > const Duration(milliseconds: 11)) {
+      Log.e(object);
+    } else {
+      Log.d(object);
+    }
+  }
+
+  final Stopwatch stopwatch = Stopwatch();
   @override
   void paint(Canvas canvas, Size size) {
-    final Stopwatch stopwatch = Stopwatch();
+    stopwatch.reset();
     stopwatch.start();
-    drawBackground(canvas, size);
+
+    // Log.d('init : ${stopwatch.elapsed}');
+    // drawBackground(canvas, size);
+    // Log.d('paint background : ${stopwatch.elapsed}');
     final Buffer buffer = controller.currentBuffer;
-    // 视图的真实高度
     for (int row = 0; row < controller.row; row++) {
       for (int column = 0; column < controller.column; column++) {
         final Character character = buffer.getCharacter(row, column);
@@ -85,7 +130,6 @@ class TermarePainter extends CustomPainter {
             text: character.content,
             style: TextStyle(
               fontSize: controller.theme.fontSize,
-              backgroundColor: Colors.transparent,
               color: foreground,
               fontWeight: FontWeight.bold,
               fontFamily: controller.fontFamily,
@@ -93,6 +137,8 @@ class TermarePainter extends CustomPainter {
             ),
           ),
         );
+
+        // log('get painter ${stopwatch.elapsed}');
         // print(
         //   'character.content -> ${character.content} painter.height -> ${painter.height}  painter.width -> ${painter.width}',
         // );
@@ -101,13 +147,13 @@ class TermarePainter extends CustomPainter {
         final bool isDoubleWidth = character.wcwidth == 2;
         // final double doubleWidthXOffset = isDoubleWidth ? 0 : 0;
         // final double doubleWidthYOffset = isDoubleWidth ? 0 : 0;
-        final Offset backOffset = Offset(
-          column * controller.theme.characterWidth,
-          row * controller.theme.characterHeight,
-        );
+        final Offset backOffset = offsetCache[row][column];
+
+        // log('get offset ${stopwatch.elapsed}');
         final Offset fontOffset = backOffset;
         if (background != controller.theme.backgroundColor) {
           // 当字符背景颜色不为空的时候
+          // print('字符背景颜色不为空的时候');
           final double backWidth = isDoubleWidth
               ? controller.theme.characterWidth * 2 + 0.6
               : controller.theme.characterWidth + 0.6;
@@ -124,6 +170,7 @@ class TermarePainter extends CustomPainter {
             backPaint,
           );
         }
+        // log('paint background ${stopwatch.elapsed}');
 
         painter
           ..layout(
@@ -134,15 +181,18 @@ class TermarePainter extends CustomPainter {
             canvas,
             fontOffset,
           );
+        // log('paint font ${stopwatch.elapsed}');
       }
     }
 
     if (controller.showBackgroundLine) {
       drawLine(canvas);
     }
+    // log('drawer line ${stopwatch.elapsed}');
     controller.dirty = false;
 
     paintCursor(canvas, buffer);
+    // log('paint cursor ${stopwatch.elapsed}');
   }
 
   void paintText(Canvas canva) {}

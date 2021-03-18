@@ -85,6 +85,20 @@ class Buffer {
     return controller.currentPointer.y;
   }
 
+  int getRowLength(int row) {
+    final List<Character> line = getCharacterLines(row);
+    final int endColumn = line.length - 1;
+    for (int column = endColumn; column > 0; column--) {
+      final Character character = line[column];
+      final bool isNotEmpty = character?.content?.isNotEmpty;
+      if (isNotEmpty != null && isNotEmpty) {
+        // print('$character ${column + 1}');
+        return column + 1;
+      }
+    }
+    return 0;
+  }
+
   void write(int row, int column, Character entity) {
     if (row >= maxLine) {
       // TODO 有问题，不用怀疑

@@ -236,10 +236,13 @@ class _TerminalViewState extends State<TerminalView>
   @override
   Widget build(BuildContext context) {
     // print('$this build');
-    return CustomPaint(
-      size: widget.painterSize,
-      painter: TermarePainter(
-        controller: widget.controller,
+    return Material(
+      color: widget.controller.theme.backgroundColor,
+      child: CustomPaint(
+        size: widget.painterSize,
+        painter: TermarePainter(
+          controller: widget.controller,
+        ),
       ),
     );
   }

@@ -577,7 +577,7 @@ class Csi {
   static void handle(TermareController controller, List<int> utf8CodeUnits) {
     final String currentChar = utf8.decode(utf8CodeUnits);
     if (csiSeqHandlerMap.containsKey(currentChar)) {
-      // print('curSeq -> $sequence$currentChar');
+      print('curSeq -> $sequence$currentChar');
       final CsiHandler handler = csiSeqHandlerMap[currentChar];
       // 执行此次序列
       // 执行完清空

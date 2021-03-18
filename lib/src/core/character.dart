@@ -16,6 +16,6 @@ class Character {
   bool get isEmpty => content == '';
   @override
   String toString() {
-    return '$content';
+    return 'content:$content';
   }
 }

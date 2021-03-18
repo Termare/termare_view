@@ -96,7 +96,13 @@ class TermareController with Observable {
   void write(String data) {
     dirty = true;
 
-    processByte(data);
+    processByte(utf8.encode(data));
+    notifyListeners();
+  }
+
+  void writeCodeUnits(List<int> codeUnits) {
+    dirty = true;
+    processByte(codeUnits);
     notifyListeners();
   }
 
@@ -258,15 +264,14 @@ class TermareController with Observable {
       currentPointer.x,
       character,
     );
-    // TextPainter painter = painterCache.getOrPerformLayout(
+    // final Color foreground = textAttributes.foreground(this);
+    // final TextPainter painter = painterCache.getOrPerformLayout(
     //   TextSpan(
     //     text: character.content,
     //     style: TextStyle(
-    //       height: 1.0,
     //       fontSize: theme.fontSize,
-    //       backgroundColor: Colors.transparent,
-    //       color: character.textAttributes.foreground(this),
-    //       fontWeight: FontWeight.w600,
+    //       color: foreground,
+    //       fontWeight: FontWeight.bold,
     //       fontFamily: fontFamily,
     //       // fontStyle: FontStyle
     //     ),
@@ -291,6 +296,7 @@ class TermareController with Observable {
         // print(controller.currentPointer.y + 1 - buffer.limit);
         Future.delayed(const Duration(milliseconds: 10), () {
           currentBuffer.scroll(currentPointer.y + 1 - currentBuffer.limit);
+          // currentBuffer.scroll(-1);
           dirty = true;
           notifyListeners();
         });
@@ -358,7 +364,7 @@ class TermareController with Observable {
 
   bool verbose = true;
   // 应该每次只接收一个字符
-  void processByte(String data, {bool verbose = !kReleaseMode}) {
+  void processByte(List<int> codeUnits, {bool verbose = !kReleaseMode}) {
     // print('-' * 10);
     // data.split(RegExp('\x0d')).forEach((element) {
     //   if (element.isNotEmpty) {
@@ -367,6 +373,7 @@ class TermareController with Observable {
     //   print('->${utf8.encode(element)}<-');
     // });
     // print('-' * 10);
+    final String data = utf8.decode(codeUnits, allowMalformed: true);
     for (int i = 0; i < data.length; i++) {
       // final List<int> codeUnits = data[i].codeUnits;
       // dart 的 codeUnits 是 utf32
