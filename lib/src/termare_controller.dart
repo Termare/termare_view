@@ -137,6 +137,11 @@ class TermareController with Observable {
     currentPointer = tmpPointer;
   }
 
+  void hideCursor() {
+    showCursor = false;
+    notifyListeners();
+  }
+
   void setWindowSize(Size size) {
     final int row = size.height ~/ theme.characterHeight;
     // 列数
