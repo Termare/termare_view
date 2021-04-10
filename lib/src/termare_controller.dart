@@ -5,17 +5,13 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:termare_view/src/core/buffer.dart';
-import 'package:termare_view/src/core/test.dart';
 import 'package:termare_view/src/painter/model/position.dart';
 import 'package:termare_view/src/sequences/osc.dart';
 import 'package:termare_view/termare_view.dart';
-
-import 'core/safe_list.dart';
 import 'core/character.dart';
-import 'core/text_attributes.dart';
 import 'core/observable.dart';
+import 'core/text_attributes.dart';
 import 'input/key_handler.dart';
-import 'painter/termare_painter.dart';
 import 'sequences/c0.dart';
 import 'sequences/c1.dart';
 import 'sequences/csi.dart';
