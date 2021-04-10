@@ -9,6 +9,7 @@ import 'package:termare_view/src/core/safe_list.dart';
 import 'package:termare_view/src/core/character.dart';
 import 'package:termare_view/src/core/text_attributes.dart';
 import 'package:termare_view/src/termare_controller.dart';
+import 'package:termare_view/src/theme/term_theme.dart';
 import 'package:termare_view/src/utils/custom_log.dart';
 
 TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 8192);
@@ -111,7 +112,7 @@ class TermarePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     stopwatch.reset();
     stopwatch.start();
-
+    TermareStyle theme = controller.theme;
     // Log.d('init : ${stopwatch.elapsed}');
     // drawBackground(canvas, size);
     // Log.d('paint background : ${stopwatch.elapsed}');
@@ -133,6 +134,7 @@ class TermarePainter extends CustomPainter {
               color: foreground,
               fontWeight: FontWeight.bold,
               fontFamily: controller.fontFamily,
+              height: 1.0,
               // fontStyle: FontStyle
             ),
           ),
@@ -150,7 +152,8 @@ class TermarePainter extends CustomPainter {
         final Offset backOffset = offsetCache[row][column];
 
         // log('get offset ${stopwatch.elapsed}');
-        final Offset fontOffset = backOffset;
+        final Offset fontOffset = backOffset +
+            Offset(0, (theme.characterHeight - painter.height) / 2);
         if (background != controller.theme.backgroundColor) {
           // 当字符背景颜色不为空的时候
           // print('字符背景颜色不为空的时候');

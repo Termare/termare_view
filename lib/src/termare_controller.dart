@@ -95,7 +95,6 @@ class TermareController with Observable {
   /// 直接指向 pty write 函数
   void write(String data) {
     dirty = true;
-
     processByte(utf8.encode(data));
     notifyListeners();
   }

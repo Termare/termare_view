@@ -54,15 +54,16 @@ class _ExampleState extends State<Example> {
 
     // SequencesTest.testCSI(controller);
     SequencesTest.testColorText(controller);
-    for (int i = 0; i < 100; i++) {
-      controller.write('$i\n');
-    }
+    controller.write('啊123撒大声地abc');
+    // for (int i = 0; i < 100; i++) {
+    //   controller.write('$i\n');
+    // }
     // controller.write(utf8.decode([27, 91, 63, 50, 48, 48, 52, 108]));
-    controller.write(utf8.decode([13]));
-    for (int i = 0; i < 49; i++) {
-      print(i);
-      controller.write('*');
-    }
+    // controller.write(utf8.decode([13]));
+    // for (int i = 0; i < 49; i++) {
+    //   print(i);
+    //   controller.write('*');
+    // }
     return;
     controller.write(utf8.decode([
       27,
