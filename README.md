@@ -1,4 +1,5 @@
 # termare_view
+
 支持全平台的终端模拟器，使用 Flutter 开发，是一个通过 canvas 渲染的上层组件，不依赖任何平台代码。
 
 Language: 中文简体 | [English](README-EN.md)
@@ -9,29 +10,40 @@ Language: 中文简体 | [English](README-EN.md)
 
 ## 开始使用
 ### 引入项目
+
 这是一个纯 flutter package，所以只需要在 yaml 配置文件的 dependencies 下引入:
 ```dart
 termare_view:
   git: https://github.com/termare/termare_view
 ```
 ### 创建终端控制器
+
 ```dart
 TermareController controller = TermareController(
   showBackgroundLine: true,
 );
 ```
 ### 使用组件
+
+TermareView 是一个 Widget，通常情况下，只需要给一个 TermareController 作为终端组件的控制器即可。
+
 ```dart
 TermareView(
   controller: controller,
 ),
 ```
+
 ### 让终端显示一些东西
+
 ```dart
 controller.write('hello termare_view');
 ```
+
 代码在 example 中。
 ## 更详细的例子
+
+- [termare_pty](https://github.com/termare/termare_pty)
+- [termare_ssh](https://github.com/termare/termare_ssh)
 
 ## 为何要用Flutter重写而不是安卓原生？
 
@@ -39,15 +51,21 @@ controller.write('hello termare_view');
 - Flutter 当前作为非常优秀的跨平台框架，我想也能用它来编写一个全平台终端模拟器，从安卓前几代终端模拟器来看，
 这可能是一个比较漫长的过程，而我的时间并不太多，但我会尽量尝试重写。
 - 我喜欢尝试。
-更多原因请移步个人文章 -> 
 
-## 为何它的表现并不如操作系统原生的终端模拟器
+更多原因请移步个人文章
 
-它截止目前只能解析一部分终端转义序列，并且解析的耗时受限于我的代码能力。
+- [Flutter 终端模拟器探索篇（一）| 简易终端模拟器](https://juejin.cn/post/6844904065889992712)
+- [Flutter 终端模拟器探索篇（二）| 完整终端模拟器](https://juejin.cn/post/6844904082155503629)
+- [Flutter 终端模拟器探索篇（三）| 原理解析与集成](https://juejin.cn/post/6844904194525102087)
+- [Flutter 终端模拟器 - 开源篇](https://juejin.cn/post/6906039308424052743)
+
+## 是否存在未适配的序列？
+
+我已经参考 xterm.js 中支持的序列，大部分序列均已适配，但仍有极个别较难的序列存在问题。
 
 ## 帮助开发？
 
-测试序列可以通过输入指定的序列对比xterm.js的显示
+测试序列可以通过输入指定的序列对比 xterm.js 或者操作系统中本地终端的显示。
 
 ### Terminal resources
 
