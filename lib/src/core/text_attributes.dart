@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:termare_view/termare_view.dart';
 
 class TextAttributes {
