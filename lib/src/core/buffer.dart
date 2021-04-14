@@ -73,7 +73,7 @@ class Buffer {
       if (line == null || line.isEmpty) {
         continue;
       }
-      for (Character character in line) {
+      for (final Character character in line) {
         final bool isNotEmpty = character?.content?.isNotEmpty;
         if (isNotEmpty != null && isNotEmpty) {
           // print(

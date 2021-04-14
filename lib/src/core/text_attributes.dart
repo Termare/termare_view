@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:termare_view/termare_view.dart';
 
 /// 用来保存终端每个节点的文本风格
