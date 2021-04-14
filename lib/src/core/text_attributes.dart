@@ -85,9 +85,9 @@ class TextAttributes {
   String textAttributes;
   // defalut foreground color
   // 这个设置成 37 跟 40 切换主题会有问题
-  String _foreground = '39';
+  String _foreground = '37';
   // defalut background color
-  String _background = '49';
+  String _background = '40';
   // 前景扩展颜色由 `38` 开启
   bool _foregroundExtended = false;
   // 背景扩展颜色由 `48` 开启
