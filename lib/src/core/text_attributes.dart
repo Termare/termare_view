@@ -16,9 +16,11 @@ class TextAttributes {
       }
     }
   }
+
   TextAttributes.normal() {
     textAttributes = '0';
   }
+
   TextAttributes copyWith(String textAttributes) {
     // print(
     //     '入参textAttributes -> $textAttributes 历史 textAttributes ->${this.textAttributes}');
@@ -48,9 +50,17 @@ class TextAttributes {
       } else if (textAttribute == '7') {
         // flips = true;
         print('交换颜色');
+        // swap = true;
+        if (tmpTextAttributes._background == '49' &&
+            tmpTextAttributes._foreground == '39') {
+          tmpTextAttributes._background = '40';
+          tmpTextAttributes._foreground = '37';
+        }
         final String swap = tmpTextAttributes._background;
-        tmpTextAttributes._background =
-            _foreground.replaceAll(RegExp('^3'), '4');
+        tmpTextAttributes._background = _foreground.replaceAll(
+          RegExp('^3'),
+          '4',
+        );
         tmpTextAttributes._foreground = swap.replaceAll(RegExp('^4'), '3');
       }
     }
@@ -71,11 +81,20 @@ class TextAttributes {
     return 'background : $_background foreground : $_foreground foregroundExtended:$_foregroundExtended _backgroundExtended:$_backgroundExtended';
   }
 
+  // 这玩意保存的是 `32;34` 这类的字符
   String textAttributes;
+  // defalut foreground color
+  // 这个设置成 37 跟 40 切换主题会有问题
   String _foreground = '39';
+  // defalut background color
   String _background = '49';
+  // 前景扩展颜色由 `38` 开启
   bool _foregroundExtended = false;
+  // 背景扩展颜色由 `48` 开启
   bool _backgroundExtended = false;
+  Color foregroundColor;
+  Color backgroundColor;
+  bool swap = false;
   final List<String> backgroundList = [
     '8',
     '9',
@@ -114,6 +133,7 @@ class TextAttributes {
     '96',
     '97',
   ];
+  // 这个 values 用来计算扩展颜色的 256 颜色
   static List<int> values = [
     0x00,
     0x5f,
@@ -124,8 +144,6 @@ class TextAttributes {
   ];
   static Color getExtendedColor(int tag, TermareController controller) {
     assert(tag >= 0 && tag <= 256);
-    // print('_background ->$tag');
-    //00 5f 87 af d7 ff
     final String tagChar = tag.toString();
     if (tag >= 0 && tag < 16) {
       switch (tagChar) {
@@ -224,13 +242,15 @@ class TextAttributes {
     return null;
   }
 
-  Color foreground(TermareController controller) {
+  Color getForegroundColor(TermareController controller) =>
+      _getForegroundColor(controller);
+
+  Color _getForegroundColor(TermareController controller) {
     if (_foreground == null) {
       return controller.theme.defaultColor;
     }
     if (_foregroundExtended) {
       return getExtendedColor(int.tryParse(_foreground), controller);
-      // return
     }
     switch (_foreground) {
       case '30':
@@ -289,7 +309,11 @@ class TextAttributes {
     }
   }
 
-  Color background(TermareController controller) {
+  Color getBackgroundColor(TermareController controller) {
+    return backgroundColor = _getBackgroundColor(controller);
+  }
+
+  Color _getBackgroundColor(TermareController controller) {
     if (_background == null) {
       return null;
     }

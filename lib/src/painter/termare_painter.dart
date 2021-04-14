@@ -55,6 +55,7 @@ class TermarePainter extends CustomPainter {
 
   /// 终端控制器
   final TermareController controller;
+
   double termWidth;
   double termHeight;
 
@@ -109,7 +110,7 @@ class TermarePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     stopwatch.reset();
     stopwatch.start();
-    TermareStyle theme = controller.theme;
+    final TermareStyle theme = controller.theme;
     // Log.d('init : ${stopwatch.elapsed}');
     // drawBackground(canvas, size);
     // Log.d('paint background : ${stopwatch.elapsed}');
@@ -121,8 +122,15 @@ class TermarePainter extends CustomPainter {
           continue;
         }
         final TextAttributes textAttributes = character.textAttributes;
-        final Color foreground = textAttributes.foreground(controller);
-        final Color background = textAttributes.background(controller);
+        Color foreground;
+        Color background;
+        if (textAttributes.swap) {
+          foreground = textAttributes.getBackgroundColor(controller);
+          background = textAttributes.getForegroundColor(controller);
+        } else {
+          foreground = textAttributes.getForegroundColor(controller);
+          background = textAttributes.getBackgroundColor(controller);
+        }
         final TextPainter painter = painterCache.getOrPerformLayout(
           TextSpan(
             text: character.content,
@@ -136,7 +144,6 @@ class TermarePainter extends CustomPainter {
             ),
           ),
         );
-
         // log('get painter ${stopwatch.elapsed}');
         // print(
         //   'character.content -> ${character.content} painter.height -> ${painter.height}  painter.width -> ${painter.width}',
@@ -154,6 +161,9 @@ class TermarePainter extends CustomPainter {
         if (background != controller.theme.backgroundColor) {
           // 当字符背景颜色不为空的时候
           // print('字符背景颜色不为空的时候');
+          //
+          // 下面是sao办法，解决neofetch显示的颜色方块中有缝隙
+          //
           final double backWidth = isDoubleWidth
               ? controller.theme.characterWidth * 2 + 0.6
               : controller.theme.characterWidth + 0.6;
@@ -161,7 +171,6 @@ class TermarePainter extends CustomPainter {
           backPaint.color = background;
           canvas.drawRect(
             Rect.fromLTWH(
-              // 下面是sao办法，解决neofetch显示的颜色方块中有缝隙
               backOffset.dx,
               backOffset.dy,
               backWidth,
@@ -170,8 +179,6 @@ class TermarePainter extends CustomPainter {
             backPaint,
           );
         }
-        // log('paint background ${stopwatch.elapsed}');
-
         painter
           ..layout(
             maxWidth: controller.theme.characterHeight,
@@ -181,16 +188,12 @@ class TermarePainter extends CustomPainter {
             canvas,
             fontOffset,
           );
-        // log('paint font ${stopwatch.elapsed}');
       }
     }
-
     if (controller.showBackgroundLine) {
       drawLine(canvas);
     }
-
     controller.forbidBuild();
-
     paintCursor(canvas, buffer);
   }
 
