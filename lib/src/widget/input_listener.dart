@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
-// copy 至 xterm.dart
+// copy form xterm.dart
 typedef KeyStrokeHandler = void Function(RawKeyEvent);
 typedef InputHandler = TextEditingValue Function(TextEditingValue);
 typedef ActionHandler = void Function(TextInputAction);

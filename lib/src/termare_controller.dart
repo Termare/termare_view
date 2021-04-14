@@ -5,7 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:termare_view/src/core/buffer.dart';
-import 'package:termare_view/src/painter/model/position.dart';
+import 'package:termare_view/src/painter/position.dart';
 import 'package:termare_view/src/sequences/osc.dart';
 import 'package:termare_view/termare_view.dart';
 import 'core/character.dart';
@@ -20,7 +20,7 @@ import 'theme/term_theme.dart';
 import 'utils/character_width.dart';
 
 /// Flutter Controller 的思想
-/// 一个TermView对应一个 Controller
+/// 一个 TermView 对应一个 Controller
 String red = '\x1b[1;41;37m';
 String pink = '\x1b[1;45;37m';
 String green = '\x1B[1;42;31m';
@@ -41,7 +41,7 @@ class TermareController with Observable {
     final Stopwatch stopwatch = Stopwatch();
     stopwatch.start();
     mainBuffer = Buffer(this);
-    alternateBuffer = Buffer(this);
+    _alternateBuffer = Buffer(this);
     currentBuffer = mainBuffer;
   }
   @override
@@ -67,17 +67,22 @@ class TermareController with Observable {
 
   /// 通过这个值来判断终端是否需要刷新
   /// 每次从 pty 中读出数据的时候会将当前终端页标记为脏，在下一帧页终端就会进执行刷新
-  bool dirty = false;
-  // String out = '';
+  bool _dirty = false;
+
+  bool get isDirty => _dirty;
+
+  /// controller 对应的终端主题
   TermareStyle theme;
-  // SafeList<SafeList<LetterEntity>> cache = SafeList();
+
   Buffer currentBuffer;
   // 这个buffer在 CSI ? 1049 h 会用到
-  Buffer alternateBuffer;
+  Buffer _alternateBuffer;
   Buffer mainBuffer;
   bool showCursor = true;
   // 当从 pty 读出内容的时候就会自动滑动
-  bool autoScroll = true;
+  bool _autoScroll = true;
+
+  bool get autoScroll => _autoScroll;
   // 显示背景网格
   bool showBackgroundLine;
   // 终端的标题，正在遇到 osc 序列的时候会改变
@@ -86,17 +91,32 @@ class TermareController with Observable {
   int column;
   TextAttributes textAttributes = TextAttributes('0');
   TextAttributes tmpTextAttributes;
-  // void write(String data) => unixPthC.write(data);
+
+  void enableAutoScroll() {
+    _autoScroll = true;
+  }
+
+  void disableAutoScroll() {
+    _autoScroll = false;
+  }
+
+  void needBuild() {
+    _dirty = true;
+  }
+
+  void forbidBuild() {
+    _dirty = true;
+  }
 
   /// 直接指向 pty write 函数
   void write(String data) {
-    dirty = true;
+    needBuild();
     processByte(utf8.encode(data));
     notifyListeners();
   }
 
   void writeCodeUnits(List<int> codeUnits) {
-    dirty = true;
+    needBuild();
     processByte(codeUnits);
     notifyListeners();
   }
@@ -109,18 +129,18 @@ class TermareController with Observable {
   void clear() {
     currentBuffer.clear();
     currentPointer = Position(0, 0);
-    dirty = true;
+    needBuild();
   }
 
   void switchBufferToAlternate() {
-    currentBuffer = alternateBuffer;
-    dirty = true;
+    currentBuffer = _alternateBuffer;
+    needBuild();
     notifyListeners();
   }
 
   void switchBufferToMain() {
     currentBuffer = mainBuffer;
-    dirty = true;
+    needBuild();
     notifyListeners();
   }
 
@@ -145,8 +165,10 @@ class TermareController with Observable {
     this.column = column;
     log('setPtyWindowSize $size row:$row column:$column');
     currentBuffer.setViewPoint(row);
+    // 这儿减一是因为zsh的序列会有%出来的情况
+    //也就是说如果终端有10列，这10列都能显示东西，但是 `stty size` 命令拿到的列应该是 9
     sizeChanged?.call(TermSize(row, column - 1));
-    dirty = true;
+    needBuild();
     execAutoScroll();
     notifyListeners();
   }
@@ -159,7 +181,7 @@ class TermareController with Observable {
     final double screenHeight = size.height / window.devicePixelRatio;
     // 行数
     setWindowSize(Size(screenWidth, screenHeight));
-    dirty = true;
+    needBuild();
     notifyListeners();
   }
 
@@ -290,14 +312,14 @@ class TermareController with Observable {
       // print(
       //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
       // 上面这个if其实就是当终端视图下方还有显示内容的时候
-      if (autoScroll) {
+      if (_autoScroll) {
         // print('滚动 pointer ${currentPointer}');
         // 只能延时执行刷新
         // print(controller.currentPointer.y + 1 - buffer.limit);
         Future.delayed(const Duration(milliseconds: 10), () {
           currentBuffer.scroll(currentPointer.y + 1 - currentBuffer.limit);
           // currentBuffer.scroll(-1);
-          dirty = true;
+          needBuild();
           notifyListeners();
         });
         // lastLetterPositionCall(
@@ -325,7 +347,7 @@ class TermareController with Observable {
       // print(
       //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
       // 上面这个if其实就是当终端视图下方还有显示内容的时候
-      if (autoScroll) {
+      if (_autoScroll) {
         // print('滚动 pointer ${currentPointer}');
         // 只能延时执行刷新
         // print(controller.currentPointer.y + 1 - buffer.limit);
@@ -333,7 +355,7 @@ class TermareController with Observable {
           currentBuffer.scroll(
             currentBuffer.absoluteLength() - currentBuffer.limit,
           );
-          dirty = true;
+          needBuild();
           notifyListeners();
         });
         // lastLetterPositionCall(

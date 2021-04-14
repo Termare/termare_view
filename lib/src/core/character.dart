@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:termare_view/src/painter/model/position.dart';
+import 'package:termare_view/src/painter/position.dart';
 
 import 'text_attributes.dart';
 

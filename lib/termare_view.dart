@@ -1,4 +1,5 @@
-// export '../example/lib/termare.dart';
+library termare_view;
+
 export 'src/core/term_size.dart';
 export 'src/termare_controller.dart';
 export 'src/termare_view.dart';

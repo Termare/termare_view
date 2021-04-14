@@ -1,4 +1,5 @@
-import 'package:flutter/services.dart';
+// 安卓上按键的宏定义
+// 是否适用 pc 待测试
 
 const int KEYCODE_DPAD_CENTER = 23;
 const KEYCODE_DPAD_UP = 0x100070052;

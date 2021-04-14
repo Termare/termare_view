@@ -50,8 +50,8 @@ class SequencesTest {
     controller.write('\n');
     for (int i = 0; i < 5500; i++) {
       controller.write('${'${i % 10}' * 40}\n');
-      controller.autoScroll = true;
-      controller.dirty = true;
+      controller.needBuild();
+      controller.enableAutoScroll();
       controller.notifyListeners();
       await Future<void>.delayed(const Duration(milliseconds: 500));
     }

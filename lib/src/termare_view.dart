@@ -1,17 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:termare_view/src/core/text_attributes.dart';
-import 'package:termare_view/src/widget/input_listener.dart';
 import 'package:termare_view/src/termare_controller.dart';
-
+import 'package:termare_view/src/widget/input_listener.dart';
 import 'input/key_handler.dart';
 import 'painter/termare_painter.dart';
-import 'core/term_size.dart';
-import 'theme/term_theme.dart';
 import 'widget/scroll_view.dart';
 
 class TermareView extends StatefulWidget {
@@ -28,15 +23,6 @@ class TermareView extends StatefulWidget {
   final InputHandler onTextInput;
   final KeyStrokeHandler onKeyStroke;
   final ActionHandler onAction;
-  static TermSize getTermSize(Size size) {
-    final double screenWidth = size.width / window.devicePixelRatio;
-    final double screenHeight = size.height / window.devicePixelRatio;
-    // 行数
-    final int row = screenHeight ~/ TermareStyles.termux.characterHeight;
-    // 列数
-    final int column = screenWidth ~/ TermareStyles.termux.characterWidth;
-    return TermSize(row, column);
-  }
 
   @override
   _TermareViewState createState() => _TermareViewState();
@@ -214,14 +200,10 @@ class _TerminalViewState extends State<TerminalView>
 
   void resizeWindow() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // double keyoardHeight = MediaQuery.of(context).viewInsets.bottom;
-      // print('keyoardHeight -> $keyoardHeight');
-      // print('$this resizeWindow');
       widget.controller.setWindowSize(widget.painterSize);
       // print(widget.painterSize);
-
-      widget.controller.autoScroll = true;
-      widget.controller.dirty = true;
+      widget.controller.execAutoScroll();
+      widget.controller.needBuild();
       widget.controller.notifyListeners();
     });
   }

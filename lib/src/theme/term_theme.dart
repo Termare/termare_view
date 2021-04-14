@@ -2,10 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-// class TermareStyle {
-//   const TermareStyle(this.showCursor);
-//   final bool showCursor;
-// }
+// 在某一字体大小时，终端每一个格子的宽度
 const Map<int, double> letterWidthMap = {
   4: 3.0,
   5: 4.0,
@@ -29,6 +26,8 @@ const Map<int, double> letterWidthMap = {
   23: 14.0,
   24: 15.0,
 };
+
+// 在某一字体大小时，终端每一个格子的高度，通过上面的map的值乘2得到，保证终端为严格的宽:高为1:2
 const Map<int, double> letterHeightMap = {
   4: 6.0,
   5: 8.0,
@@ -53,6 +52,7 @@ const Map<int, double> letterHeightMap = {
   24: 30.0,
 };
 
+// 用来表示终端风格的类
 class TermareStyle {
   TermareStyle({
     this.fontSize = 12,
@@ -181,7 +181,7 @@ class TermareStyles {
     white: const Color(0xffe5e5e5),
     lightWhite: const Color(0xffffffff),
   );
-  // static const  TermTheme manjaro;
+
   static TermareStyle macos = TermareStyle(
     defaultColor: Colors.black,
     backgroundColor: const Color(0xffffffff),

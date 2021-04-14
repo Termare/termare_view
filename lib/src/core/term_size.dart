@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import '../theme/term_theme.dart';
 
+/// 一个对终端行数和列数的简单封装类
 class TermSize {
   TermSize(this.row, this.column);
   final int row;

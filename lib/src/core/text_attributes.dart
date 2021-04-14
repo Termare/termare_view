@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:termare_view/termare_view.dart';
 
+/// 用来保存终端每个节点的文本风格
+
 class TextAttributes {
   TextAttributes(String textAttributes) {
     textAttributes = textAttributes;

@@ -106,6 +106,9 @@ class KeyHandler {
     return getCode(keyCode, keyMod, cursorKeysApplication, keypadApplication);
   }
 
+  // 通过指定的按键和指定的模式
+  // 返回应该写入终端的字符
+
   static String getCode(
     int keyCode,
     int keyMode,

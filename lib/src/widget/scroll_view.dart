@@ -30,9 +30,9 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
       },
       onPanUpdate: (details) {
         // 手在滑动的时候禁止自动滚动
-        widget.controller.autoScroll = false;
+        widget.controller.disableAutoScroll();
         // 下一帧标记为脏
-        widget.controller.dirty = true;
+        widget.controller.needBuild();
         curOffset += details.delta.dy;
 
         final int scrollLine = -curOffset.toInt() ~/
@@ -46,7 +46,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
       },
       onPanEnd: (details) {
         onPanUpdate = false;
-        widget.controller.dirty = true;
+        widget.controller.needBuild();
         final double velocity =
             1.0 / (0.050 * WidgetsBinding.instance.window.devicePixelRatio);
         final double distance =
@@ -76,7 +76,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
           }
           final double shouldOffset = animationController.value - curOffset;
 
-          widget.controller.dirty = true;
+          widget.controller.needBuild();
           final int scrollLine = -shouldOffset.toInt() ~/
               widget.controller.theme.characterHeight.toInt();
           // print('scrollLine -> $scrollLine');

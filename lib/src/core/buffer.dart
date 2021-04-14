@@ -17,7 +17,7 @@ class Buffer {
   bool isCsiR = false;
   int get length => cache.length;
 
-  ///
+  // 在 csi r 序列到来时，
   Map<int, List<Character>> fixedLine = {};
   void clear() {
     cache.clear();

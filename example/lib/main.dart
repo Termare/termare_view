@@ -228,7 +228,7 @@ class _ExampleState extends State<Example> {
         child: TermareView(
           keyboardInput: (value) {
             print('value${value.codeUnits}');
-            controller.autoScroll = true;
+            controller.enableAutoScroll();
             controller.write(value);
           },
           controller: controller,

@@ -1,11 +1,8 @@
-import 'dart:math' as math;
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:termare_view/src/config/cache.dart';
 import 'package:termare_view/src/core/buffer.dart';
-import 'package:termare_view/src/core/safe_list.dart';
 import 'package:termare_view/src/core/character.dart';
 import 'package:termare_view/src/core/text_attributes.dart';
 import 'package:termare_view/src/termare_controller.dart';
@@ -191,11 +188,10 @@ class TermarePainter extends CustomPainter {
     if (controller.showBackgroundLine) {
       drawLine(canvas);
     }
-    // log('drawer line ${stopwatch.elapsed}');
-    controller.dirty = false;
+
+    controller.forbidBuild();
 
     paintCursor(canvas, buffer);
-    // log('paint cursor ${stopwatch.elapsed}');
   }
 
   void paintText(Canvas canva) {}
@@ -218,7 +214,6 @@ class TermarePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    // return true;
-    return controller.dirty;
+    return controller.isDirty;
   }
 }
