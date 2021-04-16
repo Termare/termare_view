@@ -51,13 +51,13 @@ class TextAttributes {
         // flips = true;
         print('交换颜色');
         // swap = true;
-        backgroundColor = getForegroundColor(controller);
-        foregroundColor = getBackgroundColor(controller);
+        tmpTextAttributes.backgroundColor = getForegroundColor(controller);
+        tmpTextAttributes.foregroundColor = getBackgroundColor(controller);
       }
     }
 
-    backgroundColor = getBackgroundColor(controller);
-    foregroundColor = getForegroundColor(controller);
+    tmpTextAttributes.backgroundColor = getBackgroundColor(controller);
+    tmpTextAttributes.foregroundColor = getForegroundColor(controller);
     // print(
     //     '入参textAttributes -> $textAttributes 历史 textAttributes ->${this.textAttributes}');
     // if (textAttributes == '0') {
