@@ -55,6 +55,9 @@ class _ExampleState extends State<Example> {
     // SequencesTest.testCSI(controller);
     SequencesTest.testColorText(controller);
     controller.write('啊123撒大声地abc');
+    controller.write('\x1b[7m123');
+
+    print('');
     // for (int i = 0; i < 100; i++) {
     //   controller.write('$i\n');
     // }

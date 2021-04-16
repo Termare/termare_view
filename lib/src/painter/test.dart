@@ -1,3 +1,6 @@
+import 'dart:io';
+
 void main() {
-  print('\x1b[7m123');
+  stdout.write('\x1b[7m123');
+  String a = stdin.readLineSync();
 }

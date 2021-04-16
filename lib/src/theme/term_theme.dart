@@ -246,6 +246,6 @@ class TermareStyles {
     lightCyan: const Color(0xff29b8db),
     white: const Color(0xffe5e5e5),
     lightWhite: const Color(0xffe5e5e5),
-    cursorColor: const Color(0xffaaaaaa),
+    cursorColor: const Color(0xffcccccc),
   );
 }
