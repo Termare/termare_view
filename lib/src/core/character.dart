@@ -10,10 +10,11 @@ class Character {
     @required this.content,
   });
   final String content;
-  // 这个不是dx或者px的字体宽度，是字符应该在终端中占有的宽度
+  // 这个不是dx或者px的字体宽度，是字符应该在终端中占有的宽度，即格子数
   final int wcwidth;
   final TextAttributes textAttributes;
   bool get isEmpty => content == '';
+
   @override
   String toString() {
     return 'content:$content';

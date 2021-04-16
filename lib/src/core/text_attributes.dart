@@ -55,6 +55,9 @@ class TextAttributes {
         foregroundColor = getBackgroundColor(controller);
       }
     }
+
+    backgroundColor = getBackgroundColor(controller);
+    foregroundColor = getForegroundColor(controller);
     // print(
     //     '入参textAttributes -> $textAttributes 历史 textAttributes ->${this.textAttributes}');
     // if (textAttributes == '0') {
