@@ -200,17 +200,22 @@ class TermarePainter extends CustomPainter {
     final bool isNotOverFlow =
         controller.currentPointer.dy - buffer.position < controller.row;
     if (controller.showCursor && isNotOverFlow) {
-      Paint paint = Paint()
+      final Paint paint = Paint()
         ..color = controller.theme.cursorColor
         ..strokeWidth = 0.5;
       if (!controller.hasFocus) {
         paint.style = PaintingStyle.stroke;
       }
+      final int x = controller.currentPointer.x;
+      final int y = controller.currentPointer.y - buffer.position;
+      final Character character = buffer.getCharacter(y, x);
+      if (character != null && !character.isEmpty) {
+        paint.color = paint.color.withOpacity(0.4);
+      }
       canvas.drawRect(
         Rect.fromLTWH(
-          controller.currentPointer.dx * controller.theme.characterWidth,
-          (controller.currentPointer.dy - buffer.position) *
-              controller.theme.characterHeight,
+          x * controller.theme.characterWidth,
+          y * controller.theme.characterHeight,
           controller.theme.characterWidth,
           controller.theme.characterHeight,
         ),
