@@ -52,7 +52,13 @@ Map<String, CsiHandler> csiSeqHandlerMap = {
   'u': restoreCursor, //35
   '}': insertColumns, //36
   '~': deleteColumns, //37
+  't': tmp,
 };
+// TODO
+void tmp(TermareController controller, String sequence) {
+  print('sequence -> $sequence tttttt');
+}
+
 void insertCharactersHandler(TermareController controller, String sequence) {
   final Buffer buffer = controller.currentBuffer;
 
@@ -537,6 +543,7 @@ void setCursorStyle(TermareController controller, String sequence) {
 void setTopandBottomMargin(TermareController controller, String sequence) {
   /// CSI Ps ; Ps r
   /// DECSTBM	Set Top and Bottom Margin
+  /// TODO 22;0;0t[1;29r 一起的时候报错
   if (sequence.isEmpty) {
     sequence = '0;${controller.row}';
   }

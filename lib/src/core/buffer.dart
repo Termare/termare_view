@@ -38,7 +38,7 @@ class Buffer {
   @override
   int get hashCode => cache.hashCode;
   void setViewPoint(int rows) {
-    // print('setViewPoint -> $rows');
+    print('setViewPoint -> $rows');
     viewRows = rows;
     if (rows != controller.row) {
       // print('开始缓存');
@@ -136,7 +136,7 @@ class Buffer {
           }
           line += character.content;
         }
-        print('写入固定行 行内内容->$line');
+        print('写入固定行${row - position} 行内内容->$line');
       }
     } else {
       cache[row][column] = entity;

@@ -52,6 +52,10 @@ class Esc {
       controller.log('$green < ESC Privacy Message >');
     } else if (currentChar == '_') {
       controller.log('$green < ESC Application Program Command >');
+    } else if (currentChar == 'B') {
+      controller.log('$green < United States (USASCII), VT100. >');
+    } else {
+      controller.escapeStart = true;
     }
   }
 }
