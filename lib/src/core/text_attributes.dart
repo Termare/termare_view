@@ -21,7 +21,7 @@ class TextAttributes {
     textAttributes = '0';
   }
 
-  TextAttributes copyWith(String textAttributes) {
+  TextAttributes copyWith(String textAttributes, TermareController controller) {
     // print(
     //     '入参textAttributes -> $textAttributes 历史 textAttributes ->${this.textAttributes}');
     final TextAttributes tmpTextAttributes = TextAttributes.normal();
@@ -51,17 +51,8 @@ class TextAttributes {
         // flips = true;
         print('交换颜色');
         // swap = true;
-        if (tmpTextAttributes._background == '49' &&
-            tmpTextAttributes._foreground == '39') {
-          tmpTextAttributes._background = '40';
-          tmpTextAttributes._foreground = '37';
-        }
-        final String swap = tmpTextAttributes._background;
-        tmpTextAttributes._background = _foreground.replaceAll(
-          RegExp('^3'),
-          '4',
-        );
-        tmpTextAttributes._foreground = swap.replaceAll(RegExp('^4'), '3');
+        backgroundColor = getForegroundColor(controller);
+        foregroundColor = getBackgroundColor(controller);
       }
     }
     // print(
@@ -85,16 +76,15 @@ class TextAttributes {
   String textAttributes;
   // defalut foreground color
   // 这个设置成 37 跟 40 切换主题会有问题
-  String _foreground = '37';
+  String _foreground = '39';
   // defalut background color
-  String _background = '40';
+  String _background = '49';
   // 前景扩展颜色由 `38` 开启
   bool _foregroundExtended = false;
   // 背景扩展颜色由 `48` 开启
   bool _backgroundExtended = false;
   Color foregroundColor;
   Color backgroundColor;
-  bool swap = false;
   final List<String> backgroundList = [
     '8',
     '9',

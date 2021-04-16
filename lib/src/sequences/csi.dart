@@ -510,6 +510,7 @@ void selectGraphicRendition(TermareController controller, String sequence) {
   } else {
     controller.textAttributes = controller.textAttributes.copyWith(
       sequence,
+      controller,
     );
   }
 }

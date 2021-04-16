@@ -121,16 +121,13 @@ class TermarePainter extends CustomPainter {
         if (character == null) {
           continue;
         }
-        final TextAttributes textAttributes = character.textAttributes;
-        Color foreground;
-        Color background;
-        if (textAttributes.swap) {
-          foreground = textAttributes.getBackgroundColor(controller);
-          background = textAttributes.getForegroundColor(controller);
-        } else {
-          foreground = textAttributes.getForegroundColor(controller);
-          background = textAttributes.getBackgroundColor(controller);
-        }
+        final TextAttributes attributes = character.textAttributes;
+        final Color foreground = attributes.foregroundColor ??
+            attributes.getForegroundColor(controller);
+
+        final Color background = attributes.backgroundColor ??
+            attributes.getBackgroundColor(controller);
+
         final TextPainter painter = painterCache.getOrPerformLayout(
           TextSpan(
             text: character.content,
