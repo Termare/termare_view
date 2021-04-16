@@ -58,7 +58,7 @@ class TermareStyle {
     this.fontSize = 12,
     this.cursorColor = Colors.grey,
     this.backgroundColor = Colors.black,
-    this.defaultColor = Colors.white,
+    this.defaultFontColor = Colors.white,
     this.black,
     this.lightBlack,
     this.red,
@@ -80,7 +80,7 @@ class TermareStyle {
     double fontSize = 12,
     Color cursorColor,
     Color backgroundColor,
-    Color defaultColor,
+    Color defaultFontColor,
     Color black,
     Color lightBlack,
     Color red,
@@ -102,7 +102,7 @@ class TermareStyle {
       fontSize: fontSize ?? this.fontSize,
       cursorColor: cursorColor ?? this.cursorColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
-      defaultColor: defaultColor ?? this.defaultColor,
+      defaultFontColor: defaultFontColor ?? this.defaultFontColor,
       black: black ?? this.black,
       lightBlack: lightBlack ?? this.lightBlack,
       red: red ?? this.red,
@@ -124,8 +124,9 @@ class TermareStyle {
 
   final Color cursorColor;
   final Color backgroundColor;
-  final Color defaultColor;
-  // 前景色30 背景色40 黑色
+  final Color defaultFontColor;
+
+  /// 前景色30 背景色40 黑色
   final Color black;
   final Color lightBlack;
   // 前景色31 背景色41 红色
@@ -162,7 +163,7 @@ class TermareStyles {
   TermareStyles._();
   static TermareStyle termux = TermareStyle(
     fontSize: 11,
-    defaultColor: Colors.white,
+    defaultFontColor: Colors.white,
     cursorColor: Colors.grey,
     backgroundColor: Colors.black,
     black: const Color(0xff000000),
@@ -184,7 +185,7 @@ class TermareStyles {
   );
 
   static TermareStyle macos = TermareStyle(
-    defaultColor: Colors.black,
+    defaultFontColor: Colors.black,
     backgroundColor: const Color(0xffffffff),
     black: const Color(0xff000000),
     lightBlack: const Color(0xff666666),
@@ -204,7 +205,7 @@ class TermareStyles {
     lightWhite: const Color(0xffe6e5e6),
   );
   static TermareStyle manjaro = TermareStyle(
-    defaultColor: const Color(0xffaaaaaa),
+    defaultFontColor: const Color(0xffaaaaaa),
     backgroundColor: const Color(0xff454649),
     black: const Color(0xff000000),
     lightBlack: const Color(0xff000000),
@@ -222,5 +223,28 @@ class TermareStyles {
     lightCyan: const Color(0xff00aaaa),
     white: const Color(0xffaaaaaa),
     lightWhite: const Color(0xffaaaaaa),
+  );
+
+  /// 从 vs code 中抓取的颜色
+  static TermareStyle vsCode = TermareStyle(
+    fontSize: 11,
+    defaultFontColor: const Color(0xffcbcbcb),
+    backgroundColor: const Color(0xff1e1e1e),
+    black: const Color(0xff000000),
+    lightBlack: const Color(0xff666666),
+    red: const Color(0xffcd3131),
+    lightRed: const Color(0xfff14c4c),
+    green: const Color(0xff0dbc79),
+    lightGreen: const Color(0xff23d18b),
+    yellow: const Color(0xffe5e510),
+    lightYellow: const Color(0xfff5f543),
+    blue: const Color(0xff2472c8),
+    lightBlue: const Color(0xff3b8eea),
+    purplishRed: const Color(0xffbc3fbc),
+    lightPurplishRed: const Color(0xffd670d6),
+    cyan: const Color(0xff11a8cd),
+    lightCyan: const Color(0xff29b8db),
+    white: const Color(0xffe5e5e5),
+    lightWhite: const Color(0xffe5e5e5),
   );
 }

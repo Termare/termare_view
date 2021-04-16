@@ -247,7 +247,7 @@ class TextAttributes {
 
   Color _getForegroundColor(TermareController controller) {
     if (_foreground == null) {
-      return controller.theme.defaultColor;
+      return controller.theme.defaultFontColor;
     }
     if (_foregroundExtended) {
       return getExtendedColor(int.tryParse(_foreground), controller);
@@ -302,10 +302,10 @@ class TextAttributes {
         return controller.theme.lightWhite;
         break;
       case '39':
-        return controller.theme.defaultColor;
+        return controller.theme.defaultFontColor;
         break;
       default:
-        return controller.theme.defaultColor;
+        return controller.theme.defaultFontColor;
     }
   }
 
