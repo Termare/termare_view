@@ -1,6 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
 void main() {
-  stdout.write('\x1b[7m123');
+  stdout.write(utf8.decode([27, 107, 126, 27, 92]));
   String a = stdin.readLineSync();
 }

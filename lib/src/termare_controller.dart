@@ -87,10 +87,16 @@ class TermareController with Observable {
   bool showBackgroundLine;
   // 终端的标题，正在遇到 osc 序列的时候会改变
   String terminalTitle = '';
+
   int row;
   int column;
   TextAttributes textAttributes = TextAttributes('0');
   TextAttributes tmpTextAttributes;
+  void changeTitle(String title) {
+    print('change title to $title');
+    terminalTitle = title;
+    needBuild();
+  }
 
   void enableAutoScroll() {
     _autoScroll = true;
@@ -102,6 +108,7 @@ class TermareController with Observable {
 
   void needBuild() {
     _dirty = true;
+    notifyListeners();
   }
 
   void forbidBuild() {
@@ -387,15 +394,15 @@ class TermareController with Observable {
   bool verbose = true;
   // 应该每次只接收一个字符
   void processByte(List<int> codeUnits, {bool verbose = !kReleaseMode}) {
-    // print('-' * 10);
-    // data.split(RegExp('\x0d')).forEach((element) {
-    //   if (element.isNotEmpty) {
-    //     print('>>>$element');
-    //   }
-    //   print('->${utf8.encode(element)}<-');
-    // });
-    // print('-' * 10);
     final String data = utf8.decode(codeUnits, allowMalformed: true);
+    print('-' * 10);
+    data.split(RegExp('\x0d')).forEach((element) {
+      if (element.isNotEmpty) {
+        print('>>>$element');
+      }
+      print('->${utf8.encode(element)}<-');
+    });
+    print('-' * 10);
     for (int i = 0; i < data.length; i++) {
       // final List<int> codeUnits = data[i].codeUnits;
       // dart 的 codeUnits 是 utf32

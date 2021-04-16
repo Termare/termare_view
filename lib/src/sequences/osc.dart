@@ -12,6 +12,11 @@ class Osc {
     final String currentChar = utf8.decode(utf8CodeUnits);
     if (eq(utf8CodeUnits, [0x07])) {
       print('Osc handle curSeq -> $curSeq');
+      if (curSeq.startsWith('2')) {
+        // 设置标题
+        final String title = curSeq.replaceAll('2;', '');
+        controller.changeTitle(title);
+      }
       // 执行此次序列
       // 执行完清空
       curSeq = '';
