@@ -38,6 +38,13 @@ class _TermareViewState extends State<TermareView> {
   void initState() {
     super.initState();
     controller = widget.controller ?? TermareController();
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        controller.requestFocus();
+      } else {
+        controller.unFocus();
+      }
+    });
   }
 
   @override

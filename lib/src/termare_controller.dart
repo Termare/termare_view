@@ -37,7 +37,7 @@ class TermareController with Observable {
     this.fontFamily = 'packages/termare_view/DroidSansMono',
     this.terminalTitle,
   }) {
-    theme ??= TermareStyles.termux;
+    theme ??= TermareStyles.vsCode;
     mainBuffer = Buffer(this);
     _alternateBuffer = Buffer(this);
     currentBuffer = mainBuffer;
@@ -68,6 +68,8 @@ class TermareController with Observable {
   bool _dirty = false;
 
   bool get isDirty => _dirty;
+  bool _hasFocus = false;
+  bool get hasFocus => _hasFocus;
 
   /// controller 对应的终端主题
   TermareStyle theme;
@@ -436,5 +438,17 @@ class TermareController with Observable {
       writeChar(data[i]);
       execAutoScroll();
     }
+  }
+
+  void requestFocus() {
+    _hasFocus = true;
+    _dirty = true;
+    notifyListeners();
+  }
+
+  void unFocus() {
+    _hasFocus = false;
+    _dirty = true;
+    notifyListeners();
   }
 }

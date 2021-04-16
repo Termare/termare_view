@@ -228,7 +228,7 @@ class TermareStyles {
   /// 从 vs code 中抓取的颜色
   static TermareStyle vsCode = TermareStyle(
     fontSize: 11,
-    defaultFontColor: const Color(0xffcbcbcb),
+    defaultFontColor: const Color(0xffcccccc),
     backgroundColor: const Color(0xff1e1e1e),
     black: const Color(0xff000000),
     lightBlack: const Color(0xff666666),
@@ -246,5 +246,6 @@ class TermareStyles {
     lightCyan: const Color(0xff29b8db),
     white: const Color(0xffe5e5e5),
     lightWhite: const Color(0xffe5e5e5),
+    cursorColor: const Color(0xffaaaaaa),
   );
 }
