@@ -38,8 +38,6 @@ class TermareController with Observable {
     this.terminalTitle,
   }) {
     theme ??= TermareStyles.termux;
-    final Stopwatch stopwatch = Stopwatch();
-    stopwatch.start();
     mainBuffer = Buffer(this);
     _alternateBuffer = Buffer(this);
     currentBuffer = mainBuffer;
