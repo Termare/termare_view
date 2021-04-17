@@ -233,6 +233,8 @@ class KeyHandler {
         return ((keyMode & KEYMOD_CTRL) == 0) ? null : '\0';
       case KEYCODE_TAB:
         // This is back-tab when shifted:
+        // return (keyMode & KEYMOD_SHIFT) == 0 ? '\011' : '\x1b[Z';
+        return (keyMode & KEYMOD_SHIFT) == 0 ? '\x1b[Z' : '\x1b[Z';
         return (keyMode & KEYMOD_SHIFT) == 0 ? '\011' : '\x1b[Z';
       case KEYCODE_ENTER:
         print('enter');
