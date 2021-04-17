@@ -18,6 +18,7 @@ import 'sequences/csi.dart';
 import 'sequences/esc.dart';
 import 'theme/term_theme.dart';
 import 'utils/character_width.dart';
+import 'utils/debouncer.dart';
 
 /// Flutter Controller 的思想
 /// 一个 TermView 对应一个 Controller
@@ -56,7 +57,7 @@ class TermareController with Observable {
 
   @override
   int get hashCode => mainBuffer.hashCode;
-  final String fontFamily;
+  String fontFamily;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
 
   void Function() onBell;
@@ -92,6 +93,14 @@ class TermareController with Observable {
   int column;
   TextAttributes textAttributes = TextAttributes('0');
   TextAttributes tmpTextAttributes;
+
+  //  这个防抖函数主要是为了处理 resizeWindow
+  Debouncer _debouncer = Debouncer(
+    delay: const Duration(
+      milliseconds: 100,
+    ),
+  );
+
   void changeTitle(String title) {
     print('change title to $title');
     terminalTitle = title;
@@ -100,6 +109,11 @@ class TermareController with Observable {
 
   void enableAutoScroll() {
     _autoScroll = true;
+  }
+
+  void changeStyle(TermareStyle style) {
+    this.theme = style;
+    needBuild();
   }
 
   void disableAutoScroll() {
@@ -174,10 +188,21 @@ class TermareController with Observable {
     currentBuffer.setViewPoint(row);
     // 这儿减一是因为zsh的序列会有%出来的情况
     //也就是说如果终端有10列，这10列都能显示东西，但是 `stty size` 命令拿到的列应该是 9
-    sizeChanged?.call(TermSize(row, column - 1));
+    _debouncer.call(sizeChangedCall);
     needBuild();
     execAutoScroll();
     notifyListeners();
+  }
+
+  void sizeChangedCall() {
+    // 这个回调一般会由 pty 处理
+    print('执行回调 sizeChangedCall');
+    sizeChanged?.call(TermSize(row, column - 1));
+  }
+
+  void setFontfamily(String fontfamily) {
+    fontFamily = fontfamily;
+    needBuild();
   }
 
   void setFontSize(double fontSize) {
