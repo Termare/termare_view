@@ -15,10 +15,14 @@ class TextAttributes {
         _foreground = textAttribute;
       }
     }
+    getForegroundColor = _getForegroundColor;
+    getBackgroundColor = _getBackgroundColor;
   }
 
   TextAttributes.normal() {
     textAttributes = '0';
+    getForegroundColor = _getForegroundColor;
+    getBackgroundColor = _getBackgroundColor;
   }
 
   TextAttributes copyWith(String textAttributes, TermareController controller) {
@@ -51,8 +55,10 @@ class TextAttributes {
         // flips = true;
         print('交换颜色');
         // swap = true;
-        tmpTextAttributes.backgroundColor = getForegroundColor(controller);
-        tmpTextAttributes.foregroundColor = getBackgroundColor(controller);
+        tmpTextAttributes.getForegroundColor =
+            tmpTextAttributes._getBackgroundColor;
+        tmpTextAttributes.getBackgroundColor =
+            tmpTextAttributes._getForegroundColor;
       }
     }
 
@@ -84,8 +90,8 @@ class TextAttributes {
   bool _foregroundExtended = false;
   // 背景扩展颜色由 `48` 开启
   bool _backgroundExtended = false;
-  Color foregroundColor;
-  Color backgroundColor;
+  // Color foregroundColor;
+  // Color backgroundColor;
   final List<String> backgroundList = [
     '8',
     '9',
@@ -233,8 +239,8 @@ class TextAttributes {
     return null;
   }
 
-  Color getForegroundColor(TermareController controller) =>
-      _getForegroundColor(controller);
+  Color Function(TermareController controller) getForegroundColor;
+  Color Function(TermareController controller) getBackgroundColor;
 
   Color _getForegroundColor(TermareController controller) {
     if (_foreground == null) {
@@ -298,10 +304,6 @@ class TextAttributes {
       default:
         return controller.theme.defaultFontColor;
     }
-  }
-
-  Color getBackgroundColor(TermareController controller) {
-    return backgroundColor = _getBackgroundColor(controller);
   }
 
   Color _getBackgroundColor(TermareController controller) {
