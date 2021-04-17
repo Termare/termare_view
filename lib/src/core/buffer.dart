@@ -41,7 +41,7 @@ class Buffer {
     print('setViewPoint -> $rows');
     viewRows = rows;
     if (rows != controller.row) {
-      // print('开始缓存');
+      print('开始缓存');
       for (int i = rows; i < controller.row; i++) {
         // print('缓存第${i + 1}行');
         fixedLine[i] = [];

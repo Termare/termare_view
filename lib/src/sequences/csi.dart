@@ -242,7 +242,7 @@ void selectiveEraseInDisplay(TermareController controller, String sequence) {
       // print('清空可视窗口 ${controller.startLine} ${controller.rowLength}');
       // 从视图左上角清除到视图右下角
       final int startRow = buffer.position;
-      final int maxRow = controller.currentPointer.y + 1;
+      final int maxRow = startRow + controller.row;
       for (int row = startRow; row < maxRow; row++) {
         // print('删除 $row 行');
         for (int column = 0; column < controller.column; column++) {

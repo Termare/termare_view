@@ -395,14 +395,14 @@ class TermareController with Observable {
   // 应该每次只接收一个字符
   void processByte(List<int> codeUnits, {bool verbose = !kReleaseMode}) {
     final String data = utf8.decode(codeUnits, allowMalformed: true);
-    print('-' * 10);
-    data.split(RegExp('\x0d')).forEach((element) {
-      if (element.isNotEmpty) {
-        print('>>>$element');
-      }
-      print('->${utf8.encode(element)}<-');
-    });
-    print('-' * 10);
+    // print('-' * 10);
+    // data.split(RegExp('\x0d')).forEach((element) {
+    //   if (element.isNotEmpty) {
+    //     print('>>>$element');
+    //   }
+    //   print('->${utf8.encode(element)}<-');
+    // });
+    // print('-' * 10);
     for (int i = 0; i < data.length; i++) {
       // final List<int> codeUnits = data[i].codeUnits;
       // dart 的 codeUnits 是 utf32
