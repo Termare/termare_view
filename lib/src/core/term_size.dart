@@ -16,4 +16,9 @@ class TermSize {
     final int column = screenWidth ~/ TermareStyles.termux.characterWidth;
     return TermSize(row, column);
   }
+
+  @override
+  String toString() {
+    return 'row -> $row column -> $column';
+  }
 }
