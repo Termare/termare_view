@@ -76,6 +76,26 @@ class TermareStyle {
     this.white,
     this.lightWhite,
   });
+
+  factory TermareStyle.parse(String styleString) {
+    switch (styleString) {
+      case 'termux':
+        return TermareStyles.termux;
+        break;
+      case 'manjaro':
+        return TermareStyles.manjaro;
+        break;
+      case 'macos':
+        return TermareStyles.macos;
+        break;
+      case 'vsCode':
+        return TermareStyles.vsCode;
+        break;
+      default:
+        return TermareStyles.vsCode;
+    }
+  }
+
   TermareStyle copyWith({
     double fontSize = 12,
     Color cursorColor,
