@@ -45,6 +45,7 @@ controller.write('hello termare_view');
 ```
 
 代码在 example 中。
+
 ## 更详细的例子
 
 - [termare_pty](https://github.com/termare/termare_pty)
