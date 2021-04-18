@@ -62,7 +62,7 @@ controller.write('hello termare_view');
 - [Flutter 终端模拟器探索篇（一）| 简易终端模拟器](https://juejin.cn/post/6844904065889992712)
 - [Flutter 终端模拟器探索篇（二）| 完整终端模拟器](https://juejin.cn/post/6844904082155503629)
 - [Flutter 终端模拟器探索篇（三）| 原理解析与集成](https://juejin.cn/post/6844904194525102087)
-- [Flutter 终端模拟器 - 开源篇](https://juejin.cn/post/6906039308424052743)
+- [Flutter 终端模拟器组件 - 开源篇](https://juejin.cn/post/6906039308424052743)
 
 ## 是否存在未适配的序列？
 
