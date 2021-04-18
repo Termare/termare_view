@@ -7,6 +7,7 @@ import 'package:termare_view/src/core/buffer.dart';
 import 'package:termare_view/src/core/character.dart';
 import 'package:termare_view/src/core/text_attributes.dart';
 import 'package:termare_view/src/painter/position.dart';
+import 'package:termare_view/src/utils/custom_log.dart';
 import 'package:termare_view/termare_view.dart';
 
 typedef CsiHandler = void Function(
@@ -56,7 +57,7 @@ Map<String, CsiHandler> csiSeqHandlerMap = {
 };
 // TODO
 void tmp(TermareController controller, String sequence) {
-  print('sequence -> $sequence tttttt');
+  Log.i('sequence -> $sequence tttttt');
 }
 
 void insertCharactersHandler(TermareController controller, String sequence) {
@@ -93,7 +94,7 @@ void insertCharactersHandler(TermareController controller, String sequence) {
 void cursorUp(TermareController controller, String sequence) {
   // A CUU 	Cursor Up
   /// 向上移动光标
-  controller.log('$blue CSI Cursor Up');
+  Log.i('CSI Cursor Up');
   int ps = int.tryParse(sequence);
 
   /// ps 默认为1
@@ -122,7 +123,7 @@ void cursorBackward(TermareController controller, String sequence) {
   /// 向后移动光标
   int ps = int.tryParse(sequence);
   ps ??= 1;
-  print('ps -> $ps');
+  Log.i('D CUB Cursor Backward ps -> $ps');
   if (ps < 100) {
     /// 有的时候会有 999999D，例如在执行 neofetch 的时候会用到这个序列
     /// 但实际移动不了那么多
@@ -135,7 +136,7 @@ void cursorNextLine(TermareController controller, String sequence) {
   /// 跟 CUD 差不多，另外需要将光标移动到第一行
   int ps = int.tryParse(sequence);
   ps ??= 1;
-  print('ps -> $ps');
+  Log.i('E CNL Cursor Next Line ps -> $ps');
   controller.moveToRelativeRow(ps);
   controller.moveToLineFirstPosition();
 }
@@ -153,7 +154,7 @@ void cursorBackwardAndToFirstColumn(
 void cursorHorizontalAbsolute(TermareController controller, String sequence) {
   /// G CHA	Cursor Horizontal Absolute
   /// 将光标移动到绝对定位列
-  print('将光标移动到绝对定位列');
+  Log.i('将光标移动到绝对定位列');
   int ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToAbsoluteColumn(ps);
@@ -161,7 +162,7 @@ void cursorHorizontalAbsolute(TermareController controller, String sequence) {
 }
 
 void cursorPosition(TermareController controller, String sequence) {
-  print(' H CUP	Cursor Position');
+  Log.i('H CUP Cursor Position');
 
   /// H CUP	Cursor Position
   /// 将光标设置到位置: [Ps, Ps]
@@ -176,10 +177,10 @@ void cursorPosition(TermareController controller, String sequence) {
   }
   final int row = int.parse(sequence.split(';')[0]);
   final int column = int.parse(sequence.split(';')[1]);
-  print('row $row column $column');
+  Log.i('H CUP Cursor Position row $row column $column');
   controller.moveToOffset(column, row);
   controller.currentBuffer.isCsiR = true;
-  print('${controller.currentPointer}');
+  Log.i('H CUP Cursor Position ${controller.currentPointer}');
 }
 
 void cursorHorizontalTabulation(TermareController controller, String sequence) {
@@ -202,7 +203,7 @@ void selectiveEraseInDisplay(TermareController controller, String sequence) {
   sequence = sequence.replaceAll('?', '');
   int ps = int.tryParse(sequence);
   ps ??= 0;
-  print('ps $ps');
+  Log.i('J DECSED	Selective Erase In Display ps $ps');
   switch (ps) {
     case 0:
       // 从光标位置清除到可视窗口末尾
@@ -268,7 +269,7 @@ void eraseInLine(TermareController controller, String sequence) {
   sequence = sequence.replaceAll('?', '');
   int ps = int.tryParse(sequence);
   ps ??= 0;
-  print('ps ->$ps');
+  Log.i('K EL Erase In Line ps ->$ps');
   // 删除字符
   switch (ps) {
     case 0:
@@ -324,7 +325,7 @@ void deleteCharacter(TermareController controller, String sequence) {
   final Buffer buffer = controller.currentBuffer;
   int ps = int.tryParse(sequence);
   ps ??= 1;
-  print('ps:$ps');
+  Log.i('P DCH	Delete Character ps:$ps');
 
   for (int column = 0; column < ps; column++) {
     Character character = buffer.getCharacter(
@@ -382,7 +383,7 @@ void cursorBackwardTabulation(TermareController controller, String sequence) {
   /// Z CBT	Cursor Backward Tabulation
   int ps = int.tryParse(sequence);
   ps ??= 1;
-  print(ps);
+  Log.i('Z CBT	Cursor Backward Tabulation $ps');
   controller.moveToRelativeColumn(-ps * 5);
 }
 
@@ -407,7 +408,7 @@ void repeatPrecedingCharacter(TermareController controller, String sequence) {
   final Buffer buffer = controller.currentBuffer;
   int ps = int.tryParse(sequence);
   ps ??= 1;
-  print(ps);
+  Log.i('b REP	Repeat Preceding Character $ps');
   final Position position = controller.currentPointer;
   final int row = position.y;
   final int column = max(position.x - ps, 0);
@@ -585,7 +586,7 @@ class Csi {
   static void handle(TermareController controller, List<int> utf8CodeUnits) {
     final String currentChar = utf8.decode(utf8CodeUnits);
     if (csiSeqHandlerMap.containsKey(currentChar)) {
-      print('curSeq -> $sequence$currentChar');
+      Log.d('curSeq -> $sequence $currentChar');
       final CsiHandler handler = csiSeqHandlerMap[currentChar];
       // 执行此次序列
       // 执行完清空
@@ -594,12 +595,6 @@ class Csi {
       controller.csiStart = false;
     } else {
       sequence += currentChar;
-    }
-  }
-
-  static void log(Object object) {
-    if (!kReleaseMode) {
-      print(object);
     }
   }
 }

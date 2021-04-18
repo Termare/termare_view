@@ -214,11 +214,10 @@ class KeyHandler {
       case KEYCODE_PAGE_DOWN:
         return "\x1b[6~";
       case KEYCODE_DEL:
-        print('object');
         String prefix = ((keyMode & KEYMOD_ALT) == 0) ? "" : "\x1b";
         // Just do what xterm and gnome-terminal does:
-        print(((keyMode & KEYMOD_CTRL) == 0));
-        print("\u007F".codeUnits);
+        // print(((keyMode & KEYMOD_CTRL) == 0));
+        // print("\u007F".codeUnits);
         return prefix + (((keyMode & KEYMOD_CTRL) == 0) ? "\u007F" : "\u0008");
       case KEYCODE_NUM_LOCK:
         if (keypadApplication) {
@@ -237,7 +236,6 @@ class KeyHandler {
         return (keyMode & KEYMOD_SHIFT) == 0 ? '\x1b[Z' : '\x1b[Z';
         return (keyMode & KEYMOD_SHIFT) == 0 ? '\011' : '\x1b[Z';
       case KEYCODE_ENTER:
-        print('enter');
         return ((keyMode & KEYMOD_ALT) == 0) ? '\r' : '\x1b\r';
 
       case KEYCODE_NUMPAD_ENTER:

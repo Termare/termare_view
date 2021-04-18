@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:termare_view/src/painter/position.dart';
+import 'package:termare_view/src/utils/custom_log.dart';
 import 'package:termare_view/termare_view.dart';
 
 bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
@@ -16,44 +17,44 @@ class Esc {
       controller.csiStart = true;
     } else if (eq(utf8CodeUnits, [0x5d])) {
       // ascii 93 是字符 -> ]，‘esc ]’开启了 osc 序列。
-      controller.log('$red oscStart');
+      Log.i(' oscStart');
       controller.oscStart = true;
     } else if (currentChar == '7') {
       controller.tmpPointer = controller.currentPointer;
       controller.tmpTextAttributes = controller.textAttributes;
-      controller.log(' -> $green< 保存光标以及字符属性 >');
+      Log.i('< 保存光标以及字符属性 >');
     } else if (currentChar == '8') {
       controller.currentPointer = controller.tmpPointer;
       controller.textAttributes = controller.tmpTextAttributes;
-      controller.log(' -> $green< 恢复光标以及字符属性 >');
+      Log.i('< 恢复光标以及字符属性 >');
     } else if (currentChar == 'D') {
       controller.moveToNextLinePosition();
-      controller.log('$green < ESC Index >');
+      Log.i('< ESC Index >');
     } else if (currentChar == 'E') {
       controller.moveToNextLinePosition();
       controller.moveToLineFirstPosition();
-      controller.log('$green < ESC Next Line >');
+      Log.i('< ESC Next Line >');
     } else if (currentChar == 'H') {
-      controller.log('$green < ESC Horizontal Tabulation Set >');
+      Log.i('< ESC Horizontal Tabulation Set >');
     } else if (currentChar == 'M') {
       controller.moveToRelativeRow(-1);
-      controller.log('$green < ESC Reverse Index >');
+      Log.i('< ESC Reverse Index >');
     } else if (currentChar == 'P') {
       controller.dcsStart = true;
-      controller.log('$green < ESC Device Control String >');
+      Log.i('< ESC Device Control String >');
     } else if (currentChar == '[') {
       controller.csiStart = true;
-      controller.log('$green < ESC Control Sequence Introducer >');
+      Log.i('< ESC Control Sequence Introducer >');
     } else if (currentChar == r'\') {
-      controller.log('$green < ESC String Terminator >');
+      Log.i('< ESC String Terminator >');
     } else if (currentChar == ']') {
-      controller.log('$green < ESC Operating System Command >');
+      Log.i('< ESC Operating System Command >');
     } else if (currentChar == '^') {
-      controller.log('$green < ESC Privacy Message >');
+      Log.i('< ESC Privacy Message >');
     } else if (currentChar == '_') {
-      controller.log('$green < ESC Application Program Command >');
+      Log.i('< ESC Application Program Command >');
     } else if (currentChar == 'B') {
-      controller.log('$green < United States (USASCII), VT100. >');
+      Log.i('< United States (USASCII), VT100. >');
     } else {
       controller.escapeStart = true;
     }

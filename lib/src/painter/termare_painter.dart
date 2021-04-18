@@ -97,13 +97,13 @@ class TermarePainter extends CustomPainter {
     );
   }
 
-  void log(Object object) {
-    if (stopwatch.elapsed > const Duration(milliseconds: 11)) {
-      Log.e(object);
-    } else {
-      Log.d(object);
-    }
-  }
+  // void log(Object object) {
+  //   if (stopwatch.elapsed > const Duration(milliseconds: 11)) {
+  //     Log.e(object);
+  //   } else {
+  //     Log.d(object);
+  //   }
+  // }
 
   final Stopwatch stopwatch = Stopwatch();
   @override
@@ -125,7 +125,7 @@ class TermarePainter extends CustomPainter {
         final Color foreground = attributes.getForegroundColor(controller);
 
         final Color background = attributes.getBackgroundColor(controller);
-
+        // print('缓存 -> ${character.content}');
         final TextPainter painter = painterCache.getOrPerformLayout(
           TextSpan(
             text: character.content,

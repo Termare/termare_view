@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:termare_view/src/core/character.dart';
 import 'package:termare_view/src/termare_controller.dart';
+import 'package:termare_view/src/utils/custom_log.dart';
 
 class Buffer {
   Buffer(this.controller) {
@@ -38,10 +39,10 @@ class Buffer {
   @override
   int get hashCode => cache.hashCode;
   void setViewPoint(int rows) {
-    print('setViewPoint -> $rows');
+    // print('setViewPoint -> $rows');
     viewRows = rows;
     if (rows != controller.row) {
-      print('开始缓存');
+      Log.i('开始缓存');
       for (int i = rows; i < controller.row; i++) {
         // print('缓存第${i + 1}行');
         fixedLine[i] = [];
@@ -136,7 +137,7 @@ class Buffer {
           }
           line += character.content;
         }
-        print('写入固定行${row - position} 行内内容->$line');
+        Log.i('写入固定行${row - position} 行内内容->$line');
       }
     } else {
       cache[row][column] = entity;
@@ -157,7 +158,7 @@ class Buffer {
         }
         line += character.content;
       }
-      print('->$line<-');
+      Log.i('->$line<-');
     }
   }
 

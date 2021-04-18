@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:termare_view/src/utils/custom_log.dart';
 import 'package:termare_view/termare_view.dart';
 
 /// 用来保存终端每个节点的文本风格
@@ -53,7 +54,7 @@ class TextAttributes {
         tmpTextAttributes._backgroundExtended = true;
       } else if (textAttribute == '7') {
         // flips = true;
-        print('交换颜色');
+        Log.i('交换颜色');
         // swap = true;
         tmpTextAttributes.getForegroundColor =
             tmpTextAttributes._getBackgroundColor;
@@ -199,8 +200,12 @@ class TextAttributes {
       int v2 = (tag ~/ 6) % 6;
       int v3 = (tag ~/ 6) ~/ 6;
       // print('v---->$v  $v2');
-      final Color color =
-          Color.fromARGB(255, values[v3], values[v2], values[v]);
+      final Color color = Color.fromARGB(
+        255,
+        values[v3],
+        values[v2],
+        values[v],
+      );
       // print('color->$color');
       return color;
     } else if (tag > 231) {
@@ -209,28 +214,73 @@ class TextAttributes {
           return const Color(0xff080808);
           break;
         case 233:
-          return const Color(0xff080808);
+          return const Color(0xff121212);
           break;
         case 234:
-          return const Color(0xff080808);
+          return const Color(0xff1c1c1c);
           break;
         case 235:
-          return const Color(0xff080808);
+          return const Color(0xff262626);
           break;
         case 236:
-          return const Color(0xff080808);
+          return const Color(0xff303030);
           break;
         case 237:
-          return const Color(0xff080808);
+          return const Color(0xff3a3a3a);
           break;
         case 238:
-          return const Color(0xff080808);
+          return const Color(0xff444444);
           break;
         case 239:
-          return const Color(0xff080808);
+          return const Color(0xff4e4e4e);
           break;
         case 240:
-          return const Color(0xff080808);
+          return const Color(0xff585858);
+          break;
+        case 241:
+          return const Color(0xff626262);
+          break;
+        case 242:
+          return const Color(0xff6c6c6c);
+          break;
+        case 243:
+          return const Color(0xff767676);
+          break;
+        case 244:
+          return const Color(0xff808080);
+          break;
+        case 245:
+          return const Color(0xff8a8a8a);
+          break;
+        case 246:
+          return const Color(0xff949494);
+          break;
+        case 247:
+          return const Color(0xff9e9e9e);
+          break;
+        case 248:
+          return const Color(0xff9e9e9e);
+          break;
+        case 249:
+          return const Color(0xffababab);
+          break;
+        case 250:
+          return const Color(0xffb2b2b2);
+          break;
+        case 251:
+          return const Color(0xffc6c6c6);
+          break;
+        case 252:
+          return const Color(0xffd0d0d0);
+          break;
+        case 253:
+          return const Color(0xffdadada);
+          break;
+        case 254:
+          return const Color(0xffe4e4e4);
+          break;
+        case 255:
+          return const Color(0xffececec);
           break;
         //todo
         default:

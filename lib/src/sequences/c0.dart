@@ -3,11 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
 bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
-void log(Object object) {
-  if (!kReleaseMode) {
-    print(object);
-  }
-}
 
 class C0 {
   static bool handle(TermareController controller, List<int> utf8CodeUnits) {
