@@ -7,6 +7,7 @@ import 'package:termare_view/src/termare_controller.dart';
 import 'package:termare_view/src/widget/input_listener.dart';
 import 'input/key_handler.dart';
 import 'painter/termare_painter.dart';
+import 'utils/custom_log.dart';
 import 'widget/scroll_view.dart';
 
 class TermareView extends StatefulWidget {
@@ -76,7 +77,7 @@ class _TermareViewState extends State<TermareView> {
       widget.keyboardInput(String.fromCharCode(127));
     } else {
       // 当字符长度相等，就存在光标移动问题
-      print('光标移动问题 ${value.selection.baseOffset}');
+      Log.i('光标移动问题 ${value.selection.baseOffset}');
       if (value.selection.baseOffset < 1) {
         widget.keyboardInput(String.fromCharCode(2));
       } else if (value.selection.baseOffset > 1) {
@@ -92,7 +93,7 @@ class _TermareViewState extends State<TermareView> {
     return InputListener(
       focusNode: _focusNode,
       onTextInput: (TextEditingValue value) {
-        print(value);
+        Log.i(value);
         if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
           // return onTextEdit(
           //   value,
@@ -109,13 +110,12 @@ class _TermareViewState extends State<TermareView> {
         }
         // 当软件盘回车按下的时候
         if (action == TextInputAction.done) {
-          print('enter');
           widget.keyboardInput('\r');
         }
         widget?.onAction?.call(action);
       },
       onKeyStroke: (RawKeyEvent key) {
-        print(key);
+        Log.i(key);
         // 26键盘之外的按键按下的时候
         final int keyId = key.logicalKey.keyId;
         if (key is RawKeyDownEvent) {
@@ -126,7 +126,6 @@ class _TermareViewState extends State<TermareView> {
             false,
           );
           if (input != null) {
-            print('input -> ${input.codeUnits}');
             if (widget.controller.ctrlEnable) {
               final int charCode = utf8.encode(input).first;
               widget.keyboardInput(utf8.decode([charCode - 96]));

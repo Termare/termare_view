@@ -16,7 +16,6 @@ class Debouncer {
 
   void call(void Function() action) {
     _timer?.cancel();
-    print('Debouncer cancel');
     _timer = Timer(delay, action);
   }
 

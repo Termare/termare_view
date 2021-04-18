@@ -18,16 +18,17 @@ import 'sequences/csi.dart';
 import 'sequences/esc.dart';
 import 'theme/term_theme.dart';
 import 'utils/character_width.dart';
+import 'utils/custom_log.dart';
 import 'utils/debouncer.dart';
 
 /// Flutter Controller 的思想
 /// 一个 TermView 对应一个 Controller
-String red = '\x1b[1;41;37m';
-String pink = '\x1b[1;45;37m';
-String green = '\x1B[1;42;31m';
-String blue = '\x1b[1;46;37m';
-String whiteBackground = '\x1b[47m';
-String defaultColor = '\x1b[0m';
+// String red = '\x1b[1;41;37m';
+// String pink = '\x1b[1;45;37m';
+// String green = '\x1B[1;42;31m';
+// String blue = '\x1b[1;46;37m';
+// String whiteBackground = '\x1b[47m';
+// String defaultColor = '\x1b[0m';
 
 class TermareController with Observable {
   TermareController({
@@ -95,14 +96,14 @@ class TermareController with Observable {
   TextAttributes tmpTextAttributes;
 
   //  这个防抖函数主要是为了处理 resizeWindow
-  Debouncer _debouncer = Debouncer(
+  final Debouncer _debouncer = Debouncer(
     delay: const Duration(
       milliseconds: 100,
     ),
   );
 
   void changeTitle(String title) {
-    print('change title to $title');
+    Log.i('change title to $title');
     terminalTitle = title;
     needBuild();
   }
@@ -112,7 +113,7 @@ class TermareController with Observable {
   }
 
   void changeStyle(TermareStyle style) {
-    this.theme = style;
+    theme = style;
     needBuild();
   }
 
@@ -184,7 +185,7 @@ class TermareController with Observable {
     final int column = size.width ~/ theme.characterWidth;
     this.row = row;
     this.column = column;
-    log('setPtyWindowSize $size row:$row column:$column');
+    // log('setPtyWindowSize $size row:$row column:$column');
     currentBuffer.setViewPoint(row);
     // 这儿减一是因为zsh的序列会有%出来的情况
     //也就是说如果终端有10列，这10列都能显示东西，但是 `stty size` 命令拿到的列应该是 9
@@ -196,7 +197,7 @@ class TermareController with Observable {
 
   void sizeChangedCall() {
     // 这个回调一般会由 pty 处理
-    print('执行回调 sizeChangedCall');
+    Log.i('执行回调 sizeChangedCall');
     sizeChanged?.call(TermSize(row, column - 1));
   }
 
@@ -408,12 +409,6 @@ class TermareController with Observable {
   void enbaleOrDisableCtrl() {
     ctrlEnable = !ctrlEnable;
     notifyListeners();
-  }
-
-  void log(Object object) {
-    if (!kReleaseMode) {
-      print(object);
-    }
   }
 
   bool verbose = true;

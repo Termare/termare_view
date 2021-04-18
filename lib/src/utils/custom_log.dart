@@ -1,25 +1,28 @@
 library custom_log;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
-
 class Log {
   static StringBuffer buffer = StringBuffer();
+  static String tag = 'Termare View';
+
+  /// verbose
   static void v(Object object) {
-    String data = '\x1B[1;40;37m $object \x1B[0m';
+    final String data = '\x1b[38;5;244m[$tag]\x1b[38;5;244m $object \x1B[0m';
     String suffix = '';
     if (!object.toString().endsWith('\n')) {
       suffix += '\n';
     }
     buffer.write(data + suffix);
+    // log(
+    //   data,
+    //   name: 'Termare',
+    //   time: DateTime.now(),
+    //   level: 0,
+    // );
     print(data);
   }
 
   static void d(Object object) {
-    String data = '\x1B[1;44;37m $object \x1B[0m';
+    final String data = '\x1b[38;5;244m[$tag] \x1b[1;34m$object\x1B[0m';
     String suffix = '';
     if (!object.toString().endsWith('\n')) {
       suffix += '\n';
@@ -29,7 +32,7 @@ class Log {
   }
 
   static void i(Object object) {
-    String data = '\x1B[1;44;37m $object \x1B[0m';
+    final String data = '\x1b[38;5;244m[$tag] \x1b[1;39m$object\x1B[0m';
     String suffix = '';
     if (!object.toString().endsWith('\n')) {
       suffix += '\n';
@@ -39,7 +42,7 @@ class Log {
   }
 
   static void w(Object object) {
-    String data = '\x1B[1;43;37m $object \x1B[0m';
+    final String data = '\x1b[38;5;244m[$tag] \x1b[1;33m$object\x1B[0m';
     String suffix = '';
     if (!object.toString().endsWith('\n')) {
       suffix += '\n';
@@ -49,7 +52,7 @@ class Log {
   }
 
   static void e(Object object) {
-    String data = '\x1B[1;41;37m $object \x1B[0m';
+    final String data = '\x1b[38;5;244m[$tag] \x1b[1;31m$object\x1B[0m';
     String suffix = '';
     if (!object.toString().endsWith('\n')) {
       suffix += '\n';
