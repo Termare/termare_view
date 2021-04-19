@@ -133,7 +133,9 @@ class TermarePainter extends CustomPainter {
               fontSize: controller.theme.fontSize,
               color: foreground,
               fontWeight: FontWeight.bold,
-              fontFamily: controller.fontFamily,
+              fontFamilyFallback: [
+                controller.fontFamily,
+              ],
               height: 1.0,
               // fontStyle: FontStyle
             ),
@@ -207,9 +209,10 @@ class TermarePainter extends CustomPainter {
       final int x = controller.currentPointer.x;
       final int y = controller.currentPointer.y - buffer.position;
       final Character character = buffer.getCharacter(y, x);
-      if (character != null && !character.isEmpty) {
-        paint.color = paint.color.withOpacity(0.4);
-      }
+      // if (character != null && !character.isEmpty) {
+      //   paint.color = paint.color.withOpacity(0.4);
+      // }
+      paint.blendMode = BlendMode.dst;
       canvas.drawRect(
         Rect.fromLTWH(
           x * controller.theme.characterWidth,
