@@ -58,9 +58,9 @@ class _ExampleState extends State<Example> {
     controller.write('\x1b[7m123');
 
     print('');
-    // for (int i = 0; i < 100; i++) {
-    //   controller.write('$i\n');
-    // }
+    for (int i = 0; i < 100; i++) {
+      controller.write('$i\n');
+    }
     // controller.write(utf8.decode([27, 91, 63, 50, 48, 48, 52, 108]));
     // controller.write(utf8.decode([13]));
     // for (int i = 0; i < 49; i++) {
