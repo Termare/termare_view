@@ -187,7 +187,6 @@ class TermareController with Observable {
     this.column = column;
     // log('setPtyWindowSize $size row:$row column:$column');
     currentBuffer.setViewPoint(row);
-    // 这儿减一是因为zsh的序列会有%出来的情况
     //也就是说如果终端有10列，这10列都能显示东西，但是 `stty size` 命令拿到的列应该是 9
     _debouncer.call(sizeChangedCall);
     needBuild();
@@ -198,6 +197,7 @@ class TermareController with Observable {
   void sizeChangedCall() {
     // 这个回调一般会由 pty 处理
     Log.i('执行回调 sizeChangedCall');
+    // 这儿减一是因为zsh的序列会有%出来的情况
     sizeChanged?.call(TermSize(row, column - 1));
   }
 
