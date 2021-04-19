@@ -209,10 +209,11 @@ class TermarePainter extends CustomPainter {
       final int x = controller.currentPointer.x;
       final int y = controller.currentPointer.y - buffer.position;
       final Character character = buffer.getCharacter(y, x);
-      // if (character != null && !character.isEmpty) {
-      //   paint.color = paint.color.withOpacity(0.4);
-      // }
-      paint.blendMode = BlendMode.dst;
+      if (character != null && !character.isEmpty) {
+        paint.blendMode = BlendMode.hardLight;
+      }
+      // paint.blendMode = BlendMode.exclusion;
+      // paint.blendMode = BlendMode.xor;
       canvas.drawRect(
         Rect.fromLTWH(
           x * controller.theme.characterWidth,
