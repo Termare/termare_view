@@ -225,7 +225,7 @@ class _TerminalViewState extends State<TerminalView>
   Widget build(BuildContext context) {
     // print('$this build');
     return Material(
-      color: widget.controller.theme.backgroundColor.withOpacity(0.6),
+      color: widget.controller.theme.backgroundColor,
       child: CustomPaint(
         size: widget.painterSize,
         painter: TermarePainter(
