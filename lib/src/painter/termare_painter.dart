@@ -125,22 +125,46 @@ class TermarePainter extends CustomPainter {
         final Color foreground = attributes.getForegroundColor(controller);
 
         final Color background = attributes.getBackgroundColor(controller);
-        // print('缓存 -> ${character.content}');
-        final TextPainter painter = painterCache.getOrPerformLayout(
-          TextSpan(
-            text: character.content,
-            style: TextStyle(
-              fontSize: controller.theme.fontSize,
-              color: foreground,
-              fontWeight: FontWeight.bold,
-              fontFamilyFallback: [
-                controller.fontFamily,
-              ],
-              height: 1.0,
-              // fontStyle: FontStyle
+        // print(
+        //     '缓存 -> ${character.content} ${character.content.codeUnits} ${character.content.codeUnitAt(0) == 65533}');
+
+        TextPainter painter;
+        try {
+          painter = painterCache.getOrPerformLayout(
+            TextSpan(
+              text: character.content,
+              style: TextStyle(
+                fontSize: controller.theme.fontSize,
+                color: foreground,
+                fontWeight: FontWeight.bold,
+                fontFamilyFallback: [
+                  controller.fontFamily,
+                ],
+                height: 1.0,
+                // fontStyle: FontStyle
+              ),
             ),
-          ),
-        );
+          );
+        } catch (e) {
+          Log.i('发现错误字符，提花成空格');
+          // 在 utf 解码的时候，使用了 allowMalformed=true，编码失败会将失败的字符改为�，
+          // 这个字符画不出来
+          painter = painterCache.getOrPerformLayout(
+            TextSpan(
+              text: ' ',
+              style: TextStyle(
+                fontSize: controller.theme.fontSize,
+                color: foreground,
+                fontWeight: FontWeight.bold,
+                fontFamilyFallback: [
+                  controller.fontFamily,
+                ],
+                height: 1.0,
+                // fontStyle: FontStyle
+              ),
+            ),
+          );
+        }
         // log('get painter ${stopwatch.elapsed}');
         // print(
         //   'character.content -> ${character.content} painter.height -> ${painter.height}  painter.width -> ${painter.width}',
