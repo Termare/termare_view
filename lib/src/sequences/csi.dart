@@ -251,9 +251,24 @@ void selectiveEraseInDisplay(TermareController controller, String sequence) {
           buffer.write(row, column, null);
         }
       }
+      controller.disableAutoScroll();
       break;
     case 3:
+      // 清除历史行
+      //
       // TODO
+      const int startRow = 0;
+
+      /// 最大行为缓存开始的前一行
+
+      final int maxRow = buffer.position;
+      for (int row = startRow; row < maxRow; row++) {
+        // print('删除 $row 行');
+        for (int column = 0; column < controller.column; column++) {
+          // 如果这个位置并没有字符
+          buffer.write(row, column, null);
+        }
+      }
       break;
     default:
   }
