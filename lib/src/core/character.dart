@@ -9,7 +9,7 @@ class Character {
     this.wcwidth = 1,
     @required this.content,
   });
-  final String content;
+  String content;
   // 这个不是dx或者px的字体宽度，是字符应该在终端中占有的宽度，即格子数
   final int wcwidth;
   final TextAttributes textAttributes;
