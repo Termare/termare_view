@@ -238,11 +238,15 @@ class TermarePainter extends CustomPainter {
       }
       // paint.blendMode = BlendMode.exclusion;
       // paint.blendMode = BlendMode.xor;
+      double cursorWidth = controller.theme.characterWidth;
+      if (character != null && character.wcwidth == 2) {
+        cursorWidth *= 2;
+      }
       canvas.drawRect(
         Rect.fromLTWH(
           x * controller.theme.characterWidth,
           y * controller.theme.characterHeight,
-          controller.theme.characterWidth,
+          cursorWidth,
           controller.theme.characterHeight,
         ),
         paint,
