@@ -1,6 +1,6 @@
 name: termare_view
 description: A new Flutter package project.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/termare/termare_view
 
 environment:
@@ -17,12 +17,3 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter.
-flutter:
-  fonts:
-    - family: DroidSansMono
-      fonts:
-        - asset: assets/fonts/DroidSansMono.ttf
