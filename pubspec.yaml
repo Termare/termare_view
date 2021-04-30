@@ -1,6 +1,6 @@
 name: termare_view
-description: A new Flutter package project.
-version: 0.0.3
+description: 终端模拟器上册组件。
+version: 0.0.4
 homepage: https://github.com/termare/termare_view
 
 environment:
@@ -9,9 +9,9 @@ environment:
 
 dependencies:
   collection: ^1.14.13
-  quiver: ^3.0.0-nullsafety.1
   flutter:
     sdk: flutter
+  quiver: ^3.0.0-nullsafety.1
 
 dev_dependencies:
   flutter_test:

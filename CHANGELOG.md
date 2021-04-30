@@ -8,3 +8,6 @@
 
 * improve and refact code
 * improve performance
+## [0.0.4]
+
+* 🚀 improve performance
