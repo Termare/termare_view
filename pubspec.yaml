@@ -17,3 +17,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter:
+  fonts:
+    - family: DroidSansMono
+      fonts:
+        - asset: assets/fonts/DroidSansMono.ttf
