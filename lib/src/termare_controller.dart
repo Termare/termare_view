@@ -156,6 +156,7 @@ class TermareController with Observable {
 
   void switchBufferToAlternate() {
     currentBuffer = _alternateBuffer;
+    currentBuffer.clear();
     needBuild();
     notifyListeners();
   }
