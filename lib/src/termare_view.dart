@@ -125,6 +125,10 @@ class _TermareViewState extends State<TermareView> {
             true,
             false,
           );
+          if (key.logicalKey == LogicalKeyboardKey.controlLeft ||
+              key.logicalKey == LogicalKeyboardKey.controlRight) {
+            widget.controller.ctrlEnable = true;
+          }
           if (input != null) {
             if (widget.controller.ctrlEnable) {
               final int charCode = utf8.encode(input).first;
