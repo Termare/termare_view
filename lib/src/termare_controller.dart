@@ -415,7 +415,7 @@ class TermareController with Observable {
   bool verbose = true;
   // 应该每次只接收一个字符
   void processByte(List<int> codeUnits, {bool verbose = !kReleaseMode}) {
-    final String data = utf8.decode(codeUnits, allowMalformed: true);
+    final String data = utf8.decode(codeUnits);
     // print('-' * 10);
     // data.split(RegExp('\x0d')).forEach((element) {
     //   if (element.isNotEmpty) {
