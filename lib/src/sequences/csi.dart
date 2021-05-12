@@ -305,6 +305,7 @@ void eraseInLine(TermareController controller, String sequence) {
       break;
     case 2:
       // 清除整行
+      Log.e('清除整行');
       earseOneLine(controller, buffer);
       break;
     default:
@@ -616,8 +617,11 @@ class Csi {
 
 void earseOneLine(TermareController controller, Buffer buffer) {
   const int startColumn = 0;
-  final int endColumn = controller.row;
+  final int endColumn = controller.column;
   for (int column = startColumn; column < endColumn; column++) {
+    // final Character character =
+    //     buffer.getCharacter(controller.currentPointer.y, column);
+    // Log.e('清除第$column列 $character 总列数为:$endColumn');
     buffer.write(controller.currentPointer.y, column, null);
   }
 }
