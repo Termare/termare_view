@@ -156,7 +156,7 @@ class _TermareViewState extends State<TermareView> {
               controller: controller,
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  return TerminalView(
+                  return _TerminalView(
                     painterSize: Size(
                       constraints.maxWidth,
                       constraints.maxHeight,
@@ -173,8 +173,9 @@ class _TermareViewState extends State<TermareView> {
   }
 }
 
-class TerminalView extends StatefulWidget {
-  const TerminalView({
+// 封装了一层，避免一个widget内部太复杂
+class _TerminalView extends StatefulWidget {
+  const _TerminalView({
     Key key,
     @required this.painterSize,
     @required this.controller,
@@ -186,7 +187,7 @@ class TerminalView extends StatefulWidget {
   _TerminalViewState createState() => _TerminalViewState();
 }
 
-class _TerminalViewState extends State<TerminalView>
+class _TerminalViewState extends State<_TerminalView>
     with WidgetsBindingObserver {
   @override
   void initState() {
