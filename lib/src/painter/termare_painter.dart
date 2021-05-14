@@ -184,7 +184,7 @@ class TermarePainter extends CustomPainter {
           // 当字符背景颜色不为空的时候
           // print('字符背景颜色不为空的时候');
           //
-          // 下面是sao办法，解决neofetch显示的颜色方块中有缝隙
+          // 下面是解决neofetch显示的颜色方块中有缝隙
           //
           final double backWidth = isDoubleWidth
               ? controller!.theme!.characterWidth! * 2 + 0.6
