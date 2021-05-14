@@ -232,7 +232,7 @@ class SequencesTest {
     csiInput('3${csiSeqChars[0]}');
     write('.\n');
     write('123');
-    csiInput('${csiSeqChars[1]}');
+    csiInput(csiSeqChars[1]);
     csiInput('2${csiSeqChars[2]}');
     csiInput('2${csiSeqChars[3]}');
     csiInput('2${csiSeqChars[4]}');

@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:collection/collection.dart';
-import 'package:termare_view/src/painter/position.dart';
-import 'package:termare_view/src/utils/custom_log.dart';
+import 'package:termare_view/src/utils/signale/signale.dart';
 import 'package:termare_view/termare_view.dart';
 
 bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;

@@ -1,9 +1,10 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:termare_view/src/termare_controller.dart';
 
+//
 bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
 
+/// 主要为了处理c0系列的终端序列
 class C0 {
   static bool handle(TermareController controller, List<int> utf8CodeUnits) {
     final bool verbose = controller.verbose;

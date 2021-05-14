@@ -5,12 +5,12 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:termare_view/src/core/buffer.dart';
-import 'package:termare_view/src/painter/position.dart';
+import 'package:termare_view/src/foundation/position.dart';
 import 'package:termare_view/src/sequences/osc.dart';
 import 'package:termare_view/termare_view.dart';
-import 'core/character.dart';
-import 'core/observable.dart';
-import 'core/text_attributes.dart';
+import 'foundation/character.dart';
+import 'foundation/observable.dart';
+import 'foundation/text_attribute.dart';
 import 'input/key_handler.dart';
 import 'sequences/c0.dart';
 import 'sequences/c1.dart';
@@ -18,17 +18,15 @@ import 'sequences/csi.dart';
 import 'sequences/esc.dart';
 import 'theme/term_theme.dart';
 import 'utils/character_width.dart';
-import 'utils/custom_log.dart';
 import 'utils/debouncer.dart';
+import 'utils/signale/signale.dart';
 
-/// Flutter Controller 的思想
-/// 一个 TermView 对应一个 Controller
-// String red = '\x1b[1;41;37m';
-// String pink = '\x1b[1;45;37m';
-// String green = '\x1B[1;42;31m';
-// String blue = '\x1b[1;46;37m';
-// String whiteBackground = '\x1b[47m';
-// String defaultColor = '\x1b[0m';
+String red = '\x1b[1;31m';
+String pink = '\x1b[1;35m';
+String green = '\x1B[1;32m';
+String blue = '\x1b[1;36m';
+String whiteBackground = '\x1b[47m';
+String defaultColor = '\x1b[0m';
 
 class TermareController with Observable {
   TermareController({
@@ -92,8 +90,8 @@ class TermareController with Observable {
 
   int row;
   int column;
-  TextAttributes? textAttributes = TextAttributes('0');
-  TextAttributes? tmpTextAttributes;
+  TextAttribute? textAttributes = TextAttribute('0');
+  TextAttribute? tmpTextAttributes;
 
   //  这个防抖函数主要是为了处理 resizeWindow
   final Debouncer _debouncer = Debouncer(

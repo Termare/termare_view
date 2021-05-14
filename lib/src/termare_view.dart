@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +6,8 @@ import 'package:termare_view/src/termare_controller.dart';
 import 'package:termare_view/src/widget/input_listener.dart';
 import 'input/key_handler.dart';
 import 'painter/termare_painter.dart';
-import 'utils/custom_log.dart';
+import 'utils/platform/platform.dart';
+import 'utils/signale/signale.dart';
 import 'widget/scroll_view.dart';
 
 class TermareView extends StatefulWidget {
@@ -94,7 +94,7 @@ class _TermareViewState extends State<TermareView> {
       focusNode: _focusNode,
       onTextInput: (TextEditingValue value) {
         Log.i(value);
-        if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+        if (TermarePlatform.isDesktop) {
           // return onTextEdit(
           //   value,
           // );
@@ -105,14 +105,14 @@ class _TermareViewState extends State<TermareView> {
         );
       },
       onAction: (TextInputAction action) {
-        if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-          return null;
+        if (TermarePlatform.isDesktop) {
+          return;
         }
         // 当软件盘回车按下的时候
         if (action == TextInputAction.done) {
           widget.keyboardInput!('\r');
         }
-        widget?.onAction?.call(action);
+        widget.onAction?.call(action);
       },
       onKeyStroke: (RawKeyEvent key) {
         Log.i(key);

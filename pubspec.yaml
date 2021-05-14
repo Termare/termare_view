@@ -1,6 +1,6 @@
 name: termare_view
 description: 终端模拟器上册组件。
-version: 0.0.4
+version: 0.0.6
 homepage: https://github.com/termare/termare_view
 
 environment:
@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   # lrumap
-  quiver: ^3.0.0-nullsafety.1
+  quiver: ^3.0.1
 
 dev_dependencies:
   flutter_test:

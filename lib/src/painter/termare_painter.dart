@@ -1,16 +1,17 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
-import 'package:termare_view/src/config/cache.dart';
+import 'package:termare_view/src/utils/cache.dart';
 import 'package:termare_view/src/core/buffer.dart';
-import 'package:termare_view/src/core/character.dart';
-import 'package:termare_view/src/core/text_attributes.dart';
+import 'package:termare_view/src/foundation/character.dart';
+import 'package:termare_view/src/foundation/text_attribute.dart';
 import 'package:termare_view/src/termare_controller.dart';
 import 'package:termare_view/src/theme/term_theme.dart';
-import 'package:termare_view/src/utils/custom_log.dart';
+import 'package:termare_view/src/utils/signale/signale.dart';
 
 TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 8192);
 
+// 终端组件的Painter，也是比较重要的部分
 class TermarePainter extends CustomPainter {
   TermarePainter({
     this.controller,
@@ -121,7 +122,7 @@ class TermarePainter extends CustomPainter {
         if (character == null) {
           continue;
         }
-        final TextAttributes attributes = character.textAttributes!;
+        final TextAttribute attributes = character.textAttributes!;
         final Color? foreground = attributes.getForegroundColor(controller);
 
         final Color? background = attributes.getBackgroundColor(controller);
@@ -246,7 +247,7 @@ class TermarePainter extends CustomPainter {
         Rect.fromLTWH(
           x * controller!.theme!.characterWidth!,
           y * controller!.theme!.characterHeight!,
-          cursorWidth!,
+          cursorWidth,
           controller!.theme!.characterHeight!,
         ),
         paint,

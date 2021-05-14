@@ -1,5 +1,6 @@
 typedef _VoidCallback = void Function();
 
+/// 一个极简的观察者模式的实现
 mixin Observable {
   final listeners = <_VoidCallback>{};
 

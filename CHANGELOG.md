@@ -11,3 +11,10 @@
 ## [0.0.4]
 
 * 🚀 improve performance
+## [0.0.5]
+
+* support null-safety!
+## [0.0.6]
+
+* support web.
+* adjust project structure.

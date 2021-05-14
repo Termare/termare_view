@@ -1,13 +1,12 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:termare_view/src/utils/custom_log.dart';
+import 'package:termare_view/src/utils/signale/signale.dart';
 import 'package:termare_view/termare_view.dart';
 
-/// 用来保存终端每个节点的文本风格
+/// 用来描述终端每个节点的文本风格
 
-class TextAttributes {
-  TextAttributes(String textAttributes) {
+class TextAttribute {
+  TextAttribute(String textAttributes) {
     textAttributes = textAttributes;
     for (final String textAttribute in textAttributes.split(';')) {
       if (backgroundList.contains(textAttributes)) {
@@ -20,16 +19,16 @@ class TextAttributes {
     getBackgroundColor = _getBackgroundColor;
   }
 
-  TextAttributes.normal() {
+  TextAttribute.normal() {
     textAttributes = '0';
     getForegroundColor = _getForegroundColor;
     getBackgroundColor = _getBackgroundColor;
   }
 
-  TextAttributes copyWith(String textAttributes, TermareController controller) {
+  TextAttribute copyWith(String textAttributes, TermareController controller) {
     // print(
     //     '入参textAttributes -> $textAttributes 历史 textAttributes ->${this.textAttributes}');
-    final TextAttributes tmpTextAttributes = TextAttributes.normal();
+    final TextAttribute tmpTextAttributes = TextAttribute.normal();
     if (textAttributes == '0' || textAttributes == '00') {
       return tmpTextAttributes;
     }
@@ -147,64 +146,48 @@ class TextAttributes {
       switch (tagChar) {
         case '0':
           return controller!.theme!.black;
-          break;
         case '8':
           return controller!.theme!.lightBlack;
-          break;
         case '1':
           return controller!.theme!.red;
-          break;
         case '9':
           return controller!.theme!.lightRed;
-          break;
         case '2':
           return controller!.theme!.green;
-          break;
         case '10':
           return controller!.theme!.lightGreen;
-          break;
         case '3':
           return controller!.theme!.yellow;
-          break;
         case '11':
           return controller!.theme!.lightYellow;
-          break;
         case '4':
           return controller!.theme!.blue;
-          break;
         case '12':
           return controller!.theme!.lightBlue;
-          break;
         case '5':
           return controller!.theme!.purplishRed;
-          break;
         case '13':
           return controller!.theme!.lightPurplishRed;
-          break;
         case '6':
           return controller!.theme!.cyan;
-          break;
         case '14':
           return controller!.theme!.lightCyan;
-          break;
         case '7':
           return controller!.theme!.white;
-          break;
         case '15':
           return controller!.theme!.lightWhite;
-          break;
       }
     } else if (tag >= 16 && tag <= 231) {
       tag = tag - 16;
-      int v = tag % 6;
-      int v2 = (tag ~/ 6) % 6;
-      int v3 = (tag ~/ 6) ~/ 6;
+      final int red = tag % 6;
+      final int green = (tag ~/ 6) % 6;
+      final int blue = (tag ~/ 6) ~/ 6;
       // print('v---->$v  $v2');
       final Color color = Color.fromARGB(
         255,
-        values[v3],
-        values[v2],
-        values[v],
+        values[blue],
+        values[green],
+        values[red],
       );
       // print('color->$color');
       return color;
@@ -212,77 +195,52 @@ class TextAttributes {
       switch (tag) {
         case 232:
           return const Color(0xff080808);
-          break;
         case 233:
           return const Color(0xff121212);
-          break;
         case 234:
           return const Color(0xff1c1c1c);
-          break;
         case 235:
           return const Color(0xff262626);
-          break;
         case 236:
           return const Color(0xff303030);
-          break;
         case 237:
           return const Color(0xff3a3a3a);
-          break;
         case 238:
           return const Color(0xff444444);
-          break;
         case 239:
           return const Color(0xff4e4e4e);
-          break;
         case 240:
           return const Color(0xff585858);
-          break;
         case 241:
           return const Color(0xff626262);
-          break;
         case 242:
           return const Color(0xff6c6c6c);
-          break;
         case 243:
           return const Color(0xff767676);
-          break;
         case 244:
           return const Color(0xff808080);
-          break;
         case 245:
           return const Color(0xff8a8a8a);
-          break;
         case 246:
           return const Color(0xff949494);
-          break;
         case 247:
           return const Color(0xff9e9e9e);
-          break;
         case 248:
           return const Color(0xff9e9e9e);
-          break;
         case 249:
           return const Color(0xffababab);
-          break;
         case 250:
           return const Color(0xffb2b2b2);
-          break;
         case 251:
           return const Color(0xffc6c6c6);
-          break;
         case 252:
           return const Color(0xffd0d0d0);
-          break;
         case 253:
           return const Color(0xffdadada);
-          break;
         case 254:
           return const Color(0xffe4e4e4);
-          break;
         case 255:
           return const Color(0xffececec);
-          break;
-        //todo
         default:
       }
     }
@@ -302,55 +260,38 @@ class TextAttributes {
     switch (_foreground) {
       case '30':
         return controller!.theme!.black;
-        break;
       case '90':
         return controller!.theme!.lightBlack;
-        break;
       case '31':
         return controller!.theme!.red;
-        break;
       case '91':
         return controller!.theme!.lightRed;
-        break;
       case '32':
         return controller!.theme!.green;
-        break;
       case '92':
         return controller!.theme!.lightGreen;
-        break;
       case '33':
         return controller!.theme!.yellow;
-        break;
       case '93':
         return controller!.theme!.lightYellow;
-        break;
       case '34':
         return controller!.theme!.blue;
-        break;
       case '94':
         return controller!.theme!.lightBlue;
-        break;
       case '35':
         return controller!.theme!.purplishRed;
-        break;
       case '95':
         return controller!.theme!.lightPurplishRed;
-        break;
       case '36':
         return controller!.theme!.cyan;
-        break;
       case '96':
         return controller!.theme!.lightCyan;
-        break;
       case '37':
         return controller!.theme!.white;
-        break;
       case '97':
         return controller!.theme!.lightWhite;
-        break;
       case '39':
         return controller!.theme!.defaultFontColor;
-        break;
       default:
         return controller!.theme!.defaultFontColor;
     }
@@ -367,55 +308,38 @@ class TextAttributes {
     switch (_background) {
       case '8':
         return controller!.theme!.lightBlack;
-        break;
       case '9':
         return controller!.theme!.lightRed;
-        break;
       case '10':
         return controller!.theme!.lightGreen;
-        break;
       case '11':
         return controller!.theme!.lightYellow;
-        break;
       case '12':
         return controller!.theme!.lightBlue;
-        break;
       case '13':
         return controller!.theme!.lightPurplishRed;
-        break;
       case '14':
         return controller!.theme!.lightCyan;
-        break;
       case '15':
         return controller!.theme!.lightWhite;
-        break;
       case '40':
         return controller!.theme!.black;
-        break;
       case '41':
         return controller!.theme!.red;
-        break;
       case '42':
         return controller!.theme!.green;
-        break;
       case '43':
         return controller!.theme!.yellow;
-        break;
       case '44':
         return controller!.theme!.blue;
-        break;
       case '45':
         return controller!.theme!.purplishRed;
-        break;
       case '46':
         return controller!.theme!.cyan;
-        break;
       case '47':
         return controller!.theme!.white;
-        break;
       case '49':
         return controller!.theme!.backgroundColor;
-        break;
       default:
         return controller!.theme!.black;
     }

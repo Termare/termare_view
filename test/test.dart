@@ -30,7 +30,7 @@ Future<void> main() async {
   print('正在卸载 brotli (1.0.7-6build1) ...');
   print(
       '\x1b[31;0f\x1b\x07\x1b[42;37mProgress : [1%]\x1b[0m\x1b[49m\x1b[39m [................]\x1b\x08');
-  await Future<void>.delayed(Duration(seconds: 1));
+  await Future<void>.delayed(const Duration(seconds: 1));
   print(
       '\x1b\x07\x1b[42;37mProgress : [100%]\x1b[0m\x1b[49m\x1b[39m [#############]\x1b\x08');
   print('\x1b\x07\x1b[0;31r\x1b\x08\x1b[1A');

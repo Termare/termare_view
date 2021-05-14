@@ -1,13 +1,18 @@
 import 'dart:math';
-import 'package:termare_view/src/core/character.dart';
+import 'package:termare_view/src/foundation/character.dart';
 import 'package:termare_view/src/termare_controller.dart';
-import 'package:termare_view/src/utils/custom_log.dart';
+import 'package:termare_view/src/utils/signale/signale.dart';
 
+// 这个类作为终端模拟器组件较为核心的部分
+// 主要在于封装了二维数组，考虑到之后的reflow功能
+// 可能需要切换成以为数组
 class Buffer {
   Buffer(this.controller) {
     viewRows = controller.row;
   }
+
   final TermareController controller;
+
   List<List<Character?>> cache = [];
   int _position = 0;
   int get position => _position;
@@ -66,16 +71,17 @@ class Buffer {
     }
   }
 
+  /// 可能存在cache很长的情况，但是后面的很多行都没有内容
   int absoluteLength() {
     final int endRow = cache.length - 1;
     // print('cache.length -> ${cache.length}');
     for (int row = endRow; row > 0; row--) {
       final List<Character?> line = cache[row];
-      if (line == null || line.isEmpty) {
+      if (line.isEmpty) {
         continue;
       }
       for (final Character? character in line) {
-        final bool? isNotEmpty = character?.content?.isNotEmpty;
+        final bool? isNotEmpty = character?.content.isNotEmpty;
         if (isNotEmpty != null && isNotEmpty) {
           // print(
           //     'row + 1:${row + 1} currentPointer.y + 1 :${currentPointer.y + 1}');
@@ -91,7 +97,7 @@ class Buffer {
     final int endColumn = line.length - 1;
     for (int column = endColumn; column > 0; column--) {
       final Character? character = line[column];
-      final bool? isNotEmpty = character?.content?.isNotEmpty;
+      final bool? isNotEmpty = character?.content.isNotEmpty;
       if (isNotEmpty != null && isNotEmpty) {
         // print('$character ${column + 1}');
         return column + 1;
@@ -116,10 +122,10 @@ class Buffer {
       cache.length = row + 1;
       cache[row] = [];
     }
-    if (cache[row] == null) {
-      // 有可能存在[null,null]，这个index能取到值，但是为null
-      cache[row] = [];
-    }
+    // if (cache[row] == null) {
+    //   // 有可能存在[null,null]，这个index能取到值，但是为null
+    //   cache[row] = [];
+    // }
     if (column > cache[row].length - 1) {
       // 防止在 column 上越界
       cache[row].length = column + 1;
@@ -145,6 +151,7 @@ class Buffer {
     // printBuffer();
   }
 
+  /// 这是一个能够打印出当前buffer content的方法
   void printBuffer() {
     for (int row = 0; row < controller.row; row++) {
       // print(lines);
@@ -188,12 +195,13 @@ class Buffer {
       cache.length = row + _position + 1;
       cache[row + _position] = [];
     }
-    if (cache[row + _position] == null) {
-      cache[row + _position] = [];
-    }
+    // if (cache[row + _position] == null) {
+    //   cache[row + _position] = [];
+    // }
     return cache[row + _position];
   }
 
+  /// 通过改变position从而实现终端视图滚动
   void scroll(int line) {
     // print(absoluteLength());
     _position += line;
@@ -211,6 +219,8 @@ class Buffer {
       _position = min(absoluteLength() - viewRows!, _position);
       _position = max(0, _position);
     } else {
+      // 真实高度比终端可是高度还小
+      // 也就是说当前终端显示的内容还不足一页
       _position = 0;
     }
     // print('_position -> $_position');

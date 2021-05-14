@@ -33,7 +33,7 @@ class InputListener extends StatefulWidget {
   final Widget child;
   final InputHandler onTextInput;
   final KeyStrokeHandler onKeyStroke;
-  final ActionHandler onAction;
+  final ActionHandler? onAction;
   final FocusHandler? onFocus;
   final bool autofocus;
   final FocusNode focusNode;
@@ -193,7 +193,7 @@ class InputListenerState extends State<InputListener>
   }
 
   void onAction(TextInputAction action) {
-    widget?.onAction(action);
+    widget.onAction?.call(action);
   }
 }
 

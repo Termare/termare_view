@@ -2,18 +2,16 @@
 /// 终端是严格的高比宽=2:1的字符
 /// 代码来自 https://github.com/termux/termux-app
 
-/**
- * Implementation of wcwidth(3) for Unicode 9.
- *
- * Implementation from https://github.com/jquast/wcwidth but we return 0 for unprintable characters.
- *
- * IMPORTANT:
- * Must be kept in sync with the following:
- * https://github.com/termux/wcwidth
- * https://github.com/termux/libandroid-support
- * https://github.com/termux/termux-packages/tree/master/libandroid-support
- */
-class CharacterWidth {
+/// Implementation of wcwidth(3) for Unicode 9.
+///
+/// Implementation from https://github.com/jquast/wcwidth but we return 0 for unprintable characters.
+///
+/// IMPORTANT:
+/// Must be kept in sync with the following:
+/// https://github.com/termux/wcwidth
+/// https://github.com/termux/libandroid-support
+/// https://github.com/termux/termux-packages/tree/master/libandroid-support
+mixin CharacterWidth {
   // From https://github.com/jquast/wcwidth/blob/master/wcwidth/table_zero.py
   // at commit b29897e5a1b403a0e36f7fc991614981cbc42475 (2020-07-14):
   static final List<List<int>> ZERO_WIDTH = [

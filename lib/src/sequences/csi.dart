@@ -2,12 +2,11 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:termare_view/src/core/buffer.dart';
-import 'package:termare_view/src/core/character.dart';
-import 'package:termare_view/src/core/text_attributes.dart';
-import 'package:termare_view/src/painter/position.dart';
-import 'package:termare_view/src/utils/custom_log.dart';
+import 'package:termare_view/src/foundation/character.dart';
+import 'package:termare_view/src/foundation/text_attribute.dart';
+import 'package:termare_view/src/foundation/position.dart';
+import 'package:termare_view/src/utils/signale/signale.dart';
 import 'package:termare_view/termare_view.dart';
 
 typedef CsiHandler = void Function(
@@ -529,7 +528,7 @@ void selectGraphicRendition(TermareController controller, String sequence) {
   /// 设置颜色属性
   // log('$blue Select Graphic Rendition -> $curSeq');
   if (sequence.isEmpty) {
-    controller.textAttributes = TextAttributes.normal();
+    controller.textAttributes = TextAttribute.normal();
   } else {
     controller.textAttributes = controller.textAttributes!.copyWith(
       sequence,
@@ -602,7 +601,7 @@ class Csi {
   static void handle(TermareController controller, List<int> utf8CodeUnits) {
     final String currentChar = utf8.decode(utf8CodeUnits);
     if (csiSeqHandlerMap.containsKey(currentChar)) {
-      Log.d('curSeq -> $sequence $currentChar');
+      Log.d('current sequence -> $green$sequence $currentChar');
       final CsiHandler handler = csiSeqHandlerMap[currentChar]!;
       // 执行此次序列
       // 执行完清空
