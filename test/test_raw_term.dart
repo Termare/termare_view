@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
-void print(Object object) {
-  stdout.write(object);
-}
+// void print(Object object) {
+//   stdout.write(object);
+// }
 
 void main() {
   // for i in {16..21} {21..16} ; do echo -en "\e[48;5;${i}m \e[0m" ; done ; echo

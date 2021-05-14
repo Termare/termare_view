@@ -18,3 +18,6 @@
 
 * support web.
 * adjust project structure.
+## [0.0.7]
+
+* fix web bug.

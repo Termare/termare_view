@@ -1,6 +1,6 @@
 name: termare_view
-description: 终端模拟器上册组件。
-version: 0.0.6
+description: TermareView is a widget like TermuxView or xterm.js.
+version: 0.0.7
 homepage: https://github.com/termare/termare_view
 
 environment:
