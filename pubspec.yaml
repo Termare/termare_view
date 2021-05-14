@@ -4,13 +4,15 @@ version: 0.0.4
 homepage: https://github.com/termare/termare_view
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
-  collection: ^1.14.13
+  # 判断数组相等
+  collection: ^1.15.0
   flutter:
     sdk: flutter
+  # lrumap
   quiver: ^3.0.0-nullsafety.1
 
 dev_dependencies:

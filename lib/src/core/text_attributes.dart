@@ -81,7 +81,7 @@ class TextAttributes {
   }
 
   // 这玩意保存的是 `32;34` 这类的字符
-  String textAttributes;
+  String? textAttributes;
   // defalut foreground color
   // 这个设置成 37 跟 40 切换主题会有问题
   String _foreground = '39';
@@ -140,58 +140,58 @@ class TextAttributes {
     0xd7,
     0xff,
   ];
-  static Color getExtendedColor(int tag, TermareController controller) {
+  static Color? getExtendedColor(int tag, TermareController? controller) {
     assert(tag >= 0 && tag <= 256);
     final String tagChar = tag.toString();
     if (tag >= 0 && tag < 16) {
       switch (tagChar) {
         case '0':
-          return controller.theme.black;
+          return controller!.theme!.black;
           break;
         case '8':
-          return controller.theme.lightBlack;
+          return controller!.theme!.lightBlack;
           break;
         case '1':
-          return controller.theme.red;
+          return controller!.theme!.red;
           break;
         case '9':
-          return controller.theme.lightRed;
+          return controller!.theme!.lightRed;
           break;
         case '2':
-          return controller.theme.green;
+          return controller!.theme!.green;
           break;
         case '10':
-          return controller.theme.lightGreen;
+          return controller!.theme!.lightGreen;
           break;
         case '3':
-          return controller.theme.yellow;
+          return controller!.theme!.yellow;
           break;
         case '11':
-          return controller.theme.lightYellow;
+          return controller!.theme!.lightYellow;
           break;
         case '4':
-          return controller.theme.blue;
+          return controller!.theme!.blue;
           break;
         case '12':
-          return controller.theme.lightBlue;
+          return controller!.theme!.lightBlue;
           break;
         case '5':
-          return controller.theme.purplishRed;
+          return controller!.theme!.purplishRed;
           break;
         case '13':
-          return controller.theme.lightPurplishRed;
+          return controller!.theme!.lightPurplishRed;
           break;
         case '6':
-          return controller.theme.cyan;
+          return controller!.theme!.cyan;
           break;
         case '14':
-          return controller.theme.lightCyan;
+          return controller!.theme!.lightCyan;
           break;
         case '7':
-          return controller.theme.white;
+          return controller!.theme!.white;
           break;
         case '15':
-          return controller.theme.lightWhite;
+          return controller!.theme!.lightWhite;
           break;
       }
     } else if (tag >= 16 && tag <= 231) {
@@ -289,135 +289,135 @@ class TextAttributes {
     return null;
   }
 
-  Color Function(TermareController controller) getForegroundColor;
-  Color Function(TermareController controller) getBackgroundColor;
+  late Color? Function(TermareController? controller) getForegroundColor;
+  late Color? Function(TermareController? controller) getBackgroundColor;
 
-  Color _getForegroundColor(TermareController controller) {
+  Color? _getForegroundColor(TermareController? controller) {
     if (_foreground == null) {
-      return controller.theme.defaultFontColor;
+      return controller!.theme!.defaultFontColor;
     }
     if (_foregroundExtended) {
-      return getExtendedColor(int.tryParse(_foreground), controller);
+      return getExtendedColor(int.tryParse(_foreground)!, controller);
     }
     switch (_foreground) {
       case '30':
-        return controller.theme.black;
+        return controller!.theme!.black;
         break;
       case '90':
-        return controller.theme.lightBlack;
+        return controller!.theme!.lightBlack;
         break;
       case '31':
-        return controller.theme.red;
+        return controller!.theme!.red;
         break;
       case '91':
-        return controller.theme.lightRed;
+        return controller!.theme!.lightRed;
         break;
       case '32':
-        return controller.theme.green;
+        return controller!.theme!.green;
         break;
       case '92':
-        return controller.theme.lightGreen;
+        return controller!.theme!.lightGreen;
         break;
       case '33':
-        return controller.theme.yellow;
+        return controller!.theme!.yellow;
         break;
       case '93':
-        return controller.theme.lightYellow;
+        return controller!.theme!.lightYellow;
         break;
       case '34':
-        return controller.theme.blue;
+        return controller!.theme!.blue;
         break;
       case '94':
-        return controller.theme.lightBlue;
+        return controller!.theme!.lightBlue;
         break;
       case '35':
-        return controller.theme.purplishRed;
+        return controller!.theme!.purplishRed;
         break;
       case '95':
-        return controller.theme.lightPurplishRed;
+        return controller!.theme!.lightPurplishRed;
         break;
       case '36':
-        return controller.theme.cyan;
+        return controller!.theme!.cyan;
         break;
       case '96':
-        return controller.theme.lightCyan;
+        return controller!.theme!.lightCyan;
         break;
       case '37':
-        return controller.theme.white;
+        return controller!.theme!.white;
         break;
       case '97':
-        return controller.theme.lightWhite;
+        return controller!.theme!.lightWhite;
         break;
       case '39':
-        return controller.theme.defaultFontColor;
+        return controller!.theme!.defaultFontColor;
         break;
       default:
-        return controller.theme.defaultFontColor;
+        return controller!.theme!.defaultFontColor;
     }
   }
 
-  Color _getBackgroundColor(TermareController controller) {
+  Color? _getBackgroundColor(TermareController? controller) {
     if (_background == null) {
       return null;
     }
     if (_backgroundExtended) {
-      return getExtendedColor(int.tryParse(_background), controller);
+      return getExtendedColor(int.tryParse(_background)!, controller);
       // return
     }
     switch (_background) {
       case '8':
-        return controller.theme.lightBlack;
+        return controller!.theme!.lightBlack;
         break;
       case '9':
-        return controller.theme.lightRed;
+        return controller!.theme!.lightRed;
         break;
       case '10':
-        return controller.theme.lightGreen;
+        return controller!.theme!.lightGreen;
         break;
       case '11':
-        return controller.theme.lightYellow;
+        return controller!.theme!.lightYellow;
         break;
       case '12':
-        return controller.theme.lightBlue;
+        return controller!.theme!.lightBlue;
         break;
       case '13':
-        return controller.theme.lightPurplishRed;
+        return controller!.theme!.lightPurplishRed;
         break;
       case '14':
-        return controller.theme.lightCyan;
+        return controller!.theme!.lightCyan;
         break;
       case '15':
-        return controller.theme.lightWhite;
+        return controller!.theme!.lightWhite;
         break;
       case '40':
-        return controller.theme.black;
+        return controller!.theme!.black;
         break;
       case '41':
-        return controller.theme.red;
+        return controller!.theme!.red;
         break;
       case '42':
-        return controller.theme.green;
+        return controller!.theme!.green;
         break;
       case '43':
-        return controller.theme.yellow;
+        return controller!.theme!.yellow;
         break;
       case '44':
-        return controller.theme.blue;
+        return controller!.theme!.blue;
         break;
       case '45':
-        return controller.theme.purplishRed;
+        return controller!.theme!.purplishRed;
         break;
       case '46':
-        return controller.theme.cyan;
+        return controller!.theme!.cyan;
         break;
       case '47':
-        return controller.theme.white;
+        return controller!.theme!.white;
         break;
       case '49':
-        return controller.theme.backgroundColor;
+        return controller!.theme!.backgroundColor;
         break;
       default:
-        return controller.theme.black;
+        return controller!.theme!.black;
     }
   }
 }

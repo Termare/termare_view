@@ -61,9 +61,9 @@ class TermareController with Observable {
   String fontFamily;
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
 
-  void Function() onBell;
-  void Function(TermSize size) sizeChanged;
-  KeyboardInput input;
+  void Function()? onBell;
+  void Function(TermSize size)? sizeChanged;
+  KeyboardInput? input;
 
   /// 通过这个值来判断终端是否需要刷新
   /// 每次从 pty 中读出数据的时候会将当前终端页标记为脏，在下一帧页终端就会进执行刷新
@@ -74,12 +74,12 @@ class TermareController with Observable {
   bool get hasFocus => _hasFocus;
 
   /// controller 对应的终端主题
-  TermareStyle theme;
+  TermareStyle? theme;
 
-  Buffer currentBuffer;
+  Buffer? currentBuffer;
   // 这个buffer在 CSI ? 1049 h 会用到
-  Buffer _alternateBuffer;
-  Buffer mainBuffer;
+  Buffer? _alternateBuffer;
+  Buffer? mainBuffer;
   bool showCursor = true;
   // 当从 pty 读出内容的时候就会自动滑动
   bool _autoScroll = true;
@@ -88,12 +88,12 @@ class TermareController with Observable {
   // 显示背景网格
   bool showBackgroundLine;
   // 终端的标题，正在遇到 osc 序列的时候会改变
-  String terminalTitle = '';
+  String? terminalTitle = '';
 
   int row;
   int column;
-  TextAttributes textAttributes = TextAttributes('0');
-  TextAttributes tmpTextAttributes;
+  TextAttributes? textAttributes = TextAttributes('0');
+  TextAttributes? tmpTextAttributes;
 
   //  这个防抖函数主要是为了处理 resizeWindow
   final Debouncer _debouncer = Debouncer(
@@ -149,14 +149,14 @@ class TermareController with Observable {
   Position tmpPointer = Position(0, 0);
   // 通过这个变量来滑动终端
   void clear() {
-    currentBuffer.clear();
+    currentBuffer!.clear();
     currentPointer = Position(0, 0);
     needBuild();
   }
 
   void switchBufferToAlternate() {
     currentBuffer = _alternateBuffer;
-    currentBuffer.clear();
+    currentBuffer!.clear();
     needBuild();
     notifyListeners();
   }
@@ -181,13 +181,13 @@ class TermareController with Observable {
   }
 
   void setWindowSize(Size size) {
-    final int row = size.height ~/ theme.characterHeight;
+    final int row = size.height ~/ theme!.characterHeight!;
     // 列数
-    final int column = size.width ~/ theme.characterWidth;
+    final int column = size.width ~/ theme!.characterWidth!;
     this.row = row;
     this.column = column;
     // log('setPtyWindowSize $size row:$row column:$column');
-    currentBuffer.setViewPoint(row);
+    currentBuffer!.setViewPoint(row);
     //也就是说如果终端有10列，这10列都能显示东西，但是 `stty size` 命令拿到的列应该是 9
     _debouncer.call(sizeChangedCall);
     needBuild();
@@ -209,7 +209,7 @@ class TermareController with Observable {
 
   void setFontSize(double fontSize) {
     // TODO 有错，不用怀疑，就是有错
-    theme.fontSize = fontSize;
+    theme!.fontSize = fontSize;
     final Size size = window.physicalSize;
     final double screenWidth = size.width / window.devicePixelRatio;
     final double screenHeight = size.height / window.devicePixelRatio;
@@ -252,7 +252,7 @@ class TermareController with Observable {
     currentPointer = Position(
       max(x - 1, 0),
       max(
-        y - 1 + currentBuffer.position,
+        y - 1 + currentBuffer!.position,
         0,
       ),
     );
@@ -315,7 +315,7 @@ class TermareController with Observable {
       wcwidth: characterWidth,
       textAttributes: textAttributes,
     );
-    currentBuffer.write(
+    currentBuffer!.write(
       currentPointer.y,
       currentPointer.x,
       character,
@@ -342,7 +342,7 @@ class TermareController with Observable {
   void execAutoScroll() {
     // print('controller.currentPointer.y -> ${currentPointer.y}');
     // print('buffer.limit -> ${currentBuffer.limit}');
-    if (currentPointer.y + 1 > currentBuffer.limit) {
+    if (currentPointer.y + 1 > currentBuffer!.limit) {
       // print(
       //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
       // 上面这个if其实就是当终端视图下方还有显示内容的时候
@@ -351,7 +351,7 @@ class TermareController with Observable {
         // 只能延时执行刷新
         // print(controller.currentPointer.y + 1 - buffer.limit);
         Future.delayed(const Duration(milliseconds: 10), () {
-          currentBuffer.scroll(currentPointer.y + 1 - currentBuffer.limit);
+          currentBuffer!.scroll(currentPointer.y + 1 - currentBuffer!.limit);
           // currentBuffer.scroll(-1);
           needBuild();
           notifyListeners();
@@ -376,7 +376,7 @@ class TermareController with Observable {
       //   // );
       // }
     }
-    if (currentBuffer.absoluteLength() < currentBuffer.limit) {
+    if (currentBuffer!.absoluteLength() < currentBuffer!.limit) {
       /// 这个触发会在键盘放下的时候，最后一行不在可视窗口底部的时候
       // print(
       //     '自动滑动 absLength:$absLength controller.rowLength:${controller.rowLength} controller.startLength:${controller.startLength}');
@@ -386,8 +386,8 @@ class TermareController with Observable {
         // 只能延时执行刷新
         // print(controller.currentPointer.y + 1 - buffer.limit);
         Future.delayed(const Duration(milliseconds: 10), () {
-          currentBuffer.scroll(
-            currentBuffer.absoluteLength() - currentBuffer.limit,
+          currentBuffer!.scroll(
+            currentBuffer!.absoluteLength() - currentBuffer!.limit,
           );
           needBuild();
           notifyListeners();

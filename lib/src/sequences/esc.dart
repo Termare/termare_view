@@ -8,7 +8,7 @@ import 'package:termare_view/termare_view.dart';
 bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
 
 class Esc {
-  static bool handle(TermareController controller, List<int> utf8CodeUnits) {
+  static void handle(TermareController controller, List<int> utf8CodeUnits) {
     final String currentChar = utf8.decode(utf8CodeUnits);
     // log('currentChar -> $pink< $currentChar >');
     controller.escapeStart = false;

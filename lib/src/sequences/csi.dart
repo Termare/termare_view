@@ -61,22 +61,22 @@ void tmp(TermareController controller, String sequence) {
 }
 
 void insertCharactersHandler(TermareController controller, String sequence) {
-  final Buffer buffer = controller.currentBuffer;
+  final Buffer? buffer = controller.currentBuffer;
 
   /// @ ICH Insert Characters
   /// 向当前所在的位置添加一个空白字符
   /// ICH序列插入Ps空白字符。光标停留在空白字符的开头。光标和右边距之间的文本向右移动。超过右边距的字符将丢失。
   /// 还有点问题，下次记得找一下实际用到的序列
   //TODO
-  final int ps = int.tryParse(sequence);
+  final int ps = int.tryParse(sequence)!;
   for (int i = 0; i < ps; i++) {
     final int startColumn = controller.currentPointer.x;
     // print('startColumn $startColumn');
     final int endColumn = controller.column;
     for (int c = endColumn; c > startColumn; c--) {
-      String source =
-          buffer.getCharacter(controller.currentPointer.y, c - 1)?.content;
-      String target =
+      String? source =
+          buffer!.getCharacter(controller.currentPointer.y, c - 1)?.content;
+      String? target =
           buffer.getCharacter(controller.currentPointer.y, c)?.content;
       // print('移动 ${c - 1}的$source 到 $c的$target');
       // print('移动 $source 到 $target');
@@ -95,7 +95,7 @@ void cursorUp(TermareController controller, String sequence) {
   // A CUU 	Cursor Up
   /// 向上移动光标
   Log.i('CSI Cursor Up');
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
 
   /// ps 默认为1
   ps ??= 1;
@@ -105,7 +105,7 @@ void cursorUp(TermareController controller, String sequence) {
 void cursorDown(TermareController controller, String sequence) {
   // B CUD Cursor Down
   /// 向下移动光标
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToRelativeRow(ps);
 }
@@ -113,7 +113,7 @@ void cursorDown(TermareController controller, String sequence) {
 void cursorForward(TermareController controller, String sequence) {
   // C CUF Cursor Forward
   /// 向前移动光标
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToPosition(ps);
 }
@@ -121,7 +121,7 @@ void cursorForward(TermareController controller, String sequence) {
 void cursorBackward(TermareController controller, String sequence) {
   // D CUB Cursor Backward
   /// 向后移动光标
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   Log.i('D CUB Cursor Backward ps -> $ps');
   if (ps < 100) {
@@ -134,7 +134,7 @@ void cursorBackward(TermareController controller, String sequence) {
 void cursorNextLine(TermareController controller, String sequence) {
   /// E CNL Cursor Next Line
   /// 跟 CUD 差不多，另外需要将光标移动到第一行
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   Log.i('E CNL Cursor Next Line ps -> $ps');
   controller.moveToRelativeRow(ps);
@@ -145,7 +145,7 @@ void cursorBackwardAndToFirstColumn(
     TermareController controller, String sequence) {
   /// F CPL Cursor Backward
   /// 跟 CUU 差不多，另外需要将光标移动到第一行
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToRelativeRow(-ps);
   controller.moveToLineFirstPosition();
@@ -155,7 +155,7 @@ void cursorHorizontalAbsolute(TermareController controller, String sequence) {
   /// G CHA	Cursor Horizontal Absolute
   /// 将光标移动到绝对定位列
   Log.i('将光标移动到绝对定位列');
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToAbsoluteColumn(ps);
   // print('Cursor Horizontal Absolute ps=$ps');
@@ -179,7 +179,7 @@ void cursorPosition(TermareController controller, String sequence) {
   final int column = int.parse(sequence.split(';')[1]);
   Log.i('H CUP Cursor Position row $row column $column');
   controller.moveToOffset(column, row);
-  controller.currentBuffer.isCsiR = true;
+  controller.currentBuffer!.isCsiR = true;
   Log.i('H CUP Cursor Position ${controller.currentPointer}');
 }
 
@@ -187,7 +187,7 @@ void cursorHorizontalTabulation(TermareController controller, String sequence) {
   /// I CHT	Cursor Horizontal Tabulation
   /// 光标向右移动 ps 个 tab 的位置
   /// 这里自己测出 tab 在终端的位置有5个终端字符
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToPosition(ps * 5);
 }
@@ -199,15 +199,15 @@ void selectiveEraseInDisplay(TermareController controller, String sequence) {
   /// 1	Erase from the beginning of the viewport through the cursor.
   /// 2	Erase complete viewport.
   /// 3	Erase scrollback.
-  final Buffer buffer = controller.currentBuffer;
+  final Buffer? buffer = controller.currentBuffer;
   sequence = sequence.replaceAll('?', '');
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 0;
   Log.i('J DECSED	Selective Erase In Display ps $ps');
   switch (ps) {
     case 0:
       // 从光标位置清除到可视窗口末尾
-      final int maxRow = buffer.length;
+      final int maxRow = buffer!.length;
       final int startRow = controller.currentPointer.y;
       for (int row = startRow; row < maxRow; row++) {
         // print('清除$row行');
@@ -225,7 +225,7 @@ void selectiveEraseInDisplay(TermareController controller, String sequence) {
       break;
     case 1:
       // 从可视窗口开始清除到光标位置
-      final int startRow = buffer.position;
+      final int startRow = buffer!.position;
       final int maxRow = controller.currentPointer.y + 1;
       for (int row = startRow; row < maxRow; row++) {
         int maxColumn;
@@ -242,7 +242,7 @@ void selectiveEraseInDisplay(TermareController controller, String sequence) {
     case 2:
       // print('清空可视窗口 ${controller.startLine} ${controller.rowLength}');
       // 从视图左上角清除到视图右下角
-      final int startRow = buffer.position;
+      final int startRow = buffer!.position;
       final int maxRow = startRow + controller.row;
       for (int row = startRow; row < maxRow; row++) {
         // print('删除 $row 行');
@@ -261,7 +261,7 @@ void selectiveEraseInDisplay(TermareController controller, String sequence) {
 
       /// 最大行为缓存开始的前一行
 
-      final int maxRow = buffer.position;
+      final int maxRow = buffer!.position;
       for (int row = startRow; row < maxRow; row++) {
         // print('删除 $row 行');
         for (int column = 0; column < controller.column; column++) {
@@ -280,9 +280,9 @@ void eraseInLine(TermareController controller, String sequence) {
   /// 1	Erase from the beginning of the line through the cursor.
   /// 2	Erase complete line.
 
-  final Buffer buffer = controller.currentBuffer;
+  final Buffer? buffer = controller.currentBuffer;
   sequence = sequence.replaceAll('?', '');
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 0;
   Log.i('K EL Erase In Line ps ->$ps');
   // 删除字符
@@ -292,7 +292,7 @@ void eraseInLine(TermareController controller, String sequence) {
       final int startColumn = controller.currentPointer.x;
       final int endColumn = controller.column;
       for (int column = startColumn; column < endColumn; column++) {
-        buffer.write(controller.currentPointer.y, column, null);
+        buffer!.write(controller.currentPointer.y, column, null);
       }
       break;
     case 1:
@@ -300,7 +300,7 @@ void eraseInLine(TermareController controller, String sequence) {
       const int startColumn = 0;
       final int endColumn = controller.currentPointer.x;
       for (int column = startColumn; column < endColumn; column++) {
-        buffer.write(controller.currentPointer.y, column, null);
+        buffer!.write(controller.currentPointer.y, column, null);
       }
       break;
     case 2:
@@ -317,8 +317,8 @@ void insertLine(TermareController controller, String sequence) {
   /// 在当前光标的位置插入空白行
   /// 对于滚动顶部的每一行插入，滚动底部的每一行都将被删除。光标设置在第一列。如果光标在滚动边距之外，则IL无效。
 
-  final Buffer buffer = controller.currentBuffer;
-  int ps = int.tryParse(sequence);
+  final Buffer? buffer = controller.currentBuffer;
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToRelativeRow(1);
   for (int i = 0; i < ps; i++) {
@@ -338,13 +338,13 @@ void deleteCharacter(TermareController controller, String sequence) {
   /// P DCH	Delete Character
   /// 删除字符后，光标和右边距之间的其余字符将向左移动。角色属性随角色一起移动。终端在右边距添加空白字符。
   /// vscode与macos原生终端均未发现删除效果
-  final Buffer buffer = controller.currentBuffer;
-  int ps = int.tryParse(sequence);
+  final Buffer? buffer = controller.currentBuffer;
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   Log.i('P DCH	Delete Character ps:$ps');
 
   for (int column = 0; column < ps; column++) {
-    Character character = buffer.getCharacter(
+    Character? character = buffer!.getCharacter(
       controller.currentPointer.y,
       controller.currentPointer.x,
     );
@@ -357,7 +357,7 @@ void deleteCharacter(TermareController controller, String sequence) {
     final int startColumn = controller.currentPointer.x;
     final int endColumn = controller.column;
     for (int column = startColumn; column < endColumn; column++) {
-      final Character character = buffer.getCharacter(
+      final Character? character = buffer.getCharacter(
         controller.currentPointer.y,
         column + 1,
       );
@@ -369,14 +369,14 @@ void deleteCharacter(TermareController controller, String sequence) {
 void scrollUp(TermareController controller, String sequence) {
   /// S SU Scroll Up
   /// Scroll Ps lines up
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToRelativeRow(ps);
 }
 
 void scrollDown(TermareController controller, String sequence) {
   /// T SD Scroll Down
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToRelativeRow(-ps);
 }
@@ -384,20 +384,20 @@ void scrollDown(TermareController controller, String sequence) {
 void eraseCharacter(TermareController controller, String sequence) {
   /// X ECH	Erase Character
 
-  final Buffer buffer = controller.currentBuffer;
-  int ps = int.tryParse(sequence);
+  final Buffer? buffer = controller.currentBuffer;
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   final int startColumn = controller.currentPointer.x;
   final int endColumn = startColumn + ps;
   for (int column = startColumn; column < endColumn; column++) {
     // 如果这个一行都没有字符
-    buffer.write(controller.currentPointer.y, column, null);
+    buffer!.write(controller.currentPointer.y, column, null);
   }
 }
 
 void cursorBackwardTabulation(TermareController controller, String sequence) {
   /// Z CBT	Cursor Backward Tabulation
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   Log.i('Z CBT	Cursor Backward Tabulation $ps');
   controller.moveToRelativeColumn(-ps * 5);
@@ -421,14 +421,14 @@ void repeatPrecedingCharacter(TermareController controller, String sequence) {
   /// b REP	Repeat Preceding Character
   /// 重复前面的字符 ps 次数
 
-  final Buffer buffer = controller.currentBuffer;
-  int ps = int.tryParse(sequence);
+  final Buffer buffer = controller.currentBuffer!;
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   Log.i('b REP	Repeat Preceding Character $ps');
   final Position position = controller.currentPointer;
   final int row = position.y;
   final int column = max(position.x - ps, 0);
-  final String data = buffer.getCharacter(row, column).content;
+  final String data = buffer.getCharacter(row, column)!.content;
   // print('data ->${data * 3}');
   controller.write(data * ps);
 }
@@ -441,7 +441,7 @@ void primaryDeviceAttributes(TermareController controller, String sequence) {
 void verticalPositionAbsolute(TermareController controller, String sequence) {
   /// d VPA	Vertical Position Absolute
   /// 移动光标到垂直的绝对位置
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToAbsoluteRow(ps);
 }
@@ -449,7 +449,7 @@ void verticalPositionAbsolute(TermareController controller, String sequence) {
 void verticalPositionRelative(TermareController controller, String sequence) {
   /// e VPR	Vertical Position Relative
   /// 移动光标到垂直的相对位置
-  int ps = int.tryParse(sequence);
+  int? ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToRelativeRow(ps);
 }
@@ -531,7 +531,7 @@ void selectGraphicRendition(TermareController controller, String sequence) {
   if (sequence.isEmpty) {
     controller.textAttributes = TextAttributes.normal();
   } else {
-    controller.textAttributes = controller.textAttributes.copyWith(
+    controller.textAttributes = controller.textAttributes!.copyWith(
       sequence,
       controller,
     );
@@ -566,7 +566,7 @@ void setTopandBottomMargin(TermareController controller, String sequence) {
   }
   final int row = int.parse(sequence.split(';')[1]);
 
-  controller.currentBuffer.setViewPoint(row);
+  controller.currentBuffer!.setViewPoint(row);
 }
 
 void saveCursor(TermareController controller, String sequence) {
@@ -603,7 +603,7 @@ class Csi {
     final String currentChar = utf8.decode(utf8CodeUnits);
     if (csiSeqHandlerMap.containsKey(currentChar)) {
       Log.d('curSeq -> $sequence $currentChar');
-      final CsiHandler handler = csiSeqHandlerMap[currentChar];
+      final CsiHandler handler = csiSeqHandlerMap[currentChar]!;
       // 执行此次序列
       // 执行完清空
       handler(controller, sequence);
@@ -615,13 +615,13 @@ class Csi {
   }
 }
 
-void earseOneLine(TermareController controller, Buffer buffer) {
+void earseOneLine(TermareController controller, Buffer? buffer) {
   const int startColumn = 0;
   final int endColumn = controller.column;
   for (int column = startColumn; column < endColumn; column++) {
     // final Character character =
     //     buffer.getCharacter(controller.currentPointer.y, column);
     // Log.e('清除第$column列 $character 总列数为:$endColumn');
-    buffer.write(controller.currentPointer.y, column, null);
+    buffer!.write(controller.currentPointer.y, column, null);
   }
 }

@@ -78,12 +78,12 @@ class KeyHandler {
   //     TERMCAP_TO_KEYCODE.put("@8", KEYCODE_NUMPAD_ENTER);
   // }
 
-  static String getCodeFromTermcap(
+  static String? getCodeFromTermcap(
     String termcap,
     bool cursorKeysApplication,
     bool keypadApplication,
   ) {
-    int keyCodeAndMod = TERMCAP_TO_KEYCODE[termcap];
+    int? keyCodeAndMod = TERMCAP_TO_KEYCODE[termcap];
     if (keyCodeAndMod == null) return null;
     int keyCode = keyCodeAndMod;
     int keyMod = 0;
@@ -109,7 +109,7 @@ class KeyHandler {
   // 通过指定的按键和指定的模式
   // 返回应该写入终端的字符
 
-  static String getCode(
+  static String? getCode(
     int keyCode,
     int keyMode,
     bool cursorApp,

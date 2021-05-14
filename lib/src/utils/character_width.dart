@@ -507,10 +507,10 @@ class CharacterWidth {
   }
 
   /** The width at an index position in a java char array. */
-  static int widthInArray(String chars, int index) {
-    // String c = chars[index];
-    // return Character.isHighSurrogate(c)
-    //     ? width(Character.toCodePoint(c, chars[index + 1]))
-    //     : width(c);
-  }
+  // static int widthInArray(String chars, int index) {
+  // String c = chars[index];
+  // return Character.isHighSurrogate(c)
+  //     ? width(Character.toCodePoint(c, chars[index + 1]))
+  //     : width(c);
+  // }
 }

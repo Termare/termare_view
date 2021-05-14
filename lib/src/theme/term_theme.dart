@@ -98,28 +98,28 @@ class TermareStyle {
 
   TermareStyle copyWith({
     double fontSize = 12,
-    Color cursorColor,
-    Color backgroundColor,
-    Color defaultFontColor,
-    Color black,
-    Color lightBlack,
-    Color red,
-    Color lightRed,
-    Color green,
-    Color lightGreen,
-    Color yellow,
-    Color lightYellow,
-    Color blue,
-    Color lightBlue,
-    Color purplishRed,
-    Color lightPurplishRed,
-    Color cyan,
-    Color lightCyan,
-    Color white,
-    Color lightWhite,
+    Color? cursorColor,
+    Color? backgroundColor,
+    Color? defaultFontColor,
+    Color? black,
+    Color? lightBlack,
+    Color? red,
+    Color? lightRed,
+    Color? green,
+    Color? lightGreen,
+    Color? yellow,
+    Color? lightYellow,
+    Color? blue,
+    Color? lightBlue,
+    Color? purplishRed,
+    Color? lightPurplishRed,
+    Color? cyan,
+    Color? lightCyan,
+    Color? white,
+    Color? lightWhite,
   }) {
     return TermareStyle(
-      fontSize: fontSize ?? this.fontSize,
+      fontSize: fontSize,
       cursorColor: cursorColor ?? this.cursorColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
       defaultFontColor: defaultFontColor ?? this.defaultFontColor,
@@ -147,31 +147,31 @@ class TermareStyle {
   final Color defaultFontColor;
 
   /// 前景色30 背景色40 黑色
-  final Color black;
-  final Color lightBlack;
+  final Color? black;
+  final Color? lightBlack;
   // 前景色31 背景色41 红色
-  final Color red;
-  final Color lightRed;
+  final Color? red;
+  final Color? lightRed;
   // 前景色32 背景色42 绿色
-  final Color green;
-  final Color lightGreen;
+  final Color? green;
+  final Color? lightGreen;
   // 前景色33 背景色43 黄色
-  final Color yellow;
-  final Color lightYellow;
+  final Color? yellow;
+  final Color? lightYellow;
   // 前景色34 背景色44 蓝色
-  final Color blue;
-  final Color lightBlue;
+  final Color? blue;
+  final Color? lightBlue;
   // 前景色35 背景色45 紫红色
-  final Color purplishRed;
-  final Color lightPurplishRed;
+  final Color? purplishRed;
+  final Color? lightPurplishRed;
   // 前景色36 背景色46 青蓝色
-  final Color cyan;
-  final Color lightCyan;
+  final Color? cyan;
+  final Color? lightCyan;
   // 前景色37 背景色47 白色
-  final Color white;
-  final Color lightWhite;
-  double get characterWidth => letterWidthMap[fontSize.toInt()];
-  double get characterHeight => letterHeightMap[fontSize.toInt()];
+  final Color? white;
+  final Color? lightWhite;
+  double? get characterWidth => letterWidthMap[fontSize.toInt()];
+  double? get characterHeight => letterHeightMap[fontSize.toInt()];
   double fontSize;
   @override
   String toString() {

@@ -11,12 +11,12 @@ import 'dart:async';
 class Debouncer {
   Debouncer({this.delay});
 
-  final Duration delay;
-  Timer _timer;
+  final Duration? delay;
+  Timer? _timer;
 
   void call(void Function() action) {
     _timer?.cancel();
-    _timer = Timer(delay, action);
+    _timer = Timer(delay!, action);
   }
 
   /// Notifies if the delayed call is active.

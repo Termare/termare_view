@@ -6,12 +6,12 @@ import 'package:termare_view/termare_view.dart';
 // 只针对终端模拟器设计的滑动视图
 class ScrollViewTerm extends StatefulWidget {
   const ScrollViewTerm({
-    Key key,
-    @required this.controller,
+    Key? key,
+    required this.controller,
     this.child,
   }) : super(key: key);
-  final TermareController controller;
-  final Widget child;
+  final TermareController? controller;
+  final Widget? child;
 
   @override
   _ScrollViewTermState createState() => _ScrollViewTermState();
@@ -19,7 +19,7 @@ class ScrollViewTerm extends StatefulWidget {
 
 class _ScrollViewTermState extends State<ScrollViewTerm>
     with TickerProviderStateMixin {
-  AnimationController animationController;
+  late AnimationController animationController;
   double curOffset = 0;
   bool onPanUpdate = false;
   @override
@@ -32,12 +32,12 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
 
           curOffset -= event.scrollDelta.dy;
           final int scrollLine = -curOffset.toInt() ~/
-              widget.controller.theme.characterHeight.toInt();
+              widget.controller!.theme!.characterHeight!.toInt();
           // print('scrollLine -> $scrollLine');
           if (scrollLine != 0) {
-            widget.controller.currentBuffer.scroll(scrollLine);
+            widget.controller!.currentBuffer!.scroll(scrollLine);
             curOffset = 0;
-            widget.controller.notifyListeners();
+            widget.controller!.notifyListeners();
           }
         }
       },
@@ -49,27 +49,27 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
         },
         onPanUpdate: (details) {
           // 手在滑动的时候禁止自动滚动
-          widget.controller.disableAutoScroll();
+          widget.controller!.disableAutoScroll();
           // 下一帧标记为脏
-          widget.controller.needBuild();
+          widget.controller!.needBuild();
           curOffset += details.delta.dy;
 
           final int scrollLine = -curOffset.toInt() ~/
-              widget.controller.theme.characterHeight.toInt();
+              widget.controller!.theme!.characterHeight!.toInt();
           // print('scrollLine -> $scrollLine');
           if (scrollLine != 0) {
-            widget.controller.currentBuffer.scroll(scrollLine);
+            widget.controller!.currentBuffer!.scroll(scrollLine);
             curOffset = 0;
-            widget.controller.notifyListeners();
+            widget.controller!.notifyListeners();
           }
         },
         onPanEnd: (details) {
           onPanUpdate = false;
-          widget.controller.needBuild();
+          widget.controller!.needBuild();
           final double velocity =
-              1.0 / (0.050 * WidgetsBinding.instance.window.devicePixelRatio);
+              1.0 / (0.050 * WidgetsBinding.instance!.window.devicePixelRatio);
           final double distance =
-              1.0 / WidgetsBinding.instance.window.devicePixelRatio;
+              1.0 / WidgetsBinding.instance!.window.devicePixelRatio;
           final Tolerance tolerance = Tolerance(
             velocity: velocity, // logical pixels per second
             distance: distance, // logical pixels
@@ -95,14 +95,14 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
             }
             final double shouldOffset = animationController.value - curOffset;
 
-            widget.controller.needBuild();
+            widget.controller!.needBuild();
             final int scrollLine = -shouldOffset.toInt() ~/
-                widget.controller.theme.characterHeight.toInt();
+                widget.controller!.theme!.characterHeight!.toInt();
             // print('scrollLine -> $scrollLine');
             if (scrollLine != 0) {
-              widget.controller.currentBuffer.scroll(scrollLine);
+              widget.controller!.currentBuffer!.scroll(scrollLine);
               curOffset = animationController.value;
-              widget.controller.notifyListeners();
+              widget.controller!.notifyListeners();
             }
           });
           animationController.animateWith(clampingScrollSimulation);

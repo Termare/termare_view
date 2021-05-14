@@ -8,18 +8,18 @@ class Buffer {
     viewRows = controller.row;
   }
   final TermareController controller;
-  List<List<Character>> cache = [];
+  List<List<Character?>> cache = [];
   int _position = 0;
   int get position => _position;
-  int viewRows;
+  int? viewRows;
   // 这是默认的limit，在 	CSI Ps ; Ps r 这个序列后，可滑动的视口会变化
-  int get limit => _position + viewRows;
+  int get limit => _position + viewRows!;
   int maxLine = 1000;
   bool isCsiR = false;
   int get length => cache.length;
 
   // 在 csi r 序列到来时，
-  Map<int, List<Character>> fixedLine = {};
+  Map<int, List<Character?>> fixedLine = {};
   void clear() {
     cache.clear();
   }
@@ -46,7 +46,7 @@ class Buffer {
       for (int i = rows; i < controller.row; i++) {
         // print('缓存第${i + 1}行');
         fixedLine[i] = [];
-        fixedLine[i].length = controller.row;
+        fixedLine[i]!.length = controller.row;
         // String line = '';
         // for (int column = 0; column < controller.column; column++) {
         //   final Character character = getCharacter(i, column);
@@ -70,12 +70,12 @@ class Buffer {
     final int endRow = cache.length - 1;
     // print('cache.length -> ${cache.length}');
     for (int row = endRow; row > 0; row--) {
-      final List<Character> line = cache[row];
+      final List<Character?> line = cache[row];
       if (line == null || line.isEmpty) {
         continue;
       }
-      for (final Character character in line) {
-        final bool isNotEmpty = character?.content?.isNotEmpty;
+      for (final Character? character in line) {
+        final bool? isNotEmpty = character?.content?.isNotEmpty;
         if (isNotEmpty != null && isNotEmpty) {
           // print(
           //     'row + 1:${row + 1} currentPointer.y + 1 :${currentPointer.y + 1}');
@@ -87,11 +87,11 @@ class Buffer {
   }
 
   int getRowLength(int row) {
-    final List<Character> line = getCharacterLines(row);
+    final List<Character?> line = getCharacterLines(row)!;
     final int endColumn = line.length - 1;
     for (int column = endColumn; column > 0; column--) {
-      final Character character = line[column];
-      final bool isNotEmpty = character?.content?.isNotEmpty;
+      final Character? character = line[column];
+      final bool? isNotEmpty = character?.content?.isNotEmpty;
       if (isNotEmpty != null && isNotEmpty) {
         // print('$character ${column + 1}');
         return column + 1;
@@ -100,7 +100,7 @@ class Buffer {
     return 0;
   }
 
-  void write(int row, int column, Character entity) {
+  void write(int row, int column, Character? entity) {
     if (row >= maxLine) {
       // TODO 有问题，不用怀疑
       // print('ro - max ${row - maxLine}');
@@ -125,12 +125,12 @@ class Buffer {
       cache[row].length = column + 1;
     }
     if (fixedLine.containsKey(row - position)) {
-      fixedLine[row - position][column] = entity;
+      fixedLine[row - position]![column] = entity;
       isCsiR = false;
       for (int i = row - position; i < controller.row; i++) {
         String line = '';
         for (int column = 0; column < controller.column; column++) {
-          final Character character = getCharacter(i, column);
+          final Character? character = getCharacter(i, column);
           if (character == null) {
             line += ' ';
             continue;
@@ -151,7 +151,7 @@ class Buffer {
       // print(getCharacterLines(row));
       String line = '$row:';
       for (int column = 0; column < controller.column; column++) {
-        final Character character = getCharacter(row, column);
+        final Character? character = getCharacter(row, column);
         if (character == null) {
           line += ' ';
           continue;
@@ -162,7 +162,7 @@ class Buffer {
     }
   }
 
-  Character getCharacter(
+  Character? getCharacter(
     int row,
     int column,
   ) {
@@ -171,14 +171,14 @@ class Buffer {
       cache.length = row + _position + 1;
       cache[row + _position] = [];
     }
-    final List<Character> lines = getCharacterLines(row);
+    final List<Character?> lines = getCharacterLines(row)!;
     if (column > lines.length - 1) {
       lines.length = column + _position + 1;
     }
     return lines[column];
   }
 
-  List<Character> getCharacterLines(
+  List<Character?>? getCharacterLines(
     int row,
   ) {
     if (fixedLine.isNotEmpty && fixedLine.containsKey(row)) {
@@ -198,7 +198,7 @@ class Buffer {
     // print(absoluteLength());
     _position += line;
     // _position = max(0, _position);
-    if (absoluteLength() > viewRows) {
+    if (absoluteLength() > viewRows!) {
       if (viewRows != controller.row) {
         // print('!!!!!');
         // final tmp = cache[limit - 2];
@@ -208,7 +208,7 @@ class Buffer {
         // cache[limit - 2] = cache[limit - 1];
         // cache[limit - 1] = tmp;
       }
-      _position = min(absoluteLength() - viewRows, _position);
+      _position = min(absoluteLength() - viewRows!, _position);
       _position = max(0, _position);
     } else {
       _position = 0;
