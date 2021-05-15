@@ -44,7 +44,7 @@ controller.write('hello termare_view');
 
 ## 为什么没有使用 xterm.dart
 
-本仓库与 xterm.dart 的开始时间基本上是差不多的，我尝试将本仓库的内容合并到 xterm.dart，但最后由于代码风格
+本仓库与 xterm.dart 的开始时间基本上是差不多的，我尝试将本仓库的内容合并到 xterm.dart，但最后由于代码风格
 太不统一，还是决定像 termux-view 那样，单独维护一个更适应安卓端场景的终端。
 
 ## 更详细的例子
