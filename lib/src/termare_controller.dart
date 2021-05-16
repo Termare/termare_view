@@ -106,6 +106,18 @@ class TermareController with Observable {
     needBuild();
   }
 
+  void enableCursor() {
+    showCursor = true;
+    needBuild();
+    notifyListeners();
+  }
+
+  void disableCursor() {
+    showCursor = false;
+    needBuild();
+    notifyListeners();
+  }
+
   void enableAutoScroll() {
     _autoScroll = true;
   }
