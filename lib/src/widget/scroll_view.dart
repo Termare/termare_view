@@ -35,7 +35,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
               widget.controller!.theme!.characterHeight!.toInt();
           // print('scrollLine -> $scrollLine');
           if (scrollLine != 0) {
-            widget.controller!.currentBuffer!.scroll(scrollLine);
+            widget.controller!.currentBuffer.scroll(scrollLine);
             curOffset = 0;
             widget.controller!.notifyListeners();
           }
@@ -58,7 +58,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
               widget.controller!.theme!.characterHeight!.toInt();
           // print('scrollLine -> $scrollLine');
           if (scrollLine != 0) {
-            widget.controller!.currentBuffer!.scroll(scrollLine);
+            widget.controller!.currentBuffer.scroll(scrollLine);
             curOffset = 0;
             widget.controller!.notifyListeners();
           }
@@ -100,7 +100,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
                 widget.controller!.theme!.characterHeight!.toInt();
             // print('scrollLine -> $scrollLine');
             if (scrollLine != 0) {
-              widget.controller!.currentBuffer!.scroll(scrollLine);
+              widget.controller!.currentBuffer.scroll(scrollLine);
               curOffset = animationController.value;
               widget.controller!.notifyListeners();
             }
