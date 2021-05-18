@@ -195,9 +195,9 @@ class Buffer {
       cache.length = row + _position + 1;
       cache[row + _position] = [];
     }
-    // if (cache[row + _position] == null) {
-    //   cache[row + _position] = [];
-    // }
+    if (cache[row + _position] == null) {
+      cache[row + _position] = [];
+    }
     return cache[row + _position];
   }
 
