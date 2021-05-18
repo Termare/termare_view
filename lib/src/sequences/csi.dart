@@ -178,7 +178,7 @@ void cursorPosition(TermareController controller, String sequence) {
   final int column = int.parse(sequence.split(';')[1]);
   Log.i('H CUP Cursor Position row $row column $column');
   controller.moveToOffset(column, row);
-  controller.currentBuffer!.isCsiR = true;
+  controller.currentBuffer.isCsiR = true;
   Log.i('H CUP Cursor Position ${controller.currentPointer}');
 }
 
@@ -420,7 +420,7 @@ void repeatPrecedingCharacter(TermareController controller, String sequence) {
   /// b REP	Repeat Preceding Character
   /// 重复前面的字符 ps 次数
 
-  final Buffer buffer = controller.currentBuffer!;
+  final Buffer buffer = controller.currentBuffer;
   int? ps = int.tryParse(sequence);
   ps ??= 1;
   Log.i('b REP	Repeat Preceding Character $ps');
@@ -479,8 +479,8 @@ void setMode(TermareController controller, String sequence) {
         controller.showCursor = true;
         break;
       case '1049':
-        controller.switchBufferToAlternate();
         controller.saveCursor();
+        controller.switchBufferToAlternate();
         break;
       default:
     }
@@ -508,8 +508,8 @@ void resetMode(TermareController controller, String sequence) {
         ///
         break;
       case '1049':
-        controller.switchBufferToMain();
         controller.restoreCursor();
+        controller.switchBufferToMain();
         break;
       default:
     }
@@ -565,7 +565,7 @@ void setTopandBottomMargin(TermareController controller, String sequence) {
   }
   final int row = int.parse(sequence.split(';')[1]);
 
-  controller.currentBuffer!.setViewPoint(row);
+  controller.currentBuffer.setViewPoint(row);
 }
 
 void saveCursor(TermareController controller, String sequence) {
