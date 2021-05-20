@@ -1,41 +1,53 @@
+import 'package:termare_view/termare_view.dart';
+
 import 'core/logger.dart';
 
 Logger defaultLogger = Logger();
 
 class Log {
   static void d(Object object, {String? tag}) {
-    defaultLogger.d(
-      object,
-      tag: tag,
-    );
+    if (enableTerminalLog) {
+      defaultLogger.d(
+        object,
+        tag: tag,
+      );
+    }
   }
 
   static void i(Object object, {String? tag}) {
-    defaultLogger.i(
-      object,
-      tag: tag,
-    );
+    if (enableTerminalLog) {
+      defaultLogger.i(
+        object,
+        tag: tag,
+      );
+    }
   }
 
   static void w(Object object, {String? tag}) {
-    defaultLogger.w(
-      object,
-      tag: tag,
-    );
+    if (enableTerminalLog) {
+      defaultLogger.w(
+        object,
+        tag: tag,
+      );
+    }
   }
 
   static void v(Object object, {String? tag}) {
-    defaultLogger.v(
-      object,
-      tag: tag,
-    );
+    if (enableTerminalLog) {
+      defaultLogger.v(
+        object,
+        tag: tag,
+      );
+    }
   }
 
   static void e(Object object, {String? tag}) {
-    defaultLogger.e(
-      object,
-      tag: tag,
-    );
+    if (enableTerminalLog) {
+      defaultLogger.e(
+        object,
+        tag: tag,
+      );
+    }
   }
 
   static void custom(
