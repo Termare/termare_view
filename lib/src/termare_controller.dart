@@ -30,6 +30,7 @@ String defaultColor = '\x1b[0m';
 
 class TermareController with Observable {
   TermareController({
+    this.enableLog = true,
     this.theme,
     this.row = 25,
     this.column = 80,
@@ -37,11 +38,15 @@ class TermareController with Observable {
     this.fontFamily = 'packages/termare_view/DroidSansMono',
     this.terminalTitle,
   }) {
+    enableTerminalLog = enableLog;
     theme ??= TermareStyles.vsCode;
     mainBuffer = Buffer(this);
     _alternateBuffer = Buffer(this);
     currentBuffer = mainBuffer;
   }
+
+  /// 是否开启日志打印
+  late final bool enableLog;
   @override
   bool operator ==(dynamic other) {
     // 判断是否是非
