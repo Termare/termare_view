@@ -137,7 +137,6 @@ class TermarePainter extends CustomPainter {
               style: TextStyle(
                 fontSize: controller!.theme!.fontSize,
                 color: foreground,
-                fontWeight: FontWeight.bold,
                 fontFamilyFallback: [
                   controller!.fontFamily,
                 ],
@@ -156,7 +155,6 @@ class TermarePainter extends CustomPainter {
               style: TextStyle(
                 fontSize: controller!.theme!.fontSize,
                 color: foreground,
-                fontWeight: FontWeight.bold,
                 fontFamilyFallback: [
                   controller!.fontFamily,
                 ],
