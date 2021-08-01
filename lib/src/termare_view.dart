@@ -127,6 +127,7 @@ class _TermareViewState extends State<TermareView> {
           );
           if (key.logicalKey == LogicalKeyboardKey.controlLeft ||
               key.logicalKey == LogicalKeyboardKey.controlRight) {
+            // 当左边的ctrl或者右边的ctrl按下的时候
             widget.controller!.ctrlEnable = true;
           }
           if (input != null) {

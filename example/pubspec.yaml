@@ -26,6 +26,7 @@ dependencies:
   termare_view:
     path: ../
 
+  simple_animations: ^3.1.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
