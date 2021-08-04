@@ -23,7 +23,7 @@ import 'utils/signale/signale.dart';
 
 String red = '\x1b[1;31m';
 String pink = '\x1b[1;35m';
-String green = '\x1B[1;32m';
+String green = '\x1B[1;42;37m';
 String blue = '\x1b[1;36m';
 String whiteBackground = '\x1b[47m';
 String defaultColor = '\x1b[0m';
@@ -335,11 +335,19 @@ class TermareController with Observable {
       wcwidth: characterWidth,
       textAttributes: textAttributes,
     );
+
     currentBuffer.write(
       currentPointer.y,
       currentPointer.x,
       character,
     );
+    if (characterWidth == 2) {
+      currentBuffer.write(
+        currentPointer.y,
+        currentPointer.x + 1,
+        null,
+      );
+    }
     // final Color foreground = textAttributes.foreground(this);
     // final TextPainter painter = painterCache.getOrPerformLayout(
     //   TextSpan(

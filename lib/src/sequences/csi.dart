@@ -279,7 +279,7 @@ void eraseInLine(TermareController controller, String sequence) {
   /// 1	Erase from the beginning of the line through the cursor.
   /// 2	Erase complete line.
 
-  final Buffer? buffer = controller.currentBuffer;
+  final Buffer buffer = controller.currentBuffer;
   sequence = sequence.replaceAll('?', '');
   int? ps = int.tryParse(sequence);
   ps ??= 0;
@@ -291,7 +291,7 @@ void eraseInLine(TermareController controller, String sequence) {
       final int startColumn = controller.currentPointer.x;
       final int endColumn = controller.column;
       for (int column = startColumn; column < endColumn; column++) {
-        buffer!.write(controller.currentPointer.y, column, null);
+        buffer.write(controller.currentPointer.y, column, null);
       }
       break;
     case 1:
@@ -299,7 +299,7 @@ void eraseInLine(TermareController controller, String sequence) {
       const int startColumn = 0;
       final int endColumn = controller.currentPointer.x;
       for (int column = startColumn; column < endColumn; column++) {
-        buffer!.write(controller.currentPointer.y, column, null);
+        buffer.write(controller.currentPointer.y, column, null);
       }
       break;
     case 2:
@@ -316,7 +316,7 @@ void insertLine(TermareController controller, String sequence) {
   /// 在当前光标的位置插入空白行
   /// 对于滚动顶部的每一行插入，滚动底部的每一行都将被删除。光标设置在第一列。如果光标在滚动边距之外，则IL无效。
 
-  final Buffer? buffer = controller.currentBuffer;
+  final Buffer buffer = controller.currentBuffer;
   int? ps = int.tryParse(sequence);
   ps ??= 1;
   controller.moveToRelativeRow(1);
@@ -332,36 +332,44 @@ void deleteLine(TermareController controller, String sequence) {
   /// M DL Delete Line
   /// 删除活动的行
 }
-
+// Bug !!!!!!
 void deleteCharacter(TermareController controller, String sequence) {
   /// P DCH	Delete Character
   /// 删除字符后，光标和右边距之间的其余字符将向左移动。角色属性随角色一起移动。终端在右边距添加空白字符。
-  /// vscode与macos原生终端均未发现删除效果
-  final Buffer? buffer = controller.currentBuffer;
+  final Buffer buffer = controller.currentBuffer;
   int? ps = int.tryParse(sequence);
   ps ??= 1;
   Log.i('P DCH	Delete Character ps:$ps');
 
-  for (int column = 0; column < ps; column++) {
-    Character? character = buffer!.getCharacter(
-      controller.currentPointer.y,
-      controller.currentPointer.x,
-    );
-    // print('删除 ${controller.currentPointer} 字符 ${character?.content} ');
+  final int startColumn = controller.currentPointer.x;
+  final int endColumn = startColumn + ps;
+  for (int column = startColumn; column < endColumn; column++) {
+    // final Character? character = buffer!.getCharacter(
+    //   controller.currentPointer.y,
+    //   controller.currentPointer.x + column,
+    // );
+    // Log.i('删除 ${controller.currentPointer} 字符 ${character?.content} ');
     buffer.write(
       controller.currentPointer.y,
-      controller.currentPointer.x,
+      column,
       null,
     );
-    final int startColumn = controller.currentPointer.x;
-    final int endColumn = controller.column;
-    for (int column = startColumn; column < endColumn; column++) {
-      final Character? character = buffer.getCharacter(
-        controller.currentPointer.y,
-        column + 1,
-      );
-      buffer.write(controller.currentPointer.y, column, character);
-    }
+  }
+  for (int column = endColumn; column < controller.column; column++) {
+    final Character? character = buffer.getCharacter(
+      controller.currentPointer.y,
+      column,
+    );
+    // final Character? character = buffer!.getCharacter(
+    //   controller.currentPointer.y,
+    //   controller.currentPointer.x + column,
+    // );
+    // Log.i('删除 ${controller.currentPointer} 字符 ${character?.content} ');
+    buffer.write(
+      controller.currentPointer.y,
+      column - 3,
+      character,
+    );
   }
 }
 
@@ -616,13 +624,13 @@ class Csi {
   }
 }
 
-void earseOneLine(TermareController controller, Buffer? buffer) {
+void earseOneLine(TermareController controller, Buffer buffer) {
   const int startColumn = 0;
   final int endColumn = controller.column;
   for (int column = startColumn; column < endColumn; column++) {
     // final Character character =
     //     buffer.getCharacter(controller.currentPointer.y, column);
     // Log.e('清除第$column列 $character 总列数为:$endColumn');
-    buffer!.write(controller.currentPointer.y, column, null);
+    buffer.write(controller.currentPointer.y, column, null);
   }
 }

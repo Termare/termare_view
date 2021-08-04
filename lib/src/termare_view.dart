@@ -88,6 +88,17 @@ class _TermareViewState extends State<TermareView> {
     return initEditingState;
   }
 
+  /// 这个函数存在的意义就是
+  /// 在移动端，并且外接键盘的情况下，按下回车键会同时触发keyboard和action
+  /// 会导致输入两次换行
+  void preventAction(String char) {
+    preventChar = char;
+    Future<void>.delayed(Duration(milliseconds: 100), () {
+      preventChar = '';
+    });
+  }
+
+  String preventChar = '';
   @override
   Widget build(BuildContext context) {
     return InputListener(
@@ -110,7 +121,10 @@ class _TermareViewState extends State<TermareView> {
         }
         // 当软件盘回车按下的时候
         if (action == TextInputAction.done) {
-          widget.keyboardInput!('\r');
+          if (preventChar != '\r') {
+            Log.e('回车');
+            widget.keyboardInput!('\r');
+          }
         }
         widget.onAction?.call(action);
       },
@@ -125,6 +139,9 @@ class _TermareViewState extends State<TermareView> {
             true,
             false,
           );
+          // 100毫秒阻止同个按键的action触发
+          preventAction(input!);
+          Log.e('输入${input.codeUnits}');
           if (key.logicalKey == LogicalKeyboardKey.controlLeft ||
               key.logicalKey == LogicalKeyboardKey.controlRight) {
             // 当左边的ctrl或者右边的ctrl按下的时候
@@ -134,6 +151,7 @@ class _TermareViewState extends State<TermareView> {
             if (widget.controller!.ctrlEnable) {
               final int charCode = utf8.encode(input).first;
               widget.keyboardInput!(utf8.decode([charCode - 96]));
+              // 这儿这个取消有问题，物理键盘按下的时候，输入字符不会触发CTRL的抬起
               widget.controller!.ctrlEnable = false;
             } else {
               widget.keyboardInput!(input);

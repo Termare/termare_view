@@ -16,5 +16,5 @@ void main() {
   //   print('*');
   //   // print(i);
   // }
-  print(utf8.decode([10, 27, 107, 108, 115, 27, 92, 97]));
+  print('123456\x08\x08\x08\x08\x08\x1b[3P99');
 }
