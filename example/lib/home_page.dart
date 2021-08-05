@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> with AnimationMixin {
     termareController.write('123456\x08\x08\x08\x08\x08\x1b[3@999\n');
 
     var data = utf8.decode([8, 8, 8, 27, 91, 49, 80, 108, 115]);
-    termareController.write('~ \$ pwd$data');
+    termareController.write('~ \$ apt$data');
     // controller.write(utf8.decode([27, 91, 63, 50, 48, 48, 52, 108]));
     // controller.write(utf8.decode([13]));
     // for (int i = 0; i < 49; i++) {

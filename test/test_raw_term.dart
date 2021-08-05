@@ -3,7 +3,7 @@ import 'dart:convert';
 // void print(Object object) {
 //   stdout.write(object);
 // }
-// ~ $ pwd
+// ~ $ apt
 // [8, 8, 8, 27, 91, 49, 80, 108, 115]
 void main() {
   // for i in {16..21} {21..16} ; do echo -en "\e[48;5;${i}m \e[0m" ; done ; echo

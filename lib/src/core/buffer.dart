@@ -77,9 +77,11 @@ class Buffer {
     // print('cache.length -> ${cache.length}');
     for (int row = endRow; row > 0; row--) {
       final List<Character?> line = cache[row];
-      if (line.isEmpty) {
+      // 这个 line == null 不能删！！！，用非空模式运行这个库会出现问题的
+      if (line == null || line.isEmpty) {
         continue;
       }
+      // print(line);
       for (final Character? character in line) {
         final bool? isNotEmpty = character?.content.isNotEmpty;
         if (isNotEmpty != null && isNotEmpty) {
