@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:example/float_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,7 +51,12 @@ class _HomePageState extends State<HomePage> with AnimationMixin {
     for (int i = 0; i < 100; i++) {
       termareController.write('$i\n');
     }
-    termareController.write('123456\x08\x08\x08\x08\x08\x1b[3P');
+    termareController.write('123456\x08\x08\x08\x08\x08\x1b[3P\n');
+
+    termareController.write('123456\x08\x08\x08\x08\x08\x1b[3@999\n');
+
+    var data = utf8.decode([8, 8, 8, 27, 91, 49, 80, 108, 115]);
+    termareController.write('~ \$ pwd$data');
     // controller.write(utf8.decode([27, 91, 63, 50, 48, 48, 52, 108]));
     // controller.write(utf8.decode([13]));
     // for (int i = 0; i < 49; i++) {

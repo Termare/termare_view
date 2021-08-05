@@ -4,13 +4,16 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:termare_view/src/core/buffer.dart';
 import 'package:termare_view/src/foundation/character.dart';
-import 'package:termare_view/src/foundation/text_attribute.dart';
 import 'package:termare_view/src/foundation/position.dart';
+import 'package:termare_view/src/foundation/text_attribute.dart';
 import 'package:termare_view/src/utils/signale/signale.dart';
 import 'package:termare_view/termare_view.dart';
 
+///
 typedef CsiHandler = void Function(
-    TermareController controller, String sequence);
+  TermareController controller,
+  String sequence,
+);
 bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
 
 Map<String, CsiHandler> csiSeqHandlerMap = {
@@ -339,21 +342,21 @@ void deleteCharacter(TermareController controller, String sequence) {
   final Buffer buffer = controller.currentBuffer;
   int? ps = int.tryParse(sequence);
   ps ??= 1;
-  Log.i('P DCH	Delete Character ps:$ps');
+  Log.i('P DCH Delete Character ps:$ps');
 
   final int startColumn = controller.currentPointer.x;
   final int endColumn = startColumn + ps;
   for (int column = startColumn; column < endColumn; column++) {
-    // final Character? character = buffer!.getCharacter(
+    // final Character? character = buffer.getCharacter(
     //   controller.currentPointer.y,
-    //   controller.currentPointer.x + column,
+    //   column,
     // );
     // Log.i('删除 ${controller.currentPointer} 字符 ${character?.content} ');
-    buffer.write(
-      controller.currentPointer.y,
-      column,
-      null,
-    );
+    // buffer.write(
+    //   controller.currentPointer.y,
+    //   column,
+    //   null,
+    // );
   }
   for (int column = endColumn; column < controller.column; column++) {
     final Character? character = buffer.getCharacter(
@@ -367,7 +370,7 @@ void deleteCharacter(TermareController controller, String sequence) {
     // Log.i('删除 ${controller.currentPointer} 字符 ${character?.content} ');
     buffer.write(
       controller.currentPointer.y,
-      column - 3,
+      column - ps,
       character,
     );
   }
