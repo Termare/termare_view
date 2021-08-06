@@ -347,31 +347,32 @@ void deleteCharacter(TermareController controller, String sequence) {
   final int startColumn = controller.currentPointer.x;
   final int endColumn = startColumn + ps;
   for (int column = startColumn; column < endColumn; column++) {
-    // final Character? character = buffer.getCharacter(
-    //   controller.currentPointer.y,
-    //   column,
-    // );
-    // Log.i('删除 ${controller.currentPointer} 字符 ${character?.content} ');
-    // buffer.write(
-    //   controller.currentPointer.y,
-    //   column,
-    //   null,
-    // );
+    final Character? character = buffer.getCharacter(
+      controller.currentPointer.y,
+      column,
+    );
+    Log.i('删除 ${column} 字符 ${character?.content} ');
+    buffer.write(
+      controller.currentPointer.y,
+      column,
+      null,
+    );
   }
   for (int column = endColumn; column < controller.column; column++) {
     final Character? character = buffer.getCharacter(
       controller.currentPointer.y,
       column,
     );
-    // final Character? character = buffer!.getCharacter(
-    //   controller.currentPointer.y,
-    //   controller.currentPointer.x + column,
-    // );
-    // Log.i('删除 ${controller.currentPointer} 字符 ${character?.content} ');
+    Log.i('移动 ${column} 字符 ${character?.content} ');
     buffer.write(
       controller.currentPointer.y,
       column - ps,
       character,
+    );
+    buffer.write(
+      controller.currentPointer.y,
+      column,
+      null,
     );
   }
 }

@@ -208,7 +208,6 @@ class TermareController with Observable {
     this.column = column;
     // log('setPtyWindowSize $size row:$row column:$column');
     currentBuffer.setViewPoint(row);
-    //也就是说如果终端有10列，这10列都能显示东西，但是 `stty size` 命令拿到的列应该是 9
     _debouncer.call(sizeChangedCall);
     needBuild();
     execAutoScroll();
@@ -219,7 +218,11 @@ class TermareController with Observable {
     // 这个回调一般会由 pty 处理
     Log.i('执行回调 sizeChangedCall');
     // 这儿减一是因为zsh的序列会有%出来的情况
-    sizeChanged?.call(TermSize(row, column - 1));
+    // 这儿有个很棘手的问题
+    // 如果不减一 zsh 会异常，如果减一，按上下键获取历史命令又会出现异常
+    // 最后看了macOS的本地终端还有iterm2，显示有10列的时候，stty size拿到的列也应该是10
+    //
+    sizeChanged?.call(TermSize(row, column));
   }
 
   void setFontfamily(String fontfamily) {
