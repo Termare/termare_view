@@ -7,7 +7,7 @@ Language: English | [简体中文](README.md)
 
 This view is similar to the [xterm. Js] (https://github.com/xtermjs/xterm.js), is just an upper UI display component, you can use the terminal flow from the underlying operating system, or is connected to the SSH server terminal flow, only need to input to the components, can automatically parse rendering terminal terminal sequence.
 
-## start using
+## Start using
 
 ### introduce the project
 
