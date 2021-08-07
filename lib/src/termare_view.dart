@@ -104,7 +104,7 @@ class _TermareViewState extends State<TermareView> {
     return InputListener(
       focusNode: _focusNode,
       onTextInput: (TextEditingValue value) {
-        Log.i(value);
+        // Log.i(value);
         if (TermarePlatform.isDesktop) {
           // return onTextEdit(
           //   value,
@@ -129,7 +129,7 @@ class _TermareViewState extends State<TermareView> {
         widget.onAction?.call(action);
       },
       onKeyStroke: (RawKeyEvent key) {
-        Log.i(key);
+        // Log.i(key);
         // 26键盘之外的按键按下的时候
         final int keyId = key.logicalKey.keyId;
         if (key is RawKeyDownEvent) {

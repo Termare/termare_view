@@ -43,26 +43,146 @@ class _HomePageState extends State<HomePage> with AnimationMixin {
     // SequencesTest.testDECSEL(controller);
 
     // SequencesTest.testCSI(controller);
-    SequencesTest.testColorText(termareController);
-    termareController.write('啊123撒大声地abc');
-    termareController.write('123');
+    // SequencesTest.testColorText(termareController);
+    // termareController.write('啊123撒大声地abc');
+    // termareController.write('123');
 
-    print('');
-    for (int i = 0; i < 100; i++) {
-      termareController.write('$i\n');
-    }
-    termareController.write('123456\x08\x08\x08\x08\x08\x1b[3P\n');
-
-    termareController.write('123456\x08\x08\x08\x08\x08\x1b[3@999\n');
-
-    var data = utf8.decode([8, 8, 8, 27, 91, 49, 80, 108, 115]);
-    termareController.write('~ \$ apt$data');
-    // controller.write(utf8.decode([27, 91, 63, 50, 48, 48, 52, 108]));
-    // controller.write(utf8.decode([13]));
-    // for (int i = 0; i < 49; i++) {
-    //   print(i);
-    //   controller.write('*');
+    // print('');
+    // for (int i = 0; i < 100; i++) {
+    //   termareController.write('$i\n');
     // }
+    // termareController.write('123456\x08\x08\x08\x08\x08\x1b[3P\n');
+
+    // termareController.write('123456\x08\x08\x08\x08\x08\x1b[3@999\n');
+
+    // var data = utf8.decode([8, 8, 8, 27, 91, 49, 80, 108, 115]);
+    // termareController.write('~ \$ apt$data\n');
+
+    termareController.write(
+        '~ \$ git clone https://github.com/nightmare-space/app_manager.git');
+    var data1 = utf8.decode([
+      27,
+      91,
+      65,
+      8,
+      8,
+      8,
+      8,
+      8,
+      27,
+      91,
+      51,
+      49,
+      80,
+      97, //a
+      112, //p
+      116, //t
+      32, //' '
+      105, // i
+      110, // n
+      115, // s
+      116, // t
+      97, // a
+      108, // l
+      108, // l
+      32, // ' '
+      108, // l
+      105, // i
+      98, //b
+      103, //g
+      115, //s
+      97, //a
+      115, //s
+      108 //l
+    ]);
+    var data2 = utf8.decode([
+      10, // \n
+      27,
+      91,
+      75,
+      27,
+      91,
+      65,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67,
+      27,
+      91,
+      67
+    ]);
+    termareController.write(data1);
+    termareController.write(data2);
+//  ->[27, 91, 65, 8, 8, 8, 8, 8, 27, 91, 51, 49, 80, 97, 112, 116, 32, 105, 110, 115, 116, 97, 108, 108, 32, 108, 105, 98, 103, 115, 97, 115, 108]<-
+// I/flutter (22363): >>>
+// I/flutter (22363): ->[10]<-
+// I/flutter (22363): >>>
+// I/flutter (22363): ->[27, 91, 75, 27, 91, 65, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67]<-
     return;
     // controller.write(utf8.decode([13]));
     // controller.write(utf8.decode([32]));
