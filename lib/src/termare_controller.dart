@@ -152,14 +152,10 @@ class TermareController with Observable {
   void write(String data) {
     needBuild();
     processByte(data);
-    schedulingRead?.call();
     notifyListeners();
-  }
-
-  void writeCodeUnits(List<int> codeUnits) {
-    needBuild();
-    processByte(utf8.decode(codeUnits));
-    notifyListeners();
+    Future.delayed(Duration(milliseconds: 10), () {
+      schedulingRead?.call();
+    });
   }
 
   // 光标的位置；
