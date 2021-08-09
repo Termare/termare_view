@@ -17,8 +17,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with AnimationMixin {
   Animation<double> height;
   TermareController termareController = TermareController(
-      // showBackgroundLine: true,
-      );
+    showBackgroundLine: true,
+  );
 
   @override
   void initState() {
@@ -47,10 +47,43 @@ class _HomePageState extends State<HomePage> with AnimationMixin {
     // termareController.write('啊123撒大声地abc');
     // termareController.write('123');
 
-    // print('');
-    // for (int i = 0; i < 100; i++) {
-    //   termareController.write('$i\n');
+    // // print('');
+    // for (int i = 0; i < 1000; i++) {
+    //   termareController.write('$i\n\r');
     // }
+    // termareController.write('1000\n\r');
+    termareController.write('1001\n\r');
+    termareController.write(utf8.decode([
+      37,
+      56,
+      55,
+      54,
+      53,
+      52,
+      51,
+      50,
+      49,
+      48,
+      27,
+      91,
+      63,
+      49,
+      108,
+      27,
+      62,
+      27,
+      91,
+      63,
+      50,
+      48,
+      48,
+      52,
+      108,
+      13,
+      13,
+      10,
+      48
+    ]));
     // termareController.write('123456\x08\x08\x08\x08\x08\x1b[3P\n');
 
     // termareController.write('123456\x08\x08\x08\x08\x08\x1b[3@999\n');
@@ -58,210 +91,10 @@ class _HomePageState extends State<HomePage> with AnimationMixin {
     // var data = utf8.decode([8, 8, 8, 27, 91, 49, 80, 108, 115]);
     // termareController.write('~ \$ apt$data\n');
 
-    termareController.write(
-        '~ \$ git clone https://github.com/nightmare-space/app_manager.git');
-    var data1 = utf8.decode([
-      27,
-      91,
-      65,
-      8,
-      8,
-      8,
-      8,
-      8,
-      27,
-      91,
-      51,
-      49,
-      80,
-      97, //a
-      112, //p
-      116, //t
-      32, //' '
-      105, // i
-      110, // n
-      115, // s
-      116, // t
-      97, // a
-      108, // l
-      108, // l
-      32, // ' '
-      108, // l
-      105, // i
-      98, //b
-      103, //g
-      115, //s
-      97, //a
-      115, //s
-      108 //l
-    ]);
-    var data2 = utf8.decode([
-      10, // \n
-      27,
-      91,
-      75,
-      27,
-      91,
-      65,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67,
-      27,
-      91,
-      67
-    ]);
-    termareController.write(data1);
-    termareController.write(data2);
-//  ->[27, 91, 65, 8, 8, 8, 8, 8, 27, 91, 51, 49, 80, 97, 112, 116, 32, 105, 110, 115, 116, 97, 108, 108, 32, 108, 105, 98, 103, 115, 97, 115, 108]<-
-// I/flutter (22363): >>>
-// I/flutter (22363): ->[10]<-
-// I/flutter (22363): >>>
-// I/flutter (22363): ->[27, 91, 75, 27, 91, 65, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67, 27, 91, 67]<-
+    // termareController.write(
+    //   '~ \$ git clone https://github.com/nightmare-space/app_manager.git',
+    // );
     return;
-    // controller.write(utf8.decode([13]));
-    // controller.write(utf8.decode([32]));
-    // controller.write(utf8.decode([13]));
-    // controller.write(utf8.decode([27, 107, 126, 27, 92]));
-    // controller.write(utf8.decode([13]));
-    // controller.write(utf8.decode([
-    //   27,
-    //   91,
-    //   48,
-    //   109,
-    //   27,
-    //   91,
-    //   50,
-    //   51,
-    //   109,
-    //   27,
-    //   91,
-    //   50,
-    //   52,
-    //   109,
-    //   27,
-    //   91,
-    //   74,
-    //   27,
-    //   91,
-    //   48,
-    //   49,
-    //   59,
-    //   51,
-    //   50,
-    //   109,
-    //   226,
-    //   158,
-    //   156,
-    //   32,
-    //   32,
-    //   27,
-    //   91,
-    //   51,
-    //   54,
-    //   109,
-    //   126,
-    //   27,
-    //   91,
-    //   48,
-    //   48,
-    //   109,
-    //   32,
-    //   27,
-    //   91,
-    //   75,
-    //   27,
-    //   91,
-    //   63,
-    //   49,
-    //   104,
-    //   27,
-    //   61,
-    //   27,
-    //   91,
-    //   63,
-    //   50,
-    //   48,
-    //   48,
-    //   52,
-    //   104
-    // ]));
-    // controller.write('A');
-    // controller.write('\x1b[0;36r');
-    // controller.write('\x1b[2A');
-    // controller.write('\x1b[3C');
-    // Future.delayed(const Duration(milliseconds: 600), () {
-    //   controller.write('\x1b[K');
-    // });
-    // controller.write('\x1b[37;0f');
-    // SequencesTest.test256Color(controller);
-
-    // SequencesTest.testChinese(controller);
   }
 
   void expand() {
@@ -284,77 +117,85 @@ class _HomePageState extends State<HomePage> with AnimationMixin {
         child: SafeArea(
           child: Stack(
             children: [
-              FloatView(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: height.value,
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: Color(0xffe8ebf0),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Color(0xffee695e),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 6,
-                                ),
-                                Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Color(0xfff4be4f),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 6,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    expand();
-                                  },
-                                  child: Container(
-                                    width: 16,
-                                    height: 16,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: Color(0xff63c957),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: TermareView(
-                            keyboardInput: (value) {
-                              print('value${value.codeUnits}');
-                              termareController.enableAutoScroll();
-                              termareController.write(value);
-                            },
-                            controller: termareController,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              TermareView(
+                keyboardInput: (value) {
+                  print('value${value.codeUnits}');
+                  termareController.enableAutoScroll();
+                  termareController.write(value);
+                },
+                controller: termareController,
               ),
+              // FloatView(
+              //   child: ClipRRect(
+              //     borderRadius: BorderRadius.circular(12),
+              //     child: SizedBox(
+              //       width: MediaQuery.of(context).size.width,
+              //       height: height.value,
+              //       child: Column(
+              //         children: [
+              //           Container(
+              //             height: 24,
+              //             decoration: BoxDecoration(
+              //               color: Color(0xffe8ebf0),
+              //             ),
+              //             child: Padding(
+              //               padding: EdgeInsets.symmetric(horizontal: 8),
+              //               child: Row(
+              //                 children: [
+              //                   Container(
+              //                     width: 16,
+              //                     height: 16,
+              //                     decoration: BoxDecoration(
+              //                       borderRadius: BorderRadius.circular(8),
+              //                       color: Color(0xffee695e),
+              //                     ),
+              //                   ),
+              //                   SizedBox(
+              //                     width: 6,
+              //                   ),
+              //                   Container(
+              //                     width: 16,
+              //                     height: 16,
+              //                     decoration: BoxDecoration(
+              //                       borderRadius: BorderRadius.circular(8),
+              //                       color: Color(0xfff4be4f),
+              //                     ),
+              //                   ),
+              //                   SizedBox(
+              //                     width: 6,
+              //                   ),
+              //                   GestureDetector(
+              //                     onTap: () {
+              //                       expand();
+              //                     },
+              //                     child: Container(
+              //                       width: 16,
+              //                       height: 16,
+              //                       decoration: BoxDecoration(
+              //                         borderRadius: BorderRadius.circular(8),
+              //                         color: Color(0xff63c957),
+              //                       ),
+              //                     ),
+              //                   ),
+              //                 ],
+              //               ),
+              //             ),
+              //           ),
+              //           Expanded(
+              //             child: TermareView(
+              //               keyboardInput: (value) {
+              //                 print('value${value.codeUnits}');
+              //                 termareController.enableAutoScroll();
+              //                 termareController.write(value);
+              //               },
+              //               controller: termareController,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

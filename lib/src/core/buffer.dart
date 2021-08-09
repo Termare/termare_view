@@ -95,7 +95,7 @@ class Buffer {
   }
 
   int getRowLength(int row) {
-    final List<Character?> line = getCharacterLines(row)!;
+    final List<Character?> line = getCharacterLines(row);
     final int endColumn = line.length - 1;
     for (int column = endColumn; column > 0; column--) {
       final Character? character = line[column];
@@ -110,10 +110,11 @@ class Buffer {
 
   void write(int row, int column, Character? entity) {
     if (row >= maxLine) {
-      // TODO 有问题，不用怀疑
+      // TODO 有问题，不用怀疑,.
       // print('ro - max ${row - maxLine}');
-      cache = List.from(cache.getRange(1, maxLine));
-      row = maxLine - 1;
+      cache.removeAt(0);
+      cache.add([]);
+      row -= 1;
       controller.moveToRelativeRow(-1);
       _position -= 1;
     }
@@ -124,12 +125,13 @@ class Buffer {
       cache.length = row + 1;
       cache[row] = [];
     }
-    // if (cache[row] == null) {
-    //   // 有可能存在[null,null]，这个index能取到值，但是为null
-    //   cache[row] = [];
-    // }
+    if (cache[row] == null) {
+      // 有可能存在[null,null]，这个index能取到值，但是为null
+      cache[row] = [];
+    }
     if (column > cache[row].length - 1) {
       // 防止在 column 上越界
+      // Log.w(' 防止在 column 上越界');
       cache[row].length = column + 1;
     }
     if (fixedLine.containsKey(row - position)) {
@@ -180,18 +182,55 @@ class Buffer {
       cache.length = row + _position + 1;
       cache[row + _position] = [];
     }
-    final List<Character?> lines = getCharacterLines(row)!;
+    final List<Character?> lines = getCharacterLines(row);
     if (column > lines.length - 1) {
       lines.length = column + _position + 1;
     }
     return lines[column];
   }
 
-  List<Character?>? getCharacterLines(
+  bool isEmptyLine(int row) {
+    // 判断绝对行是否为空
+    if (row > cache.length - 1) {
+      return true;
+    }
+    final List<Character?> line = cache[row];
+    if (line.isEmpty) {
+      return true;
+    }
+    for (int i = 0; i < controller.column; i++) {
+      if (line[i] != null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool isFullLine(int row) {
+    // 判断绝对行是否为满
+    if (row > cache.length - 1) {
+      return false;
+    }
+    final List<Character?> line = cache[row];
+    if (line.isEmpty) {
+      return false;
+    }
+    if (line.length < controller.column) {
+      return false;
+    }
+    for (int i = 0; i < controller.column; i++) {
+      if (line[i] == null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  List<Character?> getCharacterLines(
     int row,
   ) {
     if (fixedLine.isNotEmpty && fixedLine.containsKey(row)) {
-      return fixedLine[row];
+      return fixedLine[row]!;
     }
     if (row + _position > length - 1) {
       cache.length = row + _position + 1;

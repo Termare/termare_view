@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:termare_view/src/termare_controller.dart';
+import 'package:termare_view/src/utils/signale/signale.dart';
 
 //
 bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
@@ -33,9 +34,7 @@ class C0 {
     } else if (eq(utf8CodeUnits, [0x0a]) ||
         eq(utf8CodeUnits, [0x0b]) ||
         eq(utf8CodeUnits, [0x0c])) {
-      // TODO 有问题，应该是指向下移动光标才对
       controller.moveToNextLinePosition();
-      controller.moveToLineFirstPosition();
       if (verbose) {
         // log('$red<- C0 Line Feed ->');
       }
@@ -44,7 +43,7 @@ class C0 {
       // ascii 13
       controller.moveToLineFirstPosition();
       if (verbose) {
-        // log('$red<- C0 Carriage Return ->');
+        // Log.e('$red<- C0 Carriage Return ->');
       }
       return true;
     } else if (eq(utf8CodeUnits, [0x0e])) {

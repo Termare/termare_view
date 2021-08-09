@@ -24,6 +24,7 @@ import 'utils/signale/signale.dart';
 String red = '\x1b[1;31m';
 String pink = '\x1b[1;35m';
 String green = '\x1B[1;42;37m';
+String yellow = '\x1B[1;43;30m';
 String blue = '\x1b[1;36m';
 String whiteBackground = '\x1b[47m';
 String defaultColor = '\x1b[0m';
@@ -65,6 +66,8 @@ class TermareController with Observable {
   bool Function(List<int>, List<int>) eq = const ListEquality<int>().equals;
 
   void Function()? onBell;
+  void Function()? schedulingRead;
+
   void Function(TermSize size)? sizeChanged;
   KeyboardInput? input;
 
@@ -148,13 +151,14 @@ class TermareController with Observable {
   /// 直接指向 pty write 函数
   void write(String data) {
     needBuild();
-    processByte(utf8.encode(data));
+    processByte(data);
+    schedulingRead?.call();
     notifyListeners();
   }
 
   void writeCodeUnits(List<int> codeUnits) {
     needBuild();
-    processByte(codeUnits);
+    processByte(utf8.decode(codeUnits));
     notifyListeners();
   }
 
@@ -294,7 +298,24 @@ class TermareController with Observable {
   }
 
   void moveToLineFirstPosition() {
-    currentPointer = Position(0, currentPointer.y);
+    // 这个序列看似简单，但实际远比想象的复杂
+    // 主要表现在 zsh 命令，会有一个 '%'
+    // 回到当前行首有个条件，本行为空，上一行为满的情况下，光标回到的是上一行的行首
+    // Log.e('vvvv->$currentPointer ');
+    // Log.e(currentBuffer.isEmptyLine(currentPointer.y));
+    // Log.e(currentBuffer.getCharacterLines(currentPointer.y));
+    // if (currentPointer.y > 1) {
+    //   Log.e(currentBuffer.isFullLine(currentPointer.y - 1));
+    //   Log.e(currentBuffer.getCharacterLines(currentPointer.y - 1));
+    // }
+    if (currentPointer.x == 0 &&
+        currentPointer.y > 0 &&
+        currentBuffer.isEmptyLine(currentPointer.y) &&
+        currentBuffer.isFullLine(currentPointer.y - 1)) {
+      currentPointer = Position(0, currentPointer.y - 1);
+    } else {
+      currentPointer = Position(0, currentPointer.y);
+    }
   }
 
   void moveToRelativeColumn(int ps) {
@@ -445,13 +466,13 @@ class TermareController with Observable {
 
   bool verbose = true;
   // 应该每次只接收一个字符
-  void processByte(List<int> codeUnits, {bool verbose = !kReleaseMode}) {
-    final String data = utf8.decode(codeUnits);
+  void processByte(String data, {bool verbose = !kReleaseMode}) {
+    // Log.w('byte -> ${utf8.encode(data)}');
     // print('-' * 10);
     // data.split(RegExp('\x0d')).forEach((element) {
-    //   if (element.isNotEmpty) {
-    //     print('>>>$element');
-    //   }
+    //   // if (element.isNotEmpty) {
+    //   //   print('>>>$element');
+    //   // }
     //   print('->${utf8.encode(element)}<-');
     // });
     // print('-' * 10);
