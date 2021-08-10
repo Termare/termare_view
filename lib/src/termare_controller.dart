@@ -145,7 +145,7 @@ class TermareController with Observable {
   }
 
   void forbidBuild() {
-    _dirty = true;
+    _dirty = false;
   }
 
   /// 直接指向 pty write 函数
@@ -153,9 +153,6 @@ class TermareController with Observable {
     needBuild();
     processByte(data);
     notifyListeners();
-    Future.delayed(Duration(milliseconds: 10), () {
-      schedulingRead?.call();
-    });
   }
 
   // 光标的位置；
