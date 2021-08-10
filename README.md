@@ -5,6 +5,9 @@ Language: 中文简体 | [English](README-EN.md)
 [![Last Commits](https://img.shields.io/github/last-commit/termare/termare_view?logo=git&logoColor=white)](https://github.com/termare/termare_view/commits/master)
 [![Code size](https://img.shields.io/github/languages/code-size/termare/termare_view?logo=github&logoColor=white)](https://github.com/termare/termare_view)
 [![License](https://img.shields.io/github/license/termare/termare_view?logo=open-source-initiative&logoColor=green)](https://github.com/termare/termare_view/blob/master/LICENSE)
+ ![Platform](https://img.shields.io/badge/support%20platform-android%20%7C%20web%20%7C%20windows%20%7C%20macos%20%7C%20linux-green) ![download time](https://img.shields.io/github/downloads/termare/termare_view/total) ![open issues](https://img.shields.io/github/issues/termare/termare_view) ![fork](https://img.shields.io/github/forks/termare/termare_view?style=social) ![code line](https://img.shields.io/tokei/lines/github/termare/termare_view) ![build](https://img.shields.io/github/workflow/status/termare/termare_view/daily%20build%20apk) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f969750dc4aa424ead664219ddcf321d)](https://app.codacy.com/gh/termare/termare_view?utm_source=github.com&utm_medium=referral&utm_content=termare/termare_view&utm_campaign=Badge_Grade)
+
+
 
 支持全平台的终端模拟器，使用 Flutter 开发，是一个通过 canvas 渲染的上层组件，不依赖任何平台代码。
 
