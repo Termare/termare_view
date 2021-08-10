@@ -215,7 +215,9 @@ class TermarePainter extends CustomPainter {
     }
     paintCursor(canvas, buffer!);
     controller.forbidBuild();
-    controller.schedulingRead?.call();
+    Future.delayed(const Duration(milliseconds: 10), () {
+      controller.schedulingRead?.call();
+    });
   }
 
   void paintText(Canvas canva) {}
