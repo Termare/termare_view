@@ -34,16 +34,16 @@ class _TermareViewState extends State<TermareView> {
   Size painterSize = const Size(0, 0);
   // 记录键盘高度
   double keyoardHeight = 0;
-  TermareController? controller;
+  late TermareController controller;
   @override
   void initState() {
     super.initState();
     controller = widget.controller ?? TermareController();
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
-        controller!.requestFocus();
+        controller.requestFocus();
       } else {
-        controller!.unFocus();
+        controller.unFocus();
       }
     });
   }
@@ -201,7 +201,7 @@ class _TerminalView extends StatefulWidget {
   }) : super(key: key);
 
   final Size painterSize;
-  final TermareController? controller;
+  final TermareController controller;
   @override
   _TerminalViewState createState() => _TerminalViewState();
 }
@@ -212,7 +212,7 @@ class _TerminalViewState extends State<_TerminalView>
   void initState() {
     super.initState();
     resizeWindow();
-    widget.controller!.addListener(updateTerm);
+    widget.controller.addListener(updateTerm);
     WidgetsBinding.instance!.addObserver(this);
   }
 
@@ -230,18 +230,18 @@ class _TerminalViewState extends State<_TerminalView>
 
   void resizeWindow() {
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      widget.controller!.setWindowSize(widget.painterSize);
+      widget.controller.setWindowSize(widget.painterSize);
       // print(widget.painterSize);
-      widget.controller!.execAutoScroll();
-      widget.controller!.needBuild();
-      widget.controller!.notifyListeners();
+      widget.controller.execAutoScroll();
+      widget.controller.needBuild();
+      widget.controller.notifyListeners();
     });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance!.removeObserver(this);
-    widget.controller!.removeListener(updateTerm);
+    widget.controller.removeListener(updateTerm);
     super.dispose();
   }
 
@@ -249,7 +249,7 @@ class _TerminalViewState extends State<_TerminalView>
   Widget build(BuildContext context) {
     // print('$this build');
     return Material(
-      color: widget.controller!.theme!.backgroundColor,
+      color: widget.controller.theme!.backgroundColor,
       child: CustomPaint(
         size: widget.painterSize,
         painter: TermarePainter(
