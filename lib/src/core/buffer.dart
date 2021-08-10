@@ -195,7 +195,7 @@ class Buffer {
       return true;
     }
     final List<Character?> line = cache[row];
-    if (line.isEmpty) {
+    if (line == null || line.isEmpty) {
       return true;
     }
     for (int i = 0; i < controller.column; i++) {
@@ -212,7 +212,8 @@ class Buffer {
       return false;
     }
     final List<Character?> line = cache[row];
-    if (line.isEmpty) {
+    // 有问题，非空模式运行的时候，可能还是会拿到空
+    if (line == null || line.isEmpty) {
       return false;
     }
     if (line.length < controller.column) {
