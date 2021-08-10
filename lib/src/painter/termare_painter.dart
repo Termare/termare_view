@@ -14,22 +14,22 @@ TextLayoutCache painterCache = TextLayoutCache(TextDirection.ltr, 8192);
 // 终端组件的Painter，也是比较重要的部分
 class TermarePainter extends CustomPainter {
   TermarePainter({
-    this.controller,
+    required this.controller,
   }) {
-    offsetCache.length = controller!.row;
+    offsetCache.length = controller.row;
     // print('TermarePainter构造');
-    termWidth = controller!.column * controller!.theme!.characterWidth!;
-    termHeight = controller!.row * controller!.theme!.characterHeight!;
+    termWidth = controller.column * controller.theme!.characterWidth!;
+    termHeight = controller.row * controller.theme!.characterHeight!;
 
-    for (int row = 0; row < controller!.row; row++) {
-      for (int column = 0; column < controller!.column; column++) {
+    for (int row = 0; row < controller.row; row++) {
+      for (int column = 0; column < controller.column; column++) {
         if (offsetCache[row] == null) {
           offsetCache[row] = [];
-          offsetCache[row].length = controller!.column;
+          offsetCache[row].length = controller.column;
         }
         offsetCache[row][column] = Offset(
-          column * controller!.theme!.characterWidth!,
-          row * controller!.theme!.characterHeight!,
+          column * controller.theme!.characterWidth!,
+          row * controller.theme!.characterHeight!,
         );
         // Log.e('第$row行 第$column列的 offset 为 ${offsetCache[row][column]}');
       }
@@ -39,15 +39,15 @@ class TermarePainter extends CustomPainter {
   }
   List<List<Offset>> offsetCache = [];
   Future<void> cacheOffset() async {
-    for (int row = 0; row < controller!.row; row++) {
-      for (int column = 0; column < controller!.column; column++) {
+    for (int row = 0; row < controller.row; row++) {
+      for (int column = 0; column < controller.column; column++) {
         if (offsetCache[row] == null) {
           offsetCache[row] = [];
-          offsetCache[row].length = controller!.column;
+          offsetCache[row].length = controller.column;
         }
         offsetCache[row][column] = Offset(
-          column * controller!.theme!.characterWidth!,
-          row * controller!.theme!.characterHeight!,
+          column * controller.theme!.characterWidth!,
+          row * controller.theme!.characterHeight!,
         );
         // Log.e('第$row行 第$column列的 offset 为 ${offsetCache[row][column]}');
       }
@@ -55,7 +55,7 @@ class TermarePainter extends CustomPainter {
   }
 
   /// 终端控制器
-  final TermareController? controller;
+  late final TermareController controller;
 
   late double termWidth;
   late double termHeight;
@@ -66,26 +66,26 @@ class TermarePainter extends CustomPainter {
     final Paint paint = Paint();
     paint.strokeWidth = 1;
     paint.color = Colors.grey.withOpacity(0.4);
-    for (int j = 0; j <= controller!.row; j++) {
+    for (int j = 0; j <= controller.row; j++) {
       canvas.drawLine(
         Offset(
           0,
-          j * controller!.theme!.characterHeight!,
+          j * controller.theme!.characterHeight!,
         ),
         Offset(
           termWidth,
-          j * controller!.theme!.characterHeight!,
+          j * controller.theme!.characterHeight!,
         ),
         paint,
       );
     }
-    for (int k = 0; k <= controller!.column; k++) {
+    for (int k = 0; k <= controller.column; k++) {
       canvas.drawLine(
         Offset(
-          k * controller!.theme!.characterWidth!,
+          k * controller.theme!.characterWidth!,
           0,
         ),
-        Offset(k * controller!.theme!.characterWidth!, termHeight),
+        Offset(k * controller.theme!.characterWidth!, termHeight),
         paint,
       );
     }
@@ -94,7 +94,7 @@ class TermarePainter extends CustomPainter {
   void drawBackground(Canvas canvas, Size size) {
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
-      Paint()..color = controller!.theme!.backgroundColor,
+      Paint()..color = controller.theme!.backgroundColor,
     );
   }
 
@@ -111,13 +111,13 @@ class TermarePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     stopwatch.reset();
     stopwatch.start();
-    final TermareStyle? theme = controller!.theme;
+    final TermareStyle? theme = controller.theme;
     // Log.d('init : ${stopwatch.elapsed}');
     // drawBackground(canvas, size);
     // Log.d('paint background : ${stopwatch.elapsed}');
-    final Buffer? buffer = controller!.currentBuffer;
-    for (int row = 0; row < controller!.row; row++) {
-      for (int column = 0; column < controller!.column; column++) {
+    final Buffer? buffer = controller.currentBuffer;
+    for (int row = 0; row < controller.row; row++) {
+      for (int column = 0; column < controller.column; column++) {
         final Character? character = buffer!.getCharacter(row, column);
         if (character == null) {
           continue;
@@ -135,10 +135,10 @@ class TermarePainter extends CustomPainter {
             TextSpan(
               text: character.content,
               style: TextStyle(
-                fontSize: controller!.theme!.fontSize,
+                fontSize: controller.theme!.fontSize,
                 color: foreground,
                 fontFamilyFallback: [
-                  controller!.fontFamily,
+                  controller.fontFamily,
                 ],
                 height: 1.0,
                 // fontStyle: FontStyle
@@ -153,10 +153,10 @@ class TermarePainter extends CustomPainter {
             TextSpan(
               text: ' ',
               style: TextStyle(
-                fontSize: controller!.theme!.fontSize,
+                fontSize: controller.theme!.fontSize,
                 color: foreground,
                 fontFamilyFallback: [
-                  controller!.fontFamily,
+                  controller.fontFamily,
                 ],
                 height: 1.0,
                 // fontStyle: FontStyle
@@ -178,15 +178,15 @@ class TermarePainter extends CustomPainter {
         // log('get offset ${stopwatch.elapsed}');
         final Offset fontOffset = backOffset +
             Offset(0, (theme!.characterHeight! - painter.height) / 2);
-        if (background != controller!.theme!.backgroundColor) {
+        if (background != controller.theme!.backgroundColor) {
           // 当字符背景颜色不为空的时候
           // print('字符背景颜色不为空的时候');
           //
           // 下面是解决neofetch显示的颜色方块中有缝隙
           //
           final double backWidth = isDoubleWidth
-              ? controller!.theme!.characterWidth! * 2 + 0.6
-              : controller!.theme!.characterWidth! + 0.6;
+              ? controller.theme!.characterWidth! * 2 + 0.6
+              : controller.theme!.characterWidth! + 0.6;
           final Paint backPaint = Paint();
           backPaint.color = background!;
           canvas.drawRect(
@@ -194,15 +194,15 @@ class TermarePainter extends CustomPainter {
               backOffset.dx,
               backOffset.dy,
               backWidth,
-              controller!.theme!.characterHeight!,
+              controller.theme!.characterHeight!,
             ),
             backPaint,
           );
         }
         painter
           ..layout(
-            maxWidth: controller!.theme!.characterHeight!,
-            minWidth: controller!.theme!.characterWidth!,
+            maxWidth: controller.theme!.characterHeight!,
+            minWidth: controller.theme!.characterWidth!,
           )
           ..paint(
             canvas,
@@ -210,43 +210,44 @@ class TermarePainter extends CustomPainter {
           );
       }
     }
-    if (controller!.showBackgroundLine) {
+    if (controller.showBackgroundLine) {
       drawLine(canvas);
     }
-    controller!.forbidBuild();
     paintCursor(canvas, buffer!);
+    controller.forbidBuild();
+    controller.schedulingRead?.call();
   }
 
   void paintText(Canvas canva) {}
 
   void paintCursor(Canvas canvas, Buffer buffer) {
     final bool isNotOverFlow =
-        controller!.currentPointer.dy - buffer.position < controller!.row;
-    if (controller!.showCursor && isNotOverFlow) {
+        controller.currentPointer.dy - buffer.position < controller.row;
+    if (controller.showCursor && isNotOverFlow) {
       final Paint paint = Paint()
-        ..color = controller!.theme!.cursorColor
+        ..color = controller.theme!.cursorColor
         ..strokeWidth = 0.5;
-      if (!controller!.hasFocus) {
+      if (!controller.hasFocus) {
         paint.style = PaintingStyle.stroke;
       }
-      final int x = controller!.currentPointer.x;
-      final int y = controller!.currentPointer.y - buffer.position;
+      final int x = controller.currentPointer.x;
+      final int y = controller.currentPointer.y - buffer.position;
       final Character? character = buffer.getCharacter(y, x);
       if (character != null && !character.isEmpty) {
         paint.blendMode = BlendMode.hardLight;
       }
       // paint.blendMode = BlendMode.exclusion;
       // paint.blendMode = BlendMode.xor;
-      double cursorWidth = controller!.theme!.characterWidth!;
+      double cursorWidth = controller.theme!.characterWidth!;
       if (character != null && character.wcwidth == 2) {
         cursorWidth *= 2;
       }
       canvas.drawRect(
         Rect.fromLTWH(
-          x * controller!.theme!.characterWidth!,
-          y * controller!.theme!.characterHeight!,
+          x * controller.theme!.characterWidth!,
+          y * controller.theme!.characterHeight!,
           cursorWidth,
-          controller!.theme!.characterHeight!,
+          controller.theme!.characterHeight!,
         ),
         paint,
       );
@@ -255,6 +256,6 @@ class TermarePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    return controller!.isDirty;
+    return controller.isDirty;
   }
 }
