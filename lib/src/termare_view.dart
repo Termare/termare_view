@@ -58,40 +58,14 @@ class _TermareViewState extends State<TermareView> {
     text: '  ',
     selection: TextSelection.collapsed(offset: 1),
   );
-  TextEditingValue onTextEdit(
-    TextEditingValue value,
-  ) {
-    if (value.text.length > initEditingState.text.length) {
-      final String input = value.text.substring(1, value.text.length - 1);
-      final List<int> codeUnits = utf8.encode(input);
-
-      int firstChar = codeUnits.first;
-      if (widget.controller!.ctrlEnable) {
-        firstChar -= 96;
-        widget.controller!.enbaleOrDisableCtrl();
-      }
-      codeUnits.first = firstChar;
-      widget.keyboardInput!(utf8.decode(codeUnits));
-    } else if (value.text.length < initEditingState.text.length) {
-      // 说明删除了字符
-      widget.keyboardInput!(String.fromCharCode(127));
-    } else {
-      // 当字符长度相等，就存在光标移动问题
-      Log.i('光标移动问题 ${value.selection.baseOffset}');
-      if (value.selection.baseOffset < 1) {
-        widget.keyboardInput!(String.fromCharCode(2));
-      } else if (value.selection.baseOffset > 1) {
-        widget.keyboardInput!(String.fromCharCode(6));
-      }
-    }
-
-    return initEditingState;
-  }
 
   /// 这个函数存在的意义就是
   /// 在移动端，并且外接键盘的情况下，按下回车键会同时触发keyboard和action
   /// 会导致输入两次换行
-  void preventAction(String char) {
+  void preventAction(String? char) {
+    if (char == null) {
+      return;
+    }
     preventChar = char;
     Future<void>.delayed(Duration(milliseconds: 100), () {
       preventChar = '';
@@ -104,16 +78,23 @@ class _TermareViewState extends State<TermareView> {
     return InputListener(
       focusNode: _focusNode,
       onTextInput: (TextEditingValue value) {
-        // Log.i(value);
-        if (TermarePlatform.isDesktop) {
-          // return onTextEdit(
-          //   value,
-          // );
-          return null;
+        Log.i(value);
+        if (value.text.length > initEditingState.text.length) {
+          final String input = value.text.substring(1, value.text.length - 1);
+          if (preventChar == input) {
+            return initEditingState;
+          }
+          final List<int> codeUnits = utf8.encode(input);
+          if (widget.controller!.ctrlEnable) {
+            codeUnits.first -= 96;
+            widget.controller!.enbaleOrDisableCtrl();
+          }
+          widget.keyboardInput!(utf8.decode(codeUnits));
+        } else if (value.text.length < initEditingState.text.length) {
+          // 说明删除了字符
+          widget.keyboardInput!(String.fromCharCode(127));
         }
-        return onTextEdit(
-          value,
-        );
+        return initEditingState;
       },
       onAction: (TextInputAction action) {
         if (TermarePlatform.isDesktop) {
@@ -140,13 +121,13 @@ class _TermareViewState extends State<TermareView> {
             false,
           );
           // 100毫秒阻止同个按键的action触发
-          preventAction(input!);
-          Log.e('输入${input.codeUnits}');
           if (key.logicalKey == LogicalKeyboardKey.controlLeft ||
               key.logicalKey == LogicalKeyboardKey.controlRight) {
             // 当左边的ctrl或者右边的ctrl按下的时候
             widget.controller!.ctrlEnable = true;
           }
+          preventAction(input);
+          Log.e('输入${input?.codeUnits}');
           if (input != null) {
             if (widget.controller!.ctrlEnable) {
               final int charCode = utf8.encode(input).first;
