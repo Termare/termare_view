@@ -38,21 +38,6 @@ class TermarePainter extends CustomPainter {
     // cacheOffset();
   }
   List<List<Offset>> offsetCache = [];
-  Future<void> cacheOffset() async {
-    for (int row = 0; row < controller.row; row++) {
-      for (int column = 0; column < controller.column; column++) {
-        if (offsetCache[row] == null) {
-          offsetCache[row] = [];
-          offsetCache[row].length = controller.column;
-        }
-        offsetCache[row][column] = Offset(
-          column * controller.theme!.characterWidth!,
-          row * controller.theme!.characterHeight!,
-        );
-        // Log.e('第$row行 第$column列的 offset 为 ${offsetCache[row][column]}');
-      }
-    }
-  }
 
   /// 终端控制器
   late final TermareController controller;

@@ -78,7 +78,7 @@ class _TermareViewState extends State<TermareView> {
     return InputListener(
       focusNode: _focusNode,
       onTextInput: (TextEditingValue value) {
-        Log.i(value);
+        // Log.i(value);
         if (value.text.length > initEditingState.text.length) {
           final String input = value.text.substring(1, value.text.length - 1);
           if (preventChar == input) {

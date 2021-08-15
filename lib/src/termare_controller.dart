@@ -148,7 +148,6 @@ class TermareController with Observable {
     _dirty = false;
   }
 
-  /// 直接指向 pty write 函数
   void write(String data) {
     needBuild();
     processByte(data);

@@ -63,23 +63,21 @@ void tmp(TermareController controller, String sequence) {
 }
 
 void insertCharactersHandler(TermareController controller, String sequence) {
-  final Buffer? buffer = controller.currentBuffer;
+  final Buffer buffer = controller.currentBuffer;
 
   /// @ ICH Insert Characters
   /// 向当前所在的位置添加一个空白字符
   /// ICH序列插入Ps空白字符。光标停留在空白字符的开头。光标和右边距之间的文本向右移动。超过右边距的字符将丢失。
-  /// 还有点问题，下次记得找一下实际用到的序列
-  //TODO
   final int ps = int.tryParse(sequence)!;
   for (int i = 0; i < ps; i++) {
     final int startColumn = controller.currentPointer.x;
     // print('startColumn $startColumn');
     final int endColumn = controller.column;
     for (int c = endColumn; c > startColumn; c--) {
-      String? source =
-          buffer!.getCharacter(controller.currentPointer.y, c - 1)?.content;
-      String? target =
-          buffer.getCharacter(controller.currentPointer.y, c)?.content;
+      // String? source =
+      //     buffer!.getCharacter(controller.currentPointer.y, c - 1)?.content;
+      // String? target =
+      //     buffer.getCharacter(controller.currentPointer.y, c)?.content;
       // print('移动 ${c - 1}的$source 到 $c的$target');
       // print('移动 $source 到 $target');
       buffer.write(
