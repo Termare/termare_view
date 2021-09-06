@@ -12,7 +12,7 @@ class Buffer {
   }
 
   final TermareController controller;
-
+  // TODO 可空类型有问题
   List<List<Character?>> cache = [];
   int _position = 0;
   int get position => _position;

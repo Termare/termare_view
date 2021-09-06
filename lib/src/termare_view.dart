@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:termare_view/src/termare_controller.dart';
 import 'package:termare_view/src/widget/input_listener.dart';
 import 'input/key_handler.dart';
+import 'input/keys.dart';
 import 'painter/termare_painter.dart';
 import 'utils/platform/platform.dart';
 import 'utils/signale/signale.dart';
@@ -34,16 +35,16 @@ class _TermareViewState extends State<TermareView> {
   Size painterSize = const Size(0, 0);
   // 记录键盘高度
   double keyoardHeight = 0;
-  late TermareController controller;
+  late TermareController _controller;
   @override
   void initState() {
     super.initState();
-    controller = widget.controller ?? TermareController();
+    _controller = widget.controller ?? TermareController();
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
-        controller.requestFocus();
+        _controller.requestFocus();
       } else {
-        controller.unFocus();
+        _controller.unFocus();
       }
     });
   }
@@ -85,9 +86,8 @@ class _TermareViewState extends State<TermareView> {
             return initEditingState;
           }
           final List<int> codeUnits = utf8.encode(input);
-          if (widget.controller!.ctrlEnable) {
+          if (_controller.ctrlEnable) {
             codeUnits.first -= 96;
-            widget.controller!.enbaleOrDisableCtrl();
           }
           widget.keyboardInput!(utf8.decode(codeUnits));
         } else if (value.text.length < initEditingState.text.length) {
@@ -110,7 +110,7 @@ class _TermareViewState extends State<TermareView> {
         widget.onAction?.call(action);
       },
       onKeyStroke: (RawKeyEvent key) {
-        // Log.i(key);
+        Log.i(key);
         // 26键盘之外的按键按下的时候
         final int keyId = key.logicalKey.keyId;
         if (key is RawKeyDownEvent) {
@@ -124,16 +124,17 @@ class _TermareViewState extends State<TermareView> {
           if (key.logicalKey == LogicalKeyboardKey.controlLeft ||
               key.logicalKey == LogicalKeyboardKey.controlRight) {
             // 当左边的ctrl或者右边的ctrl按下的时候
-            widget.controller!.ctrlEnable = true;
+            _controller.ctrlEnable = true;
           }
           preventAction(input);
-          Log.e('输入${input?.codeUnits}');
+          Log.e('$keyId 输入${input?.codeUnits}');
+          Log.d('KEYCODE_DEL -> $KEYCODE_DEL');
           if (input != null) {
-            if (widget.controller!.ctrlEnable) {
+            if (_controller.ctrlEnable) {
               final int charCode = utf8.encode(input).first;
               widget.keyboardInput!(utf8.decode([charCode - 96]));
               // 这儿这个取消有问题，物理键盘按下的时候，输入字符不会触发CTRL的抬起
-              widget.controller!.ctrlEnable = false;
+              _controller.ctrlEnable = false;
             } else {
               widget.keyboardInput!(input);
             }
@@ -153,7 +154,7 @@ class _TermareViewState extends State<TermareView> {
               }
             },
             child: ScrollViewTerm(
-              controller: controller,
+              controller: _controller,
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return _TerminalView(
@@ -161,7 +162,7 @@ class _TermareViewState extends State<TermareView> {
                       constraints.maxWidth,
                       constraints.maxHeight,
                     ),
-                    controller: controller,
+                    controller: _controller,
                   );
                 },
               ),
