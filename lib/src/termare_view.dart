@@ -68,7 +68,7 @@ class _TermareViewState extends State<TermareView> {
       return;
     }
     preventChar = char;
-    Future<void>.delayed(Duration(milliseconds: 100), () {
+    Future<void>.delayed(const Duration(milliseconds: 100), () {
       preventChar = '';
     });
   }
@@ -146,7 +146,12 @@ class _TermareViewState extends State<TermareView> {
           return GestureDetector(
             behavior: HitTestBehavior.translucent,
             onDoubleTap: () async {
-              // widget.onDoubleTap?.call();
+              final ClipboardData? data = await Clipboard.getData(
+                Clipboard.kTextPlain,
+              );
+              if (data != null) {
+                widget.keyboardInput!(data.text!);
+              }
             },
             onTap: () {
               if (widget.keyboardInput != null) {
