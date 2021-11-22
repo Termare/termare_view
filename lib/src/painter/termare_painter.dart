@@ -212,7 +212,7 @@ class TermarePainter extends CustomPainter {
         controller.currentPointer.dy - buffer.position < controller.row;
     if (controller.showCursor && isNotOverFlow) {
       final Paint paint = Paint()
-        ..color = controller.theme!.cursorColor
+        ..color = controller.theme!.cursorColor.withOpacity(0.4)
         ..strokeWidth = 0.5;
       if (!controller.hasFocus) {
         paint.style = PaintingStyle.stroke;
@@ -220,9 +220,9 @@ class TermarePainter extends CustomPainter {
       final int x = controller.currentPointer.x;
       final int y = controller.currentPointer.y - buffer.position;
       final Character? character = buffer.getCharacter(y, x);
-      if (character != null && !character.isEmpty) {
-        paint.blendMode = BlendMode.hardLight;
-      }
+      // if (character != null && !character.isEmpty) {
+      //   paint.blendMode = BlendMode.colorBurn;
+      // }
       // paint.blendMode = BlendMode.exclusion;
       // paint.blendMode = BlendMode.xor;
       double cursorWidth = controller.theme!.characterWidth!;

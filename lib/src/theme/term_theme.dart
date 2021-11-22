@@ -56,7 +56,7 @@ const Map<int, double> letterHeightMap = {
 class TermareStyle {
   TermareStyle({
     this.fontSize = 12,
-    this.cursorColor = Colors.grey,
+    this.cursorColor = Colors.black,
     this.backgroundColor = Colors.black,
     this.defaultFontColor = Colors.white,
     this.black,

@@ -37,6 +37,7 @@ class _ScrollViewTermState extends State<ScrollViewTerm>
           if (scrollLine != 0) {
             widget.controller!.currentBuffer.scroll(scrollLine);
             curOffset = 0;
+            widget.controller!.needBuild();
             widget.controller!.notifyListeners();
           }
         }
