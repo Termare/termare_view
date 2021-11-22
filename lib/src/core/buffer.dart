@@ -198,6 +198,7 @@ class Buffer {
     if (line == null || line.isEmpty) {
       return true;
     }
+    line.length = controller.column;
     for (int i = 0; i < controller.column; i++) {
       if (line[i] != null) {
         return false;
