@@ -202,7 +202,7 @@ class TermareController with Observable {
     final int column = size.width ~/ theme!.characterWidth!;
     this.row = row;
     this.column = column;
-    Log.d('setPtyWindowSize $size row:$row column:$column');
+    // Log.d('setPtyWindowSize $size row:$row column:$column');
     currentBuffer.setViewPoint(row);
     _debouncer.call(sizeChangedCall);
     needBuild();
